@@ -1,68 +1,104 @@
 # DESIGN.md — randy-digital
 
-> **Placeholder.** This is the design source of truth for the project. Fill in
-> the `TODO` values, then mirror the tokens into the Tailwind v4 `@theme {}`
-> block in `app/global.css`. The `/design-md`, `/build-ui`, `/use-grid-system`,
-> and `/add-motion` skills read this file. Run `/audit-ui` to catch drift.
+Design source of truth. Tokens here are mirrored into the Tailwind v4
+`@theme {}` block in `app/global.css` and **must stay in sync** — `/audit-ui`
+flags drift. Read this before building UI. Owned/updated via `/design-md`;
+grid implementation via `/use-grid-system`; motion via `/add-motion`.
 
 ## Design direction
 
-_TODO — one paragraph on the intended feel. Reference points so far:
-[lab01.dev](https://lab01.dev/) (numbered, restrained, type-forward, polished
-UI craft). Decide: editorial/minimal vs. expressive/experimental? Light, dark,
-or both? Personality of the lab vs. the blog?_
+**Editorial-minimal × technical-monospace.** Restrained and type-forward like
+[lab01.dev](https://lab01.dev/) — generous whitespace, content leads, flush-left
+— but with a monospace, structural register: mono carries labels, metadata,
+navigation, and numbering, with light Swiss/ITS grid discipline (visible
+structure, ruled hairlines, numbered indexes `01 / 02 / 03`). Near-monochrome
+canvas; colour comes from the lab experiments themselves, with a single signal
+red used sparingly for state and emphasis. Light and dark, system-driven.
+
+Personality: precise, understated, a little terminal. The blog reads like an
+essay; the lab feels like a workbench.
 
 ## Color tokens
 
-Map every value into `@theme` as `--color-*`. Tailwind v4 exposes these as
-runtime CSS variables — usable in canvas/WebGL sketches too.
+Near-monochrome neutrals + one signal red. Defined as runtime CSS variables in
+`:root` (light) and overridden under `prefers-color-scheme: dark`, then exposed
+to Tailwind via `@theme`. Use semantic names (`bg-bg`, `text-fg`, …), never raw
+hex, in components.
 
-| Token | Light | Dark | Usage |
-|-------|-------|------|-------|
-| `--color-bg` | TODO | TODO | page background |
-| `--color-surface` | TODO | TODO | cards, code blocks |
-| `--color-fg` | TODO | TODO | primary text |
-| `--color-muted` | TODO | TODO | secondary text |
-| `--color-accent` | TODO | TODO | links, highlights |
-| `--color-border` | TODO | TODO | hairlines, dividers |
+| Token (`--color-*`) | Light | Dark | Usage |
+|------|-------|------|-------|
+| `bg` | `#ffffff` | `#0a0a0a` | page background |
+| `surface` | `#f5f5f5` | `#171717` | code blocks, cards, insets |
+| `fg` | `#111111` | `#ededed` | primary text |
+| `muted` | `#737373` | `#a3a3a3` | metadata, secondary text, mono labels |
+| `border` | `#e5e5e5` | `#262626` | hairlines, dividers, grid rules |
+| `accent` | `#e5484d` | `#ff6369` | links (hover/active), focus ring, numbered markers, `::selection` |
+
+**Accent discipline:** red is a *signal*, not decoration. Allowed on: active
+nav item, link hover/underline, focus rings, the index numbers, small status
+ticks. Not on: large fills, headings, backgrounds.
 
 ## Typography
 
-Starter ships **Geist**. Decide whether to keep it or pair a display/serif face.
+Geist Sans (body/UI) + **Geist Mono carries the technical register** — section
+labels, nav, dates, the `01/02/03` numbering, tags, code. Both already loaded
+via `geist/font` in `app/layout.tsx`. Flush-left everywhere. `tracking-tight`
+on headings; `text-wrap: balance` on titles.
 
-| Role | Family | Size / line-height | Weight |
-|------|--------|--------------------|--------|
-| Display / H1 | TODO | TODO | TODO |
-| Heading | TODO | TODO | TODO |
-| Body | TODO (Geist?) | TODO | TODO |
-| Mono / code | Geist Mono | TODO | TODO |
+| Role | Family | Size | Line-height | Weight | Notes |
+|------|--------|------|-------------|--------|-------|
+| Display (hero) | Sans | `clamp(2.25rem, 6vw, 3rem)` | 1.05 | 500 | home/section heroes only |
+| H1 | Sans | `2.25rem` | 1.15 | 500 | tracking-tight |
+| H2 | Sans | `1.5rem` | 1.2 | 500 | tracking-tight |
+| H3 | Sans | `1.25rem` | 1.3 | 500 | |
+| Body | Sans | `1rem` | 1.6 | 400 | |
+| Mono label | Mono | `0.8125rem` | 1.4 | 500 | uppercase, `tracking-wide`, `muted` — section labels/eyebrows |
+| Metadata | Mono | `0.875rem` | 1.4 | 400 | dates, tags, numbers — `muted` |
+| Code | Mono | `0.875rem` | 1.5 | 400 | |
 
-Set a modular type scale (e.g. 1.2–1.333 ratio) and a base size. Flush-left.
+Type scale ≈ 1.25 (major third), base 16px.
 
 ## Spacing, grid & rhythm
 
-- **Baseline:** 8px vertical rhythm (set spacing scale on multiples of 8/4).
-- **Grid:** 12-column on a constant gutter — see `/use-grid-system`. Decide
-  max content width and gutter. App profile (column-line + baseline) vs.
-  editorial (strict fields)?
-- **Radius / shadows / borders:** TODO.
+- **Baseline:** 8px vertical rhythm. Spacing on multiples of 4/8 (Tailwind
+  default scale already aligns). Align type and blocks to the baseline.
+- **Grid:** 12 columns, **24px (1.5rem) gutter**, flush-left. Profile = **app**
+  (place by column line + baseline; relaxed row fields) — see `/use-grid-system`.
+  A toggleable column + baseline overlay (the `g` key) gets added during the
+  grid pass.
+- **Container widths** (`@theme` as `--container-*`):
+  - `prose` = `40rem` (640px) — reading column for blog/essays.
+  - `wide` = `64rem` (1024px) — work/lab index grids, galleries.
+- **Radius:** `--radius` = `0.375rem` (6px) — modest; leans square for the
+  technical feel. Hairline borders (`1px`, `border` token) do structural work.
 
 ## Motion
 
-Defaults the `/add-motion` skill should honor:
+Layered (CSS / View Transitions / Motion). Honored by `/add-motion`.
 
-- **Durations:** TODO (e.g. 150ms micro, 300ms entrance).
-- **Easing:** TODO (e.g. standard ease-out for entrances).
-- **Page transitions:** View Transitions API (crossfade) — TODO confirm.
-- **Hard rules:** animate `transform`/`opacity` only; always respect
-  `prefers-reduced-motion`.
+- **Durations:** micro (hover/press) `150ms`; entrance/exit `250ms`.
+- **Easing:** `cubic-bezier(0.2, 0, 0, 1)` (ease-out) for entrances.
+- **Page transitions:** View Transitions API — subtle crossfade between routes;
+  shared-element move on the numbered index → detail where it earns it.
+- **In-component:** Motion for interruptible microinteractions, staggered list
+  reveals on the index, scroll-linked accents. Lab experiments own their own
+  motion.
+- **Hard rules:** animate `transform`/`opacity` only; never layout properties.
+  Always respect `prefers-reduced-motion: reduce` (disable non-essential motion).
 
 ## Voice
 
-_Used by `/polish-copy`. TODO — describe the writing voice (e.g. plain,
-confident, low-jargon; sentence case; first person?). Add do/don't examples._
+Used by `/polish-copy`.
+
+- Plain, precise, low-jargon. Sentence case. First person ("I build…").
+- Understated confidence — state what a thing is, skip the hype adjectives.
+- Mono labels are terse and lowercase-or-uppercase-consistent (`selected work`,
+  `writing`, `lab`), never sentence fragments with punctuation.
+- Do: "A type-safe content pipeline for the site." Don't: "A blazingly fast,
+  cutting-edge content solution!"
 
 ---
 
-_Once filled in, the color + spacing + type tokens here must match
-`app/global.css` `@theme` exactly. `/audit-ui` flags divergence._
+_Sync check: the `bg/surface/fg/muted/border/accent` colors, container widths,
+radius, and font tokens above must match `app/global.css` `@theme` + `:root`
+exactly._
