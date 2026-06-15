@@ -2,18 +2,19 @@ import { BlogPosts } from 'app/components/posts'
 
 export default function Page() {
   return (
-    <section>
-      <h1 className="mb-8 text-2xl font-semibold tracking-tighter">
-        My Portfolio
+    <section className="grid-page">
+      {/* masthead — display type, intentionally not full-width */}
+      <h1 className="col-start-1 col-end-13 md:col-end-9 text-2xl font-semibold tracking-tighter">
+        Randy
       </h1>
-      <p className="mb-4">
-        {`I'm a Vim enthusiast and tab advocate, finding unmatched efficiency in
-        Vim's keystroke commands and tabs' flexibility for personal viewing
-        preferences. This extends to my support for static typing, where its
-        early error detection ensures cleaner code, and my preference for dark
-        mode, which eases long coding sessions by reducing eye strain.`}
+      {/* bio — narrow measure (~7 cols ≈ prose width) for readability */}
+      <p className="col-start-1 col-end-13 md:col-end-8 mt-4">
+        {`This is my corner of the web — a portfolio of work, notes on what I'm
+        thinking about, and a lab of small interactive experiments. Still
+        taking shape.`}
       </p>
-      <div className="my-8">
+      {/* post list — wider; short rows tolerate more columns */}
+      <div className="col-start-1 col-end-13 md:col-end-11 mt-12">
         <BlogPosts />
       </div>
     </section>

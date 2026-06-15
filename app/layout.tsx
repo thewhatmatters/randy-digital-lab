@@ -1,25 +1,35 @@
 import './global.css'
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
 import { Navbar } from './components/nav'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import Footer from './components/footer'
+import { UIChrome } from './components/command-bar'
+import { ThemeProvider } from 'next-themes'
 import { baseUrl } from './sitemap'
+
+// viewport-fit=cover lets the fixed command bar read safe-area insets on
+// notched devices (see .cmdbar in global.css).
+export const viewport: Viewport = {
+  viewportFit: 'cover',
+}
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   title: {
-    default: 'Next.js Portfolio Starter',
-    template: '%s | Next.js Portfolio Starter',
+    default: 'randy.digital',
+    template: '%s — randy.digital',
   },
-  description: 'This is my portfolio.',
+  description:
+    'Portfolio, notes, and a lab of small interactive experiments — by Randy.',
   openGraph: {
-    title: 'My Portfolio',
-    description: 'This is my portfolio.',
+    title: 'randy.digital',
+    description:
+      'Portfolio, notes, and a lab of small interactive experiments — by Randy.',
     url: baseUrl,
-    siteName: 'My Portfolio',
+    siteName: 'randy.digital',
     locale: 'en_US',
     type: 'website',
   },
@@ -46,20 +56,37 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      // next-themes sets data-theme before paint; this silences the expected
+      // server/client mismatch on the <html> attribute.
+      suppressHydrationWarning
       className={cx(
         'bg-bg text-fg',
         GeistSans.variable,
         GeistMono.variable
       )}
     >
-      <body className="antialiased max-w-xl mx-4 mt-8 lg:mx-auto">
-        <main className="flex-auto min-w-0 mt-6 flex flex-col px-2 md:px-0">
-          <Navbar />
-          {children}
-          <Footer />
-          <Analytics />
-          <SpeedInsights />
-        </main>
+      <body className="antialiased">
+        {/* Full-width shell: each section composes `grid-page`, which centers
+            its own 72rem content box. The old global max-w-xl lived here.
+            ThemeProvider drives light/dark/auto via the [data-theme] attribute
+            (no-flash inline script); UIChrome adds the fixed command bar + grid
+            overlay and owns their shared toggle state. */}
+        <ThemeProvider
+          attribute="data-theme"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <UIChrome>
+            <main className="flex-auto min-w-0 flex flex-col pt-12">
+              <Navbar />
+              {children}
+              <Footer />
+              <Analytics />
+              <SpeedInsights />
+            </main>
+          </UIChrome>
+        </ThemeProvider>
       </body>
     </html>
   )

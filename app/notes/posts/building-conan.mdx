@@ -1,0 +1,44 @@
+---
+title: 'Dashboard Confessional: I built one I’d actually want to stare at'
+publishedAt: '2026-06-14'
+summary: 'I like dashboards. So when everything Claude Code does kept vanishing into scrollback, I built one worth staring at — and somewhere in the mess of shipping it, the agent ended up making its own launch video.'
+stack:
+  - Desktop: Tauri · Rust · React · Tailwind
+  - Marketing: Astro · Vercel · Remotion · Resend
+ctaLabel: 'conan.sh'
+ctaHref: 'https://conan.sh'
+---
+
+A few days ago I kept having the same thought every time I used Claude Code: *the agent is doing a ton of work, and there's nothing good to look at while it does it.*
+
+Token usage, context filling up, which skills fired, what tools ran, when it paused, when something broke — all of it real, all of it buried in scrollback. So I'd `tail` files, squint at the terminal, and hope.
+
+That bugged me more than it probably should have. That feeling became [Conan](https://conan.sh).
+
+## I wanted something I'd actually want to look at
+
+Here's the honest version: I love a good dashboard. Charts, gauges, a little telemetry ticking across the screen — I find it genuinely fun to watch. And I live in Claude Code all day. So what I really wanted was something *pretty* sitting next to me while the agent works — not a tool I'd check when something broke, but a view I'd want to keep an eye on.
+
+Before I wrote any code, I wrote down what it should be: a terminal-primary app that wraps Claude Code and surfaces what it's doing, right where you're already working. Beautiful enough to stare at, useful enough to earn the screen space.
+
+## A "simple" app is never simple
+
+Nobody warns you that a "simple" paid app isn't actually one thing. It's the desktop app, a marketing site, and a little service that hands out licenses — three separate projects, each with its own personality and its own way of surprising you.
+
+The marketing site was the one I underestimated. I figured it'd be the easy afternoon; it became the rabbit hole. And the part I'm still grinning about is the launch video.
+
+I didn't want to learn a video editor, so I reached for [Remotion](https://remotion.dev) — a framework all its own that turns React into real, rendered video. That meant the trailer became *code*: components, props, timing I could tweak and re-render like anything else in the repo. Change a line, run it again, new cut. No timeline to fight, no keyframes to nudge by hand.
+
+The clutch part was getting Claude Code to drive it *well*. I wrote a skill — basically a playbook that teaches the agent how to build Remotion compositions the right way — and after that the trailer was mostly prompting. What I'd have lost days to in After Effects took an afternoon. And there was something perfect about it: the tool I built to watch Claude Code work, with its own trailer made *by* Claude Code.
+
+## Did watching it actually change anything?
+
+More than I expected. There's a [60% rule](https://www.youtube.com/watch?v=xaQG-eD9d58) a lot of people who live in these agents swear by: once context creeps past ~60%, you hand off or compact. Not because the agent hits a wall — it doesn't crash, it just quietly starts to rot. It stops following instructions, contradicts itself, drops details you gave it earlier. I'd nodded along to the rule for months; now I actually follow it, because I can finally *see* the context climbing toward the line. And I know whether my skills fire on their own, instead of assuming they did and hoping.
+
+That's the funny part. I built it because I wanted something nice to look at — and the looking is what changed how I work. Turns out pretty and useful were the same feature all along.
+
+## Today it's on Product Hunt
+
+From a vague itch to a signed, shipping product. It took longer than I wanted, broke in more places than I expected, and I'd do it again tomorrow.
+
+If you live in Claude Code, [come see](https://www.producthunt.com/products/conan) what your agent's actually up to.

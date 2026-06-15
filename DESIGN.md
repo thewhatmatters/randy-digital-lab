@@ -64,11 +64,19 @@ Type scale ≈ 1.25 (major third), base 16px.
   default scale already aligns). Align type and blocks to the baseline.
 - **Grid:** 12 columns, **24px (1.5rem) gutter**, flush-left. Profile = **app**
   (place by column line + baseline; relaxed row fields) — see `/use-grid-system`.
-  A toggleable column + baseline overlay (the `g` key) gets added during the
-  grid pass.
+  Implemented as `@theme` tokens in `app/global.css` (the single source of
+  truth): `--grid-cols: 12`, `--grid-gutter: 1.5rem`, `--grid-maxw: 72rem`
+  (= `wide`), `--grid-baseline: 0.5rem` (8px), `--leading-base: 1.5rem` (24px).
+  Layout via the `grid-page` + `band` (subgrid) utilities; place children by
+  column line with stock `col-start-*`/`col-end-*`.
+  - **Page margin** (`--grid-margin`) is responsive: `1.5rem` (24px) mobile →
+    `3rem` (48px) ≥768px → `4.5rem` (72px) ≥1024px.
+  - **Overlay:** press **`g`** to toggle the column + baseline guides
+    (`app/components/grid-overlay.tsx`, a client island; ignores keypresses
+    while typing in inputs).
 - **Container widths** (`@theme` as `--container-*`):
   - `prose` = `40rem` (640px) — reading column for blog/essays.
-  - `wide` = `64rem` (1024px) — work/lab index grids, galleries.
+  - `wide` = `72rem` (1152px) — desktop container; work/lab index grids, galleries.
 - **Radius:** `--radius` = `0.375rem` (6px) — modest; leans square for the
   technical feel. Hairline borders (`1px`, `border` token) do structural work.
 
@@ -93,7 +101,7 @@ Used by `/polish-copy`.
 - Plain, precise, low-jargon. Sentence case. First person ("I build…").
 - Understated confidence — state what a thing is, skip the hype adjectives.
 - Mono labels are terse and lowercase-or-uppercase-consistent (`selected work`,
-  `writing`, `lab`), never sentence fragments with punctuation.
+  `notes`, `lab`), never sentence fragments with punctuation.
 - Do: "A type-safe content pipeline for the site." Don't: "A blazingly fast,
   cutting-edge content solution!"
 

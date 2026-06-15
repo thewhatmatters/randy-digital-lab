@@ -32,6 +32,10 @@ yarn-error.log*
 # vercel
 .vercel
 
+# claude code (local-only settings + status label)
+.claude/settings.local.json
+.claude/current-task.txt
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

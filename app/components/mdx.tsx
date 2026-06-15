@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { MDXRemote } from 'next-mdx-remote/rsc'
 import { highlight } from 'sugar-high'
+import smartypants from 'remark-smartypants'
 import React from 'react'
 
 function Table({ data }) {
@@ -104,6 +105,12 @@ export function CustomMDX(props) {
     <MDXRemote
       {...props}
       components={{ ...components, ...(props.components || {}) }}
+      options={{
+        // Editorial typography: curly quotes/apostrophes, true em/en dashes,
+        // ellipses. Skips code blocks. (next-mdx-remote merges these options.)
+        mdxOptions: { remarkPlugins: [smartypants] },
+        ...(props.options || {}),
+      }}
     />
   )
 }
