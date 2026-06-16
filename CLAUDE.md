@@ -15,7 +15,9 @@ spirit of [lab01.dev](https://lab01.dev/)).
   islands only where interactivity is needed.
 - **Styling:** Tailwind **v4** — CSS-first config. Design tokens live in a
   `@theme {}` block in `app/global.css` and are the single source of truth,
-  mirrored from `DESIGN.md`. No `tailwind.config.js` theme object.
+  mirrored from `DESIGN.md`. No `tailwind.config.js` theme object. The code
+  here is **canonical**; the Paper design canvas is regenerable documentation
+  downstream of it, never authoritative.
 - **Content:** local **MDX** files (filesystem + small `utils.ts`), the
   starter's approach. No headless CMS. **Do not adopt Contentlayer** (stalled);
   if typed/validated frontmatter is needed later, migrate the data layer to
@@ -73,6 +75,8 @@ This project leans on installed skills — reach for them by name:
 - **`/design-md`** — owns the `DESIGN.md` token spec.
 - **`/audit-ui`** — a11y + responsive + Core Web Vitals + token-drift pass
   before shipping.
+- **`/design-token-drift`** — read-only check that the Paper design canvas
+  still matches the code tokens; run before committing a token/color change.
 
 `DESIGN.md` is the design source of truth (tokens, type, grid, voice). When
 building UI, read it first and map tokens into the Tailwind `@theme` block.
