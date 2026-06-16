@@ -17,6 +17,17 @@ type Metadata = {
   // Optional call-to-action button at the foot of the right rail.
   ctaLabel?: string
   ctaHref?: string
+  // Co-author credits, rendered as a byline + a roles block in the right rail.
+  // Authored like `stack` — an indented list of "Name: role" rows. List the
+  // human(s) and any AI collaborator as distinct authors, e.g.:
+  //   authors:
+  //     - Randy: direction, editing, final call
+  //     - Claude · Opus 4.8: drafting, research, code
+  authors?: StackItem[]
+  // Honest "how much AI" calibration label shown beside the byline, e.g.
+  // "Co-written with Claude" / "Human-written · AI-edited". Set per note;
+  // never fabricate it — it only means anything if it's true.
+  aiDegree?: string
 }
 
 function parseFrontmatter(fileContent: string) {

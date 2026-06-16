@@ -303,6 +303,110 @@
     top: 2rem;
   }
 }
+/* Byline under the title — "By <names>". Just *who*; the *how-much* lives in
+   the end-of-note colophon below. */
+.note-byline {
+  color: var(--fg);
+}
+.note-byline__by {
+  color: var(--muted);
+}
+
+/* "How this was made" colophon — the honest authorship sign-off at the foot of
+   each note: co-authors with roles flanking a contribution split bar. The bar
+   is driven by the degree LABEL (--human-share), not a measured number:
+   ink (--fg) = human share, accent = AI share. */
+.note-colophon {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+}
+.note-colophon__label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.note-colophon__authors {
+  margin-top: 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+.colo-side {
+  display: grid;
+  gap: 0.75rem;
+}
+.colo-author {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+.colo-author--ai {
+  justify-content: flex-end;
+}
+.colo-author__text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
+}
+.colo-side--end .colo-author__text {
+  align-items: flex-end;
+  text-align: right;
+}
+.colo-author__name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--fg);
+}
+.colo-author__role {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+.colo-avatar {
+  flex-shrink: 0;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1;
+}
+/* Avatar colors mirror the bar segments — human = ink, AI = accent — so each
+   author's color anchors their end of the bar. Claude is a monogram mark, not
+   a face: anthropomorphizing an AI would undercut the honesty this block is for. */
+.colo-avatar--human {
+  background: var(--fg);
+  color: var(--bg);
+}
+.colo-avatar--ai {
+  background: var(--accent);
+  color: #fff;
+}
+.note-bar {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 2px;
+  height: 0.5rem;
+  border-radius: 999px;
+  overflow: hidden;
+}
+.note-bar__seg--human {
+  width: var(--human-share, 50%);
+  background: var(--fg);
+}
+.note-bar__seg--ai {
+  flex: 1;
+  background: var(--accent);
+}
 /* Shared mono button (see components/button.tsx). One base + two variants:
    `default` (bordered surface — lab "Copy prompt") and `accent` (signal-red
    CTA — note rail). The leading icon always sits on the left. */
