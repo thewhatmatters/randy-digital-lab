@@ -79,19 +79,19 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <UIChrome>
-            <main className="flex-auto min-w-0 flex flex-col">
-              {/* Content fills at least one viewport so the footer lands at the
-                  bottom and the curtain below it stays off-screen — this is what
-                  gives short pages the scroll room to hide the reveal. */}
+            {/* Aurora bloom pinned behind the page (z-0). Hidden until you push
+                past the footer, when <main> lifts to uncover it. See
+                footer-reveal.tsx. */}
+            <FooterReveal />
+            {/* <main> is the opaque page surface (z-1) that covers the bloom; the
+                overscroll lift opens a gap at the bottom that reveals it. The
+                min-h wrapper keeps the footer at the bottom on short pages. */}
+            <main className="relative z-[1] flex flex-auto min-w-0 flex-col bg-bg">
               <div className="flex min-h-[100dvh] flex-col pt-12">
                 <Navbar />
                 <div className="flex-auto">{children}</div>
                 <Footer />
               </div>
-              {/* Decorative aurora "curtain": a real in-flow section below the
-                  footer, hidden at rest, pulled into view on overscroll, then
-                  the scroll position springs back. See footer-reveal.tsx. */}
-              <FooterReveal />
               <Analytics />
               <SpeedInsights />
             </main>
