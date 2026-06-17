@@ -51,6 +51,14 @@
   } /* 72px */
 }
 
+/* Shorter curtain on phones — a 60vh overscroll is a lot of travel on a small
+   viewport. */
+@media (max-width: 640px) {
+  :root {
+    --reveal-h: 42vh;
+  }
+}
+
 /* Place children by column LINE. A band spans all 12 columns and re-exposes
    them as subgrid, so children align to the same lines as everything else.
    Usage: <div class="grid-page"><div class="band">
@@ -670,12 +678,53 @@
   }
 }
 
+/* Footer aurora "curtain" (see components/footer-reveal.tsx). A real in-flow
+   section below the footer — it adds genuine scroll height, so it's hidden one
+   viewport below the footer at rest and only revealed when you overscroll past
+   it. The JS springs the scroll position back afterwards. --reveal-h is the
+   section's height = the overscroll travel. The bloom is anchored at the bottom
+   and fades to transparent up top so the seam with the page is soft. */
+.footer-reveal {
+  position: relative;
+  flex-shrink: 0; /* keep its height inside main's flex column */
+  height: var(--reveal-h);
+  overflow: hidden;
+  pointer-events: none;
+}
+.footer-reveal__aurora {
+  position: absolute;
+  /* oversize past the clip so the blur never leaves a hard edge */
+  inset: -20% -12% -12% -12%;
+  background:
+    radial-gradient(
+      120% 100% at 50% 100%,
+      color-mix(in srgb, var(--accent) 90%, #ff9e5e) 0%,
+      color-mix(in srgb, var(--accent) 68%, transparent) 30%,
+      transparent 62%
+    ),
+    radial-gradient(
+      80% 80% at 18% 104%,
+      color-mix(in srgb, var(--accent) 66%, #ffd27a) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      80% 80% at 84% 102%,
+      color-mix(in srgb, var(--accent) 70%, #ff5fa2) 0%,
+      transparent 58%
+    );
+  filter: blur(34px) saturate(1.04);
+}
+
 ::selection {
   background-color: var(--accent);
   color: #ffffff;
 }
 
 :root {
+  /* Footer aurora geometry (see .footer-reveal). --reveal-h is the curtain
+     section's height = the overscroll travel before the scroll springs back. */
+  --reveal-h: 60vh;
+
   /* semantic palette — light (see DESIGN.md) */
   --bg: #ffffff;
   --surface: #f5f5f5;

@@ -6,6 +6,7 @@ import { Navbar } from './components/nav'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import Footer from './components/footer'
+import { FooterReveal } from './components/footer-reveal'
 import { UIChrome } from './components/command-bar'
 import { ThemeProvider } from 'next-themes'
 import { baseUrl } from './sitemap'
@@ -78,10 +79,19 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <UIChrome>
-            <main className="flex-auto min-w-0 flex flex-col pt-12">
-              <Navbar />
-              {children}
-              <Footer />
+            <main className="flex-auto min-w-0 flex flex-col">
+              {/* Content fills at least one viewport so the footer lands at the
+                  bottom and the curtain below it stays off-screen — this is what
+                  gives short pages the scroll room to hide the reveal. */}
+              <div className="flex min-h-[100dvh] flex-col pt-12">
+                <Navbar />
+                <div className="flex-auto">{children}</div>
+                <Footer />
+              </div>
+              {/* Decorative aurora "curtain": a real in-flow section below the
+                  footer, hidden at rest, pulled into view on overscroll, then
+                  the scroll position springs back. See footer-reveal.tsx. */}
+              <FooterReveal />
               <Analytics />
               <SpeedInsights />
             </main>
