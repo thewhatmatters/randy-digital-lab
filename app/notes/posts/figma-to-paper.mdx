@@ -1,0 +1,49 @@
+---
+title: 'Design Engineer: the day Figma stopped fitting'
+publishedAt: '2026-06-17'
+summary: 'I kept opening Figma less and less. Not because I stopped caring about design — because I started shipping it myself. Here is why I traded a tool built around the handoff for a canvas that speaks HTML, stays honest with the code, and that Claude can actually draw on.'
+ctaLabel: 'paper.design'
+ctaHref: 'https://paper.design'
+aiDegree: 'Co-written with Claude'
+authors:
+  - Randy Daniel: direction, editing, final call
+  - Claude · Opus 4.8: drafting, research
+---
+
+For a while I didn't notice it happening. I'd start a screen in Figma like I always had, then find myself bailing halfway to go build the real thing in code — because the real thing was where the decisions actually got made. Figma had quietly become the place I sketched *before* the work instead of the place I did it.
+
+Eventually I stopped pretending. I closed the tab.
+
+## I'm a design engineer now, and Figma knew it before I did
+
+Figma is a beautiful tool for a specific shape of work: a designer makes a file, a developer turns it into code, and the file is the contract between them. Every great part of it — the polish, the components, the redlines — exists to make that handoff clean.
+
+The thing is, lately I'm both people. I design *and* I ship. There's no one downstream waiting for a file, because the file and the build are the same job, done by the same person, in the same afternoon. And the moment you collapse the handoff, all that machinery built to support it turns into ceremony. I was maintaining a contract I was signing with myself.
+
+## The file kept lying to me
+
+Here's the part that actually pushed me out. A Figma file is only as honest as the last time you remembered to update it — and I never remembered. I'd change a radius, a color, a spacing rule *in the code*, because that's where I was working, and the canvas would just... drift. A week later I'd open it and it was a museum: a confident, pixel-perfect picture of a site that no longer existed.
+
+For a solo personal site, that's the worst kind of overkill. All the weight of a collaboration tool, and the one job I needed it to do — *tell me the truth about my own site* — was the job it was quietly failing.
+
+## Paper speaks the language I ship in
+
+So I switched to [Paper](https://paper.design). The first thing that clicked is almost dumb in how simple it is: Paper thinks in HTML and CSS. What I draw maps to what I ship, because they're the same vocabulary. There's no mental translation step where "this Figma auto-layout frame" becomes "this flex container" — it already *is* one.
+
+It's also just lighter to think in. Closer to sketching than to booting up a workstation. When the gap between "I have an idea" and "it's on the canvas" gets small enough, you start using the canvas for thinking instead of presenting. That changed how much I reach for it.
+
+## The canvas is downstream of the code now
+
+But the real unlock is the part that fixed my lying-file problem: I inverted the source of truth.
+
+In this project, the **code is canonical**. The design tokens — color, type, grid — live in one `@theme` block in the CSS, and that's the law. The Paper canvas isn't where design originates anymore; it's *regenerable documentation* of what the code already says. When I built the footer's overscroll "equalizer" reveal in code, I mirrored it onto the canvas afterward — as a record, not a spec. The arrow points from code to canvas, never the other way.
+
+And because Claude can drive Paper directly — it reads the canvas and writes real HTML nodes back into it — keeping the two in sync stopped being a chore I forget and became something that just happens in the loop I'm already in. I even have a little check that flags when the canvas swatches drift from the code tokens, so "the file is lying again" is now a thing I get *told*, not a thing I discover three weeks late.
+
+## This isn't a Figma takedown
+
+Figma is still extraordinary at the thing it's for. If I were handing work to a team, I'd open it tomorrow.
+
+But I'm not. I'm one person wearing the design hat and the engineering hat at the same time, and I wanted a tool that assumes that instead of fighting it — one where the canvas and the code are two views of a single source of truth, not two files I have to keep apologizing to each other for. Paper fits the shape of the work I'm actually doing now.
+
+The handoff was the whole point of the old setup. Turns out I didn't have one anymore.
