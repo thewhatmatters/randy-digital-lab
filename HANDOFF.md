@@ -1,10 +1,11 @@
 # Handoff — randy-digital
 
-_Updated 2026-06-16 (session 2) · built the **footer "equalizer" overscroll
+_Updated 2026-06-17 (session 2) · built the **footer "equalizer" overscroll
 reveal** — the sui.io / diabrowser.com "push past the footer" effect — as a
-zero-dependency, grid-aligned, velocity-driven component. Iterated through
-several models with Randy's live feedback to the final look; verified in a real
-browser (light + dark, short + long pages); committing + pushing to deploy._
+zero-dependency, grid-aligned, velocity-driven component (committed + pushed,
+`6a511e9`). Then mirrored it onto the **Paper design canvas** as a "Footer ·
+reveal" component, and decided the next iteration will use **Paper Shaders**
+(see Next steps #1)._
 
 ## Goal
 
@@ -77,11 +78,26 @@ reveals the arc; springs back to 0; arc peaks center in both themes;
 
 ## Next steps
 
-1. **Optional polish on the bloom** (Randy is happy with it as-is): per-bar live
-   animation/jitter while revealed; tune arc steepness via `BARS`, `HOLD_MS`,
-   `GAIN`, or `--reveal-h`. Randy floated "another type of graphic for that area"
-   earlier — the interaction is decoupled from the visual (only `.footer-bloom`
-   markup/CSS changes).
+1. **Shader footer (DECIDED — Randy will use Paper Shaders).** Replace the 12
+   CSS gradient bars inside `.footer-bloom` with a `<canvas>` running a Paper
+   Shaders effect (`@paper-design/shaders-react` — open-source from Paper Design,
+   thematically on-brand; `MeshGradient`/`GrainGradient` give the grainy-gradient
+   Sui look). The reveal mechanism is UNCHANGED — the visual is decoupled from
+   the interaction. Plan:
+   - Client island, `dynamic(import, { ssr: false })`, canvas sized to the same
+     72rem grid box `.footer-bloom__panel` uses.
+   - Feed the EXISTING scroll state as uniforms: `uProgress` (the `--p` the JS
+     already sets), velocity, `uTime`, and `uAccent` read from the resolved
+     `--accent` custom property (keep it token-driven / code-canonical).
+   - Only run the rAF/GL loop while the panel is revealed (opacity > 0) — don't
+     idle a GL context at the page bottom. Lazy-load on first approach to bottom.
+   - Keep the CSS bars as the fallback (no-WebGL / `prefers-reduced-motion`
+     freezes to a static frame).
+   - Aligns with `CLAUDE.md`'s planned `Canvas.tsx` lab island pattern.
+2. **Optional polish on the CSS bloom** (Randy is happy with it as-is, and may
+   supersede it with the shader above): per-bar jitter; tune arc via `BARS`,
+   `HOLD_MS`, `GAIN`, `--reveal-h`. Interaction is decoupled from the visual
+   (only `.footer-bloom` markup/CSS changes).
 2. **Motion/Lenis variant** still deferred (Randy chose zero-dep). `CLAUDE.md`
    designates `motion` but it's NOT installed.
 3. **Confirm the Vercel deploy** reached `randy.digital` (domain attach + DNS may
@@ -93,6 +109,12 @@ reveals the arc; springs back to 0; arc peaks center in both themes;
 
 - Frontmatter parser (`app/notes/utils.ts`) is **custom, NOT real YAML**.
 - Serif body + drop cap were tried and **REJECTED** — body stays Geist Sans.
+- **Paper canvas** (Design System page) now has a **"Footer · reveal"** component
+  under `03 · Components` — a dark preview of the peak equalizer arc + a spec note
+  ("code-driven scroll interaction, not a static asset"). It's documentation of
+  the PEAK state only (Paper is static); update it if the shader version lands.
+  Paper quirks hit: it drops CSS `%` heights and the `flex` shorthand — set
+  explicit px width/height on bar nodes.
 - Running `pnpm build` while `pnpm dev` is up can disturb `.next` — restart dev
   after a build (did so this session).
 - `.claude/settings.local.json` + `.claude/current-task.txt` are gitignored.
