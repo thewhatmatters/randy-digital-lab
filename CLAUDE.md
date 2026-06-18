@@ -38,6 +38,11 @@ spirit of [lab01.dev](https://lab01.dev/)).
   components — `Sketch.tsx` (p5.js), `Canvas.tsx` (react-three-fiber, imported
   via `dynamic(..., { ssr: false })`), `Playground.tsx` (Sandpack, optional /
   measure its bundle cost before site-wide use).
+- **Data-viz / charts:** minimalist monochrome figures built as our own thin
+  **visx** wrappers (`app/components/charts/`), rendered as Server Components
+  (pure SVG, zero client JS) and styled with tokens only. Authored in notes
+  inside `<Margin>`; supporting text uses `<Caption>`. See **`/chart-craft`**
+  for the style contract + the `blockJS: false` MDX requirement.
 - **Motion:** layer it — CSS for hover/press, **View Transitions API** for
   route/shared-element changes, **Motion** (independent successor to Framer
   Motion) for interruptible gesture/scroll microinteractions. Always honor
@@ -85,6 +90,9 @@ This project leans on installed skills — reach for them by name:
   before shipping.
 - **`/design-token-drift`** — read-only check that the Paper design canvas
   still matches the code tokens; run before committing a token/color change.
+- **`/chart-craft`** — style contract for data-viz: minimalist monochrome
+  charts as visx Server-Component wrappers (tokens only, no chrome). Use before
+  adding any chart/figure to a note or the lab.
 
 `DESIGN.md` is the design source of truth (tokens, type, grid, voice). When
 building UI, read it first and map tokens into the Tailwind `@theme` block.
