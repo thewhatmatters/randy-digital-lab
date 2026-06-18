@@ -32,11 +32,19 @@ hex, in components.
 | `fg` | `#111111` | `#ededed` | primary text |
 | `muted` | `#737373` | `#a3a3a3` | metadata, secondary text, mono labels |
 | `border` | `#e5e5e5` | `#262626` | hairlines, dividers, grid rules |
-| `accent` | `#e5484d` | `#ff6369` | links (hover/active), focus ring, numbered markers, `::selection` |
+| `accent` | `#e5484d` | `#ff6369` | standard text links, focus ring, numbered markers, `::selection` |
 
-**Accent discipline:** red is a *signal*, not decoration. Allowed on: active
-nav item, link hover/underline, focus rings, the index numbers, small status
-ticks. Not on: large fills, headings, backgrounds.
+**Accent discipline:** red is a *signal*, not decoration. Allowed on: standard
+text links, active nav item, focus rings, the index numbers, small status ticks.
+Not on: large fills, headings, backgrounds.
+
+**Links:** standard text/content links (`.prose a`) render in `accent` **at
+rest** — a link is itself a signal, so this is on-brand, not decoration. The
+underline stays for affordance but sits in a softened accent
+(`color-mix(in srgb, accent 35%, transparent)`) that solidifies to full `accent`
+on hover. Token-driven, so it adapts light/dark automatically. Scoped to
+standard text links; **nav and post-list links are navigation** and keep their
+own component treatment (don't make those accent).
 
 ## Typography
 
@@ -52,6 +60,7 @@ on headings; `text-wrap: balance` on titles.
 | H2 | Sans | `1.5rem` | 1.2 | 500 | tracking-tight |
 | H3 | Sans | `1.25rem` | 1.3 | 500 | |
 | Body | Sans | `1rem` | 1.6 | 400 | |
+| Caption | Sans | `0.9375rem` | 1.45 | 400 | margin supporting text — `muted`; a tad under body; authored via `<Caption>` |
 | Mono label | Mono | `0.8125rem` | 1.4 | 500 | uppercase, `tracking-wide`, `muted` — section labels/eyebrows |
 | Metadata | Mono | `0.875rem` | 1.4 | 400 | dates, tags, numbers — `muted` |
 | Code | Mono | `0.875rem` | 1.5 | 400 | |
