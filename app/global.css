@@ -242,8 +242,21 @@ html {
   @apply visible;
 }
 
+/* Standard text links — accent color, consistent across all note/MDX content.
+   The underline stays for affordance but sits in a softened accent that
+   solidifies on hover. (Site-wide "standard text link" == prose links; nav and
+   post-list links are navigation and keep their own component treatment.) */
 .prose a {
-  @apply underline transition-all decoration-neutral-400 dark:decoration-neutral-600 underline-offset-2 decoration-[0.1em];
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--accent) 35%, transparent);
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 2px;
+  transition: color 0.15s ease, text-decoration-color 0.15s ease;
+}
+
+.prose a:hover {
+  text-decoration-color: var(--accent);
 }
 
 .prose .anchor:after {
