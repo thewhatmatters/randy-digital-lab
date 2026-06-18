@@ -699,15 +699,20 @@
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 0;
+  /* Sit below the fold so the bars' solid bottoms (and their blur) run off the
+     bottom edge — no hard horizontal cut. offsetHeight is unchanged, so the JS
+     lift math (MAX = panel height) is unaffected. */
+  bottom: calc(-1 * var(--aurora-overflow, 0px));
   height: 100%;
   width: 100%;
-  max-width: var(--grid-maxw);
-  margin-inline: auto;
-  padding-inline: var(--grid-margin);
+  /* Full-bleed: the 12 columns run edge-to-edge (like the diabrowser.com
+     footer), the blur melting them into the aurora. For a grid-contained arc
+     instead (bars on the content columns), add back max-width:var(--grid-maxw)
+     + margin-inline:auto + padding-inline:var(--grid-margin). */
   display: grid;
   grid-template-columns: repeat(var(--grid-cols), 1fr);
   align-items: end;
+  filter: blur(var(--aurora-blur));
   opacity: 0; /* JS fades the panel in with the lift */
   --p: 0; /* JS-set scroll progress 0..1 → bar scale */
 }
@@ -722,11 +727,18 @@
   height: var(--bar-h, 50%);
   transform: scaleY(var(--p, 0));
   transform-origin: 50% 100%;
+  /* Vertical rainbow. scaleY compresses it: early in the push (small --p) the
+     whole spectrum squashes toward the bottom edge — ~1px per color, the thin
+     seam — then blooms to the full arc as you keep pulling. Top stop is
+     transparent so the blurred crest fades out instead of hard-clipping. */
   background: linear-gradient(
     to top,
-    color-mix(in srgb, var(--accent) 92%, #ffffff) 0%,
-    var(--accent) 24%,
-    color-mix(in srgb, var(--accent) 58%, transparent) 62%,
+    var(--aurora-1) 0%,
+    var(--aurora-2) 20%,
+    var(--aurora-3) 40%,
+    var(--aurora-4) 56%,
+    var(--aurora-5) 73%,
+    var(--aurora-6) 88%,
     transparent 100%
   );
 }
@@ -741,6 +753,24 @@
      which the JS also uses as the max page lift — so at peak scroll the gap
      reveals the whole panel and the center bar reaches the top. */
   --reveal-h: 46vh;
+
+  /* Footer aurora gradient stops (bottom → top) — a deliberate full-spectrum
+     "equalizer" bloom à la diabrowser.com. This is an INTENTIONAL departure
+     from the accent-only rule, defined here as canonical tokens so the code
+     stays the source of truth. Mirror to the Paper canvas + run
+     /design-token-drift after changing these. Shared across light/dark. */
+  --aurora-1: #2756f0; /* blue (bottom) */
+  --aurora-2: #5ea0ff; /* light blue */
+  --aurora-3: #ffe06a; /* yellow */
+  --aurora-4: #ff9d3c; /* orange */
+  --aurora-5: #ff4d6a; /* red-pink */
+  --aurora-6: #ff35e0; /* magenta (top) */
+  --aurora-blur: 6px; /* soft glow on distinct equalizer steps. Higher (10+)
+                         softens toward a smooth dome; lower (≤4) hardens the
+                         column sides and loses the aurora glow. */
+  --aurora-overflow: 24px; /* push the bars' solid bottoms below the fold so
+                              the blurred bottom edge bleeds off-screen instead
+                              of ending on a hard line. */
 
   /* semantic palette — light (see DESIGN.md) */
   --bg: #ffffff;
