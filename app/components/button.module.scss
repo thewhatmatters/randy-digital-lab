@@ -1,0 +1,50 @@
+/* Shared mono button (see button.tsx). One base + two variants:
+   `default` (bordered surface — lab "Copy prompt") and `accent` (signal-red
+   CTA — note rail). The leading icon always sits on the left. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.875rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}
+.icon {
+  display: inline-flex;
+  align-items: center;
+}
+.default {
+  border-color: var(--border);
+  background: var(--surface);
+  color: var(--fg);
+
+  &:hover {
+    border-color: color-mix(in srgb, var(--fg) 24%, var(--border));
+  }
+}
+.accent {
+  background: var(--accent);
+  color: #fff;
+
+  &:hover {
+    background: color-mix(in srgb, var(--accent) 88%, #000);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .btn {
+    transition:
+      color 0.15s ease,
+      border-color 0.15s ease,
+      background-color 0.15s ease;
+  }
+}

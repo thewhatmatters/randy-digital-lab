@@ -1,0 +1,64 @@
+/* Footer aurora "equalizer" (see ./footer-reveal.tsx). A fixed panel
+   of accent gradient bars — one per grid column, with dotted column guides —
+   pinned to the viewport bottom BEHIND the page (<main> is the opaque z-1
+   surface above it). Hidden at rest (opacity 0); when you push past the footer
+   the JS lifts <main>, opening a gap that uncovers the bars, and grows them via
+   the --p progress var (0→1). It falls inside the same 72rem grid as the page,
+   so the bars align to the columns. --reveal-h is the panel's height. */
+.bloom {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--reveal-h);
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  /* Sit below the fold so the bars' solid bottoms (and their blur) run off the
+     bottom edge — no hard horizontal cut. offsetHeight is unchanged, so the JS
+     lift math (MAX = panel height) is unaffected. */
+  bottom: calc(-1 * var(--aurora-overflow, 0px));
+  height: 100%;
+  width: 100%;
+  /* Full-bleed: the 12 columns run edge-to-edge (like the diabrowser.com
+     footer), the blur melting them into the aurora. For a grid-contained arc
+     instead (bars on the content columns), add back max-width:var(--grid-maxw)
+     + margin-inline:auto + padding-inline:var(--grid-margin). */
+  display: grid;
+  grid-template-columns: repeat(var(--grid-cols), 1fr);
+  align-items: end;
+  filter: blur(var(--aurora-blur));
+  opacity: 0; /* JS fades the panel in with the lift */
+  --p: 0; /* JS-set scroll progress 0..1 → bar scale */
+}
+.col {
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+}
+.bar {
+  width: 100%;
+  height: var(--bar-h, 50%);
+  transform: scaleY(var(--p, 0));
+  transform-origin: 50% 100%;
+  /* Vertical rainbow. scaleY compresses it: early in the push (small --p) the
+     whole spectrum squashes toward the bottom edge — ~1px per color, the thin
+     seam — then blooms to the full arc as you keep pulling. Top stop is
+     transparent so the blurred crest fades out instead of hard-clipping. */
+  background: linear-gradient(
+    to top,
+    var(--aurora-1) 0%,
+    var(--aurora-2) 20%,
+    var(--aurora-3) 40%,
+    var(--aurora-4) 56%,
+    var(--aurora-5) 73%,
+    var(--aurora-6) 88%,
+    transparent 100%
+  );
+}

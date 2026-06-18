@@ -18,6 +18,14 @@ spirit of [lab01.dev](https://lab01.dev/)).
   mirrored from `DESIGN.md`. No `tailwind.config.js` theme object. The code
   here is **canonical**; the Paper design canvas is regenerable documentation
   downstream of it, never authoritative.
+- **Component styles:** co-located **SCSS Modules** (`*.module.scss`, `sass`
+  dep) next to each component — `import styles from './x.module.scss'`, kebab
+  selectors → camelCase locals, nest states/descendants but keep specificity
+  equivalent. `app/global.css` stays **plain CSS** (the Tailwind entry — Sass
+  would break `@import 'tailwindcss'` + the `@theme`/`@apply`/`@utility` rules)
+  and holds ONLY the shared layers: tokens, the `grid-page`/`band` utilities,
+  base resets, and the MDX `.prose` typography. **Do not** add component rules
+  to `global.css`; give the component a module instead.
 - **Content:** local **MDX** files (filesystem + small `utils.ts`), the
   starter's approach. No headless CMS. **Do not adopt Contentlayer** (stalled);
   if typed/validated frontmatter is needed later, migrate the data layer to

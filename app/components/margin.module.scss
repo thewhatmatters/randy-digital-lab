@@ -1,0 +1,75 @@
+/* --- Editorial margin -----------------------------------------------------
+   A note's article spans the full content width, but its prose text caps at a
+   reading measure so the right portion stays open. Inline <Margin>/<PullQuote>/
+   <Figure> components float into that open column, anchored to where they're
+   written in the MDX (the Tufte/sidenote model). Below --margin-bp the column
+   can't hold both, so marginalia collapse back inline into the reading flow.
+   The container is content-agnostic — any island (incl. an interactive chart)
+   dropped inside <Margin> renders here. */
+
+/* Cap the running text at the reading measure; leave block-level embeds
+   (pre, tables, the lab figures) free to use more width. Margin elements are
+   excluded — they float past the measure. The measure is a notes-private token
+   declared on the article so its descendants inherit it. */
+.article {
+  --reading-measure: 40rem; /* ~66ch — the body text column */
+
+  & > :where(p, h1, h2, h3, h4, h5, h6, ul, ol, blockquote) {
+    max-width: var(--reading-measure);
+  }
+}
+
+.margin {
+  margin-block: 0.5rem 1.75rem;
+}
+@media (min-width: 64rem) {
+  .margin {
+    /* Span the rightmost 4 columns — grid lines 9 → 13. Because .article
+       spans all 12 columns, its width IS the full track area, so a 4-col-wide
+       box (4 cols + 3 gutters = (W − 2·gutter)/3) right-floated pins its left
+       edge exactly to column line 9. Derived from the grid, so it tracks every
+       breakpoint. Column 8 is the gutter between the text and the margin. */
+    float: right;
+    clear: right;
+    width: calc((100% - 2 * var(--grid-gutter)) / 3);
+  }
+}
+.marginLabel {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 0.5rem;
+}
+
+/* Pull quote — a lifted line set large in the accent color. The text is a
+   plain MDX paragraph; the doubled class (.pullquote.margin) outranks
+   `.prose p { text-fg }` so the accent color actually lands on it. */
+.pullquote {
+  font-family: var(--font-sans);
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: 1.4;
+
+  &.margin p {
+    margin: 0;
+    color: var(--accent);
+    text-wrap: pretty;
+  }
+}
+
+/* Supporting image — figure + caption. */
+.figureImg {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+.figureCaption {
+  margin-top: 0.5rem;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--muted);
+  text-wrap: pretty;
+}

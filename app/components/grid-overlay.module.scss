@@ -1,0 +1,45 @@
+/* Grid overlay — toggled by the `g` key (see components/grid-overlay.tsx).
+   Lives in the SAME centered content box as grid-page so the columns never
+   drift past the max-width. Reads the semantic tokens, so it themes
+   light/dark with the rest of the site. */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+}
+.page {
+  height: 100%;
+  grid-template-rows: 100%;
+  align-items: stretch;
+}
+.col {
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
+  box-shadow:
+    inset 1px 0 0 color-mix(in srgb, var(--accent) 22%, transparent),
+    inset -1px 0 0 color-mix(in srgb, var(--accent) 22%, transparent);
+}
+.baseline {
+  /* Horizontal baseline guides read blue to distinguish them from the
+     accent-tinted columns (matches the reference overlay). Dev-only color,
+     so it's a literal rather than a semantic token. */
+  --grid-overlay-baseline: #5b8def;
+  grid-column: 1 / -1;
+  grid-row: 1;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--grid-overlay-baseline) 28%, transparent) 0 1px,
+    transparent 1px var(--leading-base)
+  );
+}
+.num {
+  position: absolute;
+  top: 0.5rem;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1;
+  color: var(--accent);
+}

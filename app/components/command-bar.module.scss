@@ -1,0 +1,94 @@
+/* Command bar — persistent control chips in the bottom corner. Mono keycaps
+   (the `g` grid toggle now; a light/dark/auto theme chip to come). Reads the
+   semantic tokens so it themes with the site. Sits above the grid overlay
+   (z-60) so it stays crisp and clickable, but never blocks page content. */
+.bar {
+  position: fixed;
+  /* clear notches / home indicator on devices that report safe areas
+     (needs viewport-fit=cover; env() is 0 elsewhere, so this is a no-op there) */
+  right: calc(var(--grid-margin) + env(safe-area-inset-right, 0px));
+  bottom: calc(var(--grid-margin) + env(safe-area-inset-bottom, 0px));
+  z-index: 70;
+  display: flex;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3125rem 0.625rem 0.3125rem 0.3125rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--surface) 86%, transparent);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  &:hover {
+    color: var(--fg);
+    border-color: color-mix(in srgb, var(--fg) 24%, var(--border));
+  }
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  &[data-active='true'] {
+    color: var(--accent);
+    border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+    & .key {
+      border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+      color: var(--accent);
+    }
+  }
+}
+/* Keycap: raised look via a thicker bottom edge, like a physical key. */
+.key {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.375rem;
+  height: 1.375rem;
+  padding: 0 0.25rem;
+  border: 1px solid var(--border);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  background: var(--bg);
+  color: var(--fg);
+  font: inherit;
+  font-size: 11px;
+}
+.label {
+  padding-right: 0.125rem;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .chip,
+  .key {
+    transition:
+      color 0.15s ease,
+      border-color 0.15s ease,
+      background-color 0.15s ease;
+  }
+}
+/* Touch / no-hover devices (phones + touch tablets): the grid overlay is a
+   desktop inspection tool — keyboard-driven (`g`) and a column grid means
+   little on a small touch screen — so hide its chip. Enlarge the remaining
+   control to a comfortable ≥44px touch target (WCAG 2.5.5). */
+@media (hover: none), (pointer: coarse) {
+  .chip[data-chip='grid'] {
+    display: none;
+  }
+  .chip {
+    min-height: 44px;
+    padding-inline: 0.75rem 0.875rem;
+    gap: 0.625rem;
+    font-size: 12px;
+  }
+  .key {
+    min-width: 1.75rem;
+    height: 1.75rem;
+    font-size: 12px;
+  }
+}

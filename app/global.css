@@ -1,3 +1,32 @@
+/* ============================================================================
+   global.css · the shared style layer + Tailwind v4 entry point
+   ============================================================================
+   This is the ONLY global stylesheet. Per-component styling lives in co-located
+   *.module.scss files next to each component (button, command-bar, grid-overlay,
+   footer-reveal, margin/notes, lab, dev-overlay). Keep this file to the SHARED
+   layers only — do NOT add component rules here; give the component a module.
+   See CLAUDE.md → "Component styles".
+
+   Why this file stays plain .css (not .scss): it's the Tailwind entry, so it
+   uses @import 'tailwindcss', @theme, @apply, @utility, @custom-variant — all
+   processed by Tailwind's PostCSS plugin, which the Sass compiler would break.
+
+   ── Contents ───────────────────────────────────────────────────────────────
+     1 · Tailwind import + dark-mode variant
+     2 · Design tokens         @theme — fonts, color aliases, radius, grid vars
+     3 · Responsive grid margins   (+ phone override of the footer-reveal height)
+     4 · Layout utilities      .grid-page / .band — the 12-column grid
+     5 · Base · text selection
+     6 · Runtime color tokens  :root — footer aurora + semantic palette (light)
+                               + syntax-highlight (--sh-*) colors
+     7 · Dark palette          [data-theme='dark']
+     8 · Document base         html
+     9 · MDX typography        .prose — how rendered note / markdown bodies look
+    10 · Element resets        pre scrollbars, inputs, table, .title
+   ========================================================================== */
+
+/* ── 1 · Tailwind import + dark-mode variant ──────────────────────────────── */
+
 @import 'tailwindcss';
 
 /* Drive the `dark:` variant off the [data-theme] attribute (set by
@@ -6,14 +35,18 @@
    concrete light/dark attribute at runtime, so the system option still works. */
 @custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
 
-/* --- Design tokens (mirror of DESIGN.md) -------------------------------- */
-/* Semantic colors are runtime CSS vars (--bg etc.), themed in :root +
-   [data-theme='dark'] below, and exposed to Tailwind utilities here so
-   `bg-bg`, `text-fg`, `border-border`, `text-accent`, … resolve per theme. */
+/* ── 2 · Design tokens (@theme) ───────────────────────────────────────────────
+   The @theme block is where Tailwind reads its design scale. Here it does two
+   jobs: (a) ALIASES the runtime color tokens (whose actual values live in §6
+   :root / §7 dark) so Tailwind generates per-theme utilities — `bg-bg`,
+   `text-fg`, `border-border`, `text-accent`, …; and (b) defines the grid
+   variables consumed by the .grid-page/.band utilities (§4) and the g-key
+   overlay. Mirrors DESIGN.md. ── */
 @theme {
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
 
+  /* color aliases → Tailwind utilities; real values are in §6 / §7 */
   --color-bg: var(--bg);
   --color-surface: var(--surface);
   --color-fg: var(--fg);
@@ -37,9 +70,10 @@
   --leading-base: 1.5rem; /* 24px = 3 × 8px — default leading on the grid */
 }
 
-/* Responsive page margins — desktop reaches the canonical 72px. Both the
-   grid-page utility and the overlay read var(--grid-margin), so they stay
-   locked together at every breakpoint. */
+/* ── 3 · Responsive grid margins ──────────────────────────────────────────────
+   Page margins widen with the viewport, reaching the canonical 72px on desktop.
+   Both the grid-page utility and the overlay read var(--grid-margin), so they
+   stay locked together at every breakpoint. ── */
 @media (min-width: 768px) {
   :root {
     --grid-margin: 3rem;
@@ -51,20 +85,24 @@
   } /* 72px */
 }
 
-/* Shorter curtain on phones — a 60vh overscroll is a lot of travel on a small
-   viewport. */
+/* Phone override of the footer-reveal panel height (the token itself lives in
+   §6). A 60vh overscroll curtain is a lot of travel on a small viewport. */
 @media (max-width: 640px) {
   :root {
     --reveal-h: 42vh;
   }
 }
 
-/* Place children by column LINE. A band spans all 12 columns and re-exposes
-   them as subgrid, so children align to the same lines as everything else.
-   Usage: <div class="grid-page"><div class="band">
+/* ── 4 · Layout utilities · .grid-page / .band ────────────────────────────────
+   The site-wide 12-column grid, used via plain class strings in JSX (e.g.
+   <section class="grid-page">, then children placed by column LINE with
+   `col-start-* col-end-*`). These are global Tailwind @utilities on purpose —
+   every page composes them. Place children by column LINE; a band spans all 12
+   columns and re-exposes them as subgrid so nested children align to the same
+   lines. Usage: <div class="grid-page"><div class="band">
             <h2 class="col-start-1 col-end-6">…</h2>
             <figure class="col-start-6 col-end-13">…</figure>
-          </div></div> */
+          </div></div> ── */
 @utility grid-page {
   display: grid;
   grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
@@ -91,667 +129,22 @@
   }
 }
 
-/* Grid overlay — toggled by the `g` key (see components/grid-overlay.tsx).
-   Lives in the SAME centered content box as grid-page so the columns never
-   drift past the max-width. Reads the semantic tokens, so it themes
-   light/dark with the rest of the site. */
-.grid-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 60;
-  pointer-events: none;
-}
-.grid-overlay__page {
-  height: 100%;
-  grid-template-rows: 100%;
-  align-items: stretch;
-}
-.grid-overlay__col {
-  background: color-mix(in srgb, var(--accent) 6%, transparent);
-  box-shadow:
-    inset 1px 0 0 color-mix(in srgb, var(--accent) 22%, transparent),
-    inset -1px 0 0 color-mix(in srgb, var(--accent) 22%, transparent);
-}
-.grid-overlay__baseline {
-  /* Horizontal baseline guides read blue to distinguish them from the
-     accent-tinted columns (matches the reference overlay). Dev-only color,
-     so it's a literal rather than a semantic token. */
-  --grid-overlay-baseline: #5b8def;
-  grid-column: 1 / -1;
-  grid-row: 1;
-  background-image: repeating-linear-gradient(
-    to bottom,
-    color-mix(in srgb, var(--grid-overlay-baseline) 28%, transparent) 0 1px,
-    transparent 1px var(--leading-base)
-  );
-}
-.grid-overlay__num {
-  position: absolute;
-  top: 0.5rem;
-  left: 0;
-  right: 0;
-  text-align: center;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  line-height: 1;
-  color: var(--accent);
-}
-
-/* Command bar — persistent control chips in the bottom corner. Mono keycaps
-   (the `g` grid toggle now; a light/dark/auto theme chip to come). Reads the
-   semantic tokens so it themes with the site. Sits above the grid overlay
-   (z-60) so it stays crisp and clickable, but never blocks page content. */
-.cmdbar {
-  position: fixed;
-  /* clear notches / home indicator on devices that report safe areas
-     (needs viewport-fit=cover; env() is 0 elsewhere, so this is a no-op there) */
-  right: calc(var(--grid-margin) + env(safe-area-inset-right, 0px));
-  bottom: calc(var(--grid-margin) + env(safe-area-inset-bottom, 0px));
-  z-index: 70;
-  display: flex;
-  gap: 0.5rem;
-  font-family: var(--font-mono);
-}
-.cmd-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.3125rem 0.625rem 0.3125rem 0.3125rem;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: color-mix(in srgb, var(--surface) 86%, transparent);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-  color: var(--muted);
-  font-size: 11px;
-  line-height: 1;
-  letter-spacing: 0.02em;
-  cursor: pointer;
-}
-.cmd-chip:hover {
-  color: var(--fg);
-  border-color: color-mix(in srgb, var(--fg) 24%, var(--border));
-}
-.cmd-chip:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-.cmd-chip[data-active='true'] {
-  color: var(--accent);
-  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
-}
-/* Keycap: raised look via a thicker bottom edge, like a physical key. */
-.cmd-key {
-  display: inline-grid;
-  place-items: center;
-  min-width: 1.375rem;
-  height: 1.375rem;
-  padding: 0 0.25rem;
-  border: 1px solid var(--border);
-  border-bottom-width: 2px;
-  border-radius: 5px;
-  background: var(--bg);
-  color: var(--fg);
-  font: inherit;
-  font-size: 11px;
-}
-.cmd-chip[data-active='true'] .cmd-key {
-  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
-  color: var(--accent);
-}
-.cmd-label {
-  padding-right: 0.125rem;
-}
-@media (prefers-reduced-motion: no-preference) {
-  .cmd-chip,
-  .cmd-key {
-    transition:
-      color 0.15s ease,
-      border-color 0.15s ease,
-      background-color 0.15s ease;
-  }
-}
-/* Touch / no-hover devices (phones + touch tablets): the grid overlay is a
-   desktop inspection tool — keyboard-driven (`g`) and a column grid means
-   little on a small touch screen — so hide its chip. Enlarge the remaining
-   control to a comfortable ≥44px touch target (WCAG 2.5.5). */
-@media (hover: none), (pointer: coarse) {
-  .cmd-chip[data-chip='grid'] {
-    display: none;
-  }
-  .cmd-chip {
-    min-height: 44px;
-    padding-inline: 0.75rem 0.875rem;
-    gap: 0.625rem;
-    font-size: 12px;
-  }
-  .cmd-key {
-    min-width: 1.75rem;
-    height: 1.75rem;
-    font-size: 12px;
-  }
-}
-
-/* Lab 01 — "Dev Overlay" (see components/dev-overlay.tsx). Recreates the
-   Next.js build-error overlay as a themed UI element. Reuses semantic tokens:
-   the error red IS --accent; the "Turbopack" violet reuses --sh-jsxliterals;
-   the doc link reuses --sh-class. */
-/* Metadata caption under each experiment — blurb, spec list (stack/fonts/
-   colors) and a copy-prompt button. Technical-mono key/value rows. */
-.lab-meta {
-  /* right-hand spec sidebar; aligns to the top of the description column */
-}
-.lab-meta__head {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 0.625rem;
-}
-.lab-meta__num {
-  font-family: var(--font-mono);
-  font-size: 0.8125rem;
-  color: var(--muted);
-}
-.lab-meta__title {
-  font-size: 1.0625rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-.lab-meta__head:hover .lab-meta__title {
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-.lab-meta__blurb {
-  margin-top: 0.625rem;
-  color: var(--muted);
-  max-width: 60ch;
-}
-.lab-meta__rows {
-  display: grid;
-  gap: 1rem;
-  font-family: var(--font-mono);
-  font-size: 0.8125rem;
-}
-.lab-meta__row {
-  display: flex;
-  flex-direction: column;
-  gap: 0.375rem;
-}
-.lab-meta__row dt {
-  color: var(--muted);
-  text-transform: lowercase;
-}
-.lab-meta__row dd {
-  margin: 0;
-  color: var(--fg);
-}
-.lab-swatches {
-  display: inline-flex;
-  gap: 0.3125rem;
-}
-.lab-swatch {
-  width: 1.05rem;
-  height: 1.05rem;
-  border-radius: 4px;
-  border: 1px solid color-mix(in srgb, var(--fg) 16%, transparent);
-}
-/* Note post right-rail — supplemental "at a glance" data alongside the
-   article (mirrors the lab spec sidebar; reuses .lab-meta__rows). On md+ the
-   aside stretches to the article's height so its inner can stick while you
-   read; it stacks below the article on mobile. */
-.note-aside {
-  margin-top: 2.5rem;
-}
-@media (min-width: 768px) {
-  .note-aside {
-    margin-top: 0;
-    align-self: stretch;
-  }
-  .note-aside__inner {
-    position: sticky;
-    top: 2rem;
-  }
-}
-/* Byline under the title — "By <names>". Just *who*; the *how-much* lives in
-   the end-of-note colophon below. */
-.note-byline {
-  color: var(--fg);
-}
-.note-byline__by {
-  color: var(--muted);
-}
-
-/* "How this was made" colophon — the honest authorship sign-off at the foot of
-   each note: co-authors with roles flanking a contribution split bar. The bar
-   is driven by the degree LABEL (--human-share), not a measured number:
-   ink (--fg) = human share, accent = AI share. */
-.note-colophon {
-  margin-top: 3rem;
-  padding-top: 2rem;
-  border-top: 1px solid var(--border);
-}
-.note-colophon__label {
-  font-family: var(--font-mono);
-  font-size: 0.6875rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-.note-colophon__authors {
-  margin-top: 1.25rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-}
-.colo-side {
-  display: grid;
-  gap: 0.75rem;
-}
-.colo-author {
-  display: flex;
-  align-items: center;
-  gap: 0.625rem;
-}
-.colo-author--ai {
-  justify-content: flex-end;
-}
-.colo-author__text {
-  display: flex;
-  flex-direction: column;
-  gap: 0.125rem;
-  min-width: 0;
-}
-.colo-side--end .colo-author__text {
-  align-items: flex-end;
-  text-align: right;
-}
-.colo-author__name {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--fg);
-}
-.colo-author__role {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: var(--muted);
-}
-.colo-avatar {
-  flex-shrink: 0;
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: 999px;
-  display: grid;
-  place-items: center;
-  font-family: var(--font-mono);
-  font-size: 0.875rem;
-  font-weight: 500;
-  line-height: 1;
-}
-/* Avatar colors mirror the bar segments — human = ink, AI = accent — so each
-   author's color anchors their end of the bar. Claude is a monogram mark, not
-   a face: anthropomorphizing an AI would undercut the honesty this block is for. */
-.colo-avatar--human {
-  background: var(--fg);
-  color: var(--bg);
-}
-.colo-avatar--ai {
-  background: var(--accent);
-  color: #fff;
-}
-.note-bar {
-  margin-top: 1.5rem;
-  display: flex;
-  gap: 2px;
-  height: 0.5rem;
-  border-radius: 999px;
-  overflow: hidden;
-}
-.note-bar__seg--human {
-  width: var(--human-share, 50%);
-  background: var(--fg);
-}
-.note-bar__seg--ai {
-  flex: 1;
-  background: var(--accent);
-}
-/* Shared mono button (see components/button.tsx). One base + two variants:
-   `default` (bordered surface — lab "Copy prompt") and `accent` (signal-red
-   CTA — note rail). The leading icon always sits on the left. */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0.875rem;
-  border: 1px solid transparent;
-  border-radius: var(--radius);
-  font-family: var(--font-mono);
-  font-size: 0.8125rem;
-  line-height: 1;
-  text-decoration: none;
-  cursor: pointer;
-}
-.btn__icon {
-  display: inline-flex;
-  align-items: center;
-}
-.btn--default {
-  border-color: var(--border);
-  background: var(--surface);
-  color: var(--fg);
-}
-.btn--default:hover {
-  border-color: color-mix(in srgb, var(--fg) 24%, var(--border));
-}
-.btn--accent {
-  background: var(--accent);
-  color: #fff;
-}
-.btn--accent:hover {
-  background: color-mix(in srgb, var(--accent) 88%, #000);
-}
-.btn:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-@media (prefers-reduced-motion: no-preference) {
-  .btn {
-    transition:
-      color 0.15s ease,
-      border-color 0.15s ease,
-      background-color 0.15s ease;
-  }
-}
-
-/* Lab entry container — stays within the grid (placed by column line). Its
-   visual element is free to overflow these bounds and is clipped here, à la
-   lab01.dev. Fixed height so the element visibly spills past the frame. */
-.lab-frame {
-  position: relative;
-  height: clamp(300px, 46vh, 440px);
-  overflow: hidden;
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: clamp(1.5rem, 4vw, 2.5rem) clamp(1rem, 4vw, 2.5rem) 0;
-  background:
-    radial-gradient(
-      120% 120% at 30% 0%,
-      color-mix(in srgb, var(--accent) 8%, transparent),
-      transparent 60%
-    ),
-    var(--surface);
-}
-.devov-card {
-  max-width: 44rem;
-  margin-inline: auto;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  box-shadow: 0 16px 50px -12px rgb(0 0 0 / 0.18);
-  padding: 1rem 1.25rem 1.25rem;
-}
-.devov-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  font-family: var(--font-mono);
-  font-size: 12px;
-}
-.devov-tab {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-  padding: 0.25rem 0.5rem;
-  border: 1px solid var(--border);
-  border-radius: 9px;
-  background: var(--surface);
-  color: var(--muted);
-}
-.devov-chev {
-  display: inline-grid;
-  place-items: center;
-  width: 1.25rem;
-  height: 1.25rem;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  background: var(--bg);
-  color: var(--fg);
-  cursor: pointer;
-  line-height: 1;
-}
-.devov-count {
-  color: var(--fg);
-  min-width: 2rem;
-  text-align: center;
-}
-.devov-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-  padding: 0.3125rem 0.625rem;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: var(--surface);
-  color: var(--muted);
-}
-.devov-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 999px;
-  background: #f5a623;
-}
-.devov-stale {
-  color: var(--muted);
-}
-.devov-turbo {
-  color: var(--sh-jsxliterals);
-}
-.devov-badgerow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 1rem;
-}
-.devov-badge {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 12%, transparent);
-  padding: 0.25rem 0.5rem;
-  border-radius: 6px;
-}
-.devov-icons {
-  display: flex;
-  gap: 0.5rem;
-}
-.devov-icon {
-  display: inline-grid;
-  place-items: center;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  background: var(--bg);
-  color: var(--muted);
-  cursor: pointer;
-}
-.devov-icon:hover {
-  color: var(--fg);
-}
-.devov-icon--sm {
-  width: 1.625rem;
-  height: 1.625rem;
-  border-color: transparent;
-}
-.devov-title {
-  color: var(--accent);
-  font-size: 1.25rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  margin: 1rem 0 0;
-  word-break: break-word;
-}
-.devov-frame {
-  margin-top: 1.25rem;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: var(--surface);
-  overflow: hidden;
-}
-.devov-frame-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.5rem 0.75rem;
-  border-bottom: 1px solid var(--border);
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--muted);
-}
-.devov-file {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.devov-code {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  line-height: 1.6;
-  padding: 0.875rem 1rem;
-  color: var(--fg);
-  overflow-x: auto;
-}
-.devov-msg {
-  margin-bottom: 0.75rem;
-  color: var(--fg);
-}
-.devov-row {
-  display: flex;
-  white-space: pre;
-}
-.devov-gutter {
-  color: var(--muted);
-  white-space: pre;
-}
-.devov-ptr {
-  color: var(--accent);
-  font-weight: 700;
-}
-.devov-row[data-error] .devov-src {
-  font-weight: 600;
-}
-.devov-caret {
-  color: var(--accent);
-  white-space: pre;
-}
-.devov-trace {
-  margin-top: 1rem;
-  color: var(--muted);
-  white-space: pre;
-}
-.devov-doc {
-  display: inline-block;
-  margin-top: 1rem;
-  color: var(--sh-class);
-  text-decoration: none;
-}
-.devov-doc:hover {
-  text-decoration: underline;
-}
-@media (prefers-reduced-motion: no-preference) {
-  .devov-card {
-    animation: devov-in 0.32s cubic-bezier(0.2, 0.8, 0.2, 1);
-  }
-}
-@keyframes devov-in {
-  from {
-    opacity: 0;
-    transform: translateY(6px) scale(0.99);
-  }
-}
-
-/* Footer aurora "equalizer" (see components/footer-reveal.tsx). A fixed panel
-   of accent gradient bars — one per grid column, with dotted column guides —
-   pinned to the viewport bottom BEHIND the page (<main> is the opaque z-1
-   surface above it). Hidden at rest (opacity 0); when you push past the footer
-   the JS lifts <main>, opening a gap that uncovers the bars, and grows them via
-   the --p progress var (0→1). It falls inside the same 72rem grid as the page,
-   so the bars align to the columns. --reveal-h is the panel's height. */
-.footer-bloom {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: var(--reveal-h);
-  z-index: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-.footer-bloom__panel {
-  position: absolute;
-  left: 0;
-  right: 0;
-  /* Sit below the fold so the bars' solid bottoms (and their blur) run off the
-     bottom edge — no hard horizontal cut. offsetHeight is unchanged, so the JS
-     lift math (MAX = panel height) is unaffected. */
-  bottom: calc(-1 * var(--aurora-overflow, 0px));
-  height: 100%;
-  width: 100%;
-  /* Full-bleed: the 12 columns run edge-to-edge (like the diabrowser.com
-     footer), the blur melting them into the aurora. For a grid-contained arc
-     instead (bars on the content columns), add back max-width:var(--grid-maxw)
-     + margin-inline:auto + padding-inline:var(--grid-margin). */
-  display: grid;
-  grid-template-columns: repeat(var(--grid-cols), 1fr);
-  align-items: end;
-  filter: blur(var(--aurora-blur));
-  opacity: 0; /* JS fades the panel in with the lift */
-  --p: 0; /* JS-set scroll progress 0..1 → bar scale */
-}
-.footer-bloom__col {
-  position: relative;
-  height: 100%;
-  display: flex;
-  align-items: flex-end;
-}
-.footer-bloom__bar {
-  width: 100%;
-  height: var(--bar-h, 50%);
-  transform: scaleY(var(--p, 0));
-  transform-origin: 50% 100%;
-  /* Vertical rainbow. scaleY compresses it: early in the push (small --p) the
-     whole spectrum squashes toward the bottom edge — ~1px per color, the thin
-     seam — then blooms to the full arc as you keep pulling. Top stop is
-     transparent so the blurred crest fades out instead of hard-clipping. */
-  background: linear-gradient(
-    to top,
-    var(--aurora-1) 0%,
-    var(--aurora-2) 20%,
-    var(--aurora-3) 40%,
-    var(--aurora-4) 56%,
-    var(--aurora-5) 73%,
-    var(--aurora-6) 88%,
-    transparent 100%
-  );
-}
-
+/* ── 5 · Base · text selection ────────────────────────────────────────────── */
 ::selection {
   background-color: var(--accent);
   color: #ffffff;
 }
 
+/* ── 6 · Runtime color tokens (:root — light) ─────────────────────────────────
+   The actual color VALUES for the site (the @theme aliases in §2 point here).
+   Three groups: the footer-aurora geometry + gradient stops, the semantic
+   palette (bg/surface/fg/muted/border/accent), and the syntax-highlight
+   (--sh-*) colors consumed by sugar-high in code blocks and the lab dev-overlay.
+   §7 re-declares the theme-varying ones for dark. ── */
 :root {
-  /* Footer aurora geometry (see .footer-bloom). --reveal-h is the panel height,
-     which the JS also uses as the max page lift — so at peak scroll the gap
-     reveals the whole panel and the center bar reaches the top. */
+  /* Footer aurora geometry (see footer-reveal.module.scss). --reveal-h is the
+     panel height, which the JS also uses as the max page lift — so at peak
+     scroll the gap reveals the whole panel and the center bar reaches the top. */
   --reveal-h: 46vh;
 
   /* Footer aurora gradient stops (bottom → top) — a deliberate full-spectrum
@@ -780,6 +173,7 @@
   --border: #e5e5e5;
   --accent: #e5484d;
 
+  /* syntax-highlight palette (sugar-high) — light */
   --sh-class: #2d5e9d;
   --sh-identifier: #354150;
   --sh-sign: #8996a3;
@@ -791,9 +185,10 @@
   --sh-entity: #e25a1c;
 }
 
-/* Dark palette keyed off the [data-theme] attribute (next-themes resolves
-   "auto" to a concrete light/dark value before paint). color-scheme for native
-   form controls/scrollbars is set by next-themes (enableColorScheme). */
+/* ── 7 · Dark palette ([data-theme='dark']) ───────────────────────────────────
+   Overrides only the theme-varying tokens. next-themes resolves "auto" to a
+   concrete light/dark value before paint; color-scheme for native form
+   controls/scrollbars is set by next-themes (enableColorScheme). ── */
 [data-theme='dark'] {
   /* semantic palette — dark (see DESIGN.md) */
   --bg: #0a0a0a;
@@ -803,12 +198,14 @@
   --border: #262626;
   --accent: #ff6369;
 
+  /* syntax-highlight palette (sugar-high) — dark */
   --sh-class: #4c97f8;
   --sh-identifier: white;
   --sh-keyword: #f47067;
   --sh-string: #0fa295;
 }
 
+/* ── 8 · Document base (html) ─────────────────────────────────────────────── */
 html {
   min-width: 360px;
   /* our footer bloom owns the overscroll at the bottom; suppress the native
@@ -816,6 +213,14 @@ html {
   overscroll-behavior-y: none;
 }
 
+/* ── 9 · MDX typography (.prose) ──────────────────────────────────────────────
+   How a rendered note (and any MDX) body looks. The note article wraps the MDX
+   output with the literal class `prose` (app/notes/[slug]/page.tsx), and these
+   rules style the raw elements markdown produces (p, h1–h4, a, ul/ol, code,
+   pre, img). It lives here — not in a module — because (a) it targets bare
+   markdown-generated elements via the global `prose` class, (b) it leans on
+   @apply (cleanest in the Tailwind entry), and (c) it's shared by every note.
+   `.anchor` is the hover "#" deep-link injected next to each heading. ── */
 .prose {
   /* let opening quotes/punctuation hang into the margin (Safari; harmless
      elsewhere) and turn on kerning/ligatures */
@@ -920,6 +325,7 @@ html {
   margin-bottom: 1.25em !important;
 }
 
+/* ── 10 · Element resets (pre, inputs, table, .title) ─────────────────────── */
 pre::-webkit-scrollbar {
   display: none;
 }

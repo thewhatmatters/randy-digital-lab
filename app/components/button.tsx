@@ -1,4 +1,5 @@
 import { ReactNode } from 'react'
+import styles from './button.module.scss'
 
 type Variant = 'default' | 'accent'
 
@@ -29,12 +30,12 @@ type ButtonProps = BaseProps & {
  */
 export function Button(props: LinkProps | ButtonProps) {
   const { variant = 'default', icon, children, className } = props
-  const classes = ['btn', `btn--${variant}`, className].filter(Boolean).join(' ')
+  const classes = [styles.btn, styles[variant], className].filter(Boolean).join(' ')
 
   const inner = (
     <>
       {icon && (
-        <span className="btn__icon" aria-hidden="true">
+        <span className={styles.icon} aria-hidden="true">
           {icon}
         </span>
       )}

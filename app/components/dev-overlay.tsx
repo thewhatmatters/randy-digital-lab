@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { highlight } from 'sugar-high'
+import styles from './dev-overlay.module.scss'
 
 /**
  * Lab experiment 01 — the Next.js / Turbopack build-error overlay recreated as
@@ -81,87 +82,87 @@ export function DevOverlay() {
   }
 
   return (
-    <div className="devov-card" key={i}>
+    <div className={styles.card} key={i}>
         {/* top row — paginator tab + status pill */}
-        <div className="devov-top">
-          <div className="devov-tab" role="group" aria-label="Cycle errors">
-            <button onClick={prev} className="devov-chev" aria-label="Previous">
+        <div className={styles.top}>
+          <div className={styles.tab} role="group" aria-label="Cycle errors">
+            <button onClick={prev} className={styles.chev} aria-label="Previous">
               ‹
             </button>
-            <span className="devov-count">
+            <span className={styles.count}>
               {i + 1}/{count}
             </span>
-            <button onClick={next} className="devov-chev" aria-label="Next">
+            <button onClick={next} className={styles.chev} aria-label="Next">
               ›
             </button>
           </div>
-          <div className="devov-status">
-            <span className="devov-dot" aria-hidden />
-            Next.js 16.0.10 <span className="devov-stale">(stale)</span>
-            <span className="devov-turbo">Turbopack</span>
+          <div className={styles.status}>
+            <span className={styles.dot} aria-hidden />
+            Next.js 16.0.10 <span className={styles.stale}>(stale)</span>
+            <span className={styles.turbo}>Turbopack</span>
           </div>
         </div>
 
         {/* badge row + icon buttons */}
-        <div className="devov-badgerow">
-          <span className="devov-badge">Build Error</span>
-          <div className="devov-icons">
-            <button onClick={copy} className="devov-icon" aria-label="Copy code">
+        <div className={styles.badgerow}>
+          <span className={styles.badge}>Build Error</span>
+          <div className={styles.icons}>
+            <button onClick={copy} className={styles.icon} aria-label="Copy code">
               {copied ? <CheckIcon /> : <CopyIcon />}
             </button>
-            <button className="devov-icon" aria-label="Docs" type="button">
+            <button className={styles.icon} aria-label="Docs" type="button">
               <BookIcon />
             </button>
-            <button className="devov-icon" aria-label="More" type="button">
+            <button className={styles.icon} aria-label="More" type="button">
               <CubeIcon />
             </button>
           </div>
         </div>
 
-        <h3 className="devov-title">{frame.title}</h3>
+        <h3 className={styles.title}>{frame.title}</h3>
 
         {/* code frame */}
-        <div className="devov-frame">
-          <div className="devov-frame-head">
-            <span className="devov-file">
+        <div className={styles.frame}>
+          <div className={styles.frameHead}>
+            <span className={styles.file}>
               <AtomIcon />
               {frame.file}
             </span>
-            <button className="devov-icon devov-icon--sm" aria-label="Open file" type="button">
+            <button className={`${styles.icon} ${styles.iconSm}`} aria-label="Open file" type="button">
               <ExternalIcon />
             </button>
           </div>
-          <div className="devov-code">
-            <div className="devov-msg">{frame.title}</div>
+          <div className={styles.code}>
+            <div className={styles.msg}>{frame.title}</div>
             {frame.lines.map((ln, idx) => {
               const n = idx + 1
               const isErr = n === frame.errorLine
               return (
                 <div key={n}>
-                  <div className="devov-row" data-error={isErr || undefined}>
-                    <span className="devov-gutter">
-                      <span className="devov-ptr">{isErr ? '>' : ' '}</span> {n} |{' '}
+                  <div className={styles.row} data-error={isErr || undefined}>
+                    <span className={styles.gutter}>
+                      <span className={styles.ptr}>{isErr ? '>' : ' '}</span> {n} |{' '}
                     </span>
                     <code
-                      className="devov-src"
+                      className={styles.src}
                       dangerouslySetInnerHTML={{ __html: highlight(ln) }}
                     />
                   </div>
                   {isErr && (
-                    <div className="devov-row">
-                      <span className="devov-gutter">{'  '} |{' '}</span>
-                      <span className="devov-caret">{caretFor(ln)}</span>
+                    <div className={styles.row}>
+                      <span className={styles.gutter}>{'  '} |{' '}</span>
+                      <span className={styles.caret}>{caretFor(ln)}</span>
                     </div>
                   )}
                 </div>
               )
             })}
-            <div className="devov-trace">
+            <div className={styles.trace}>
               {frame.trace.map((t, k) => (
                 <div key={k}>{t}</div>
               ))}
             </div>
-            <a className="devov-doc" href={frame.doc}>
+            <a className={styles.doc} href={frame.doc}>
               {frame.doc}
             </a>
           </div>

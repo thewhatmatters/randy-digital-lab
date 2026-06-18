@@ -2,13 +2,11 @@
 title: 'Dashboard Confessional: I built one I’d actually want to stare at'
 publishedAt: '2026-06-14'
 summary: 'I like dashboards. So when everything Claude Code does kept vanishing into scrollback, I built one worth staring at — and somewhere in the mess of shipping it, the agent ended up making its own launch video.'
-ctaLabel: 'conan.sh'
-ctaHref: 'https://conan.sh'
-aiDegree: 'Co-written with Claude'
-authors:
-  - Randy Daniel: direction, editing, final call
-  - Claude · Opus 4.8: drafting, research, code
 ---
+
+<Margin label="The thing itself">
+  A terminal-primary dashboard that wraps Claude Code. [conan.sh ↗](https://conan.sh)
+</Margin>
 
 A few days ago I kept having the same thought every time I used Claude Code: *the agent is doing a ton of work, and there's nothing good to look at while it does it.*
 
@@ -17,6 +15,10 @@ Token usage, context filling up, which skills fired, what tools ran, when it pau
 That bugged me more than it probably should have. That feeling became [Conan](https://conan.sh).
 
 ## I wanted something I'd actually want to look at
+
+<PullQuote from="— the brief, to myself">
+  Beautiful enough to stare at, useful enough to earn the screen space.
+</PullQuote>
 
 Here's the honest version: I love a good dashboard. Charts, gauges, a little telemetry ticking across the screen — I find it genuinely fun to watch. And I live in Claude Code all day. So what I really wanted was something *pretty* sitting next to me while the agent works — not a tool I'd check when something broke, but a view I'd want to keep an eye on.
 
@@ -33,6 +35,15 @@ I didn't want to learn a video editor, so I reached for [Remotion](https://remot
 The clutch part was getting Claude Code to drive it *well*. I wrote a skill — basically a playbook that teaches the agent how to build Remotion compositions the right way — and after that the trailer was mostly prompting. What I'd have lost days to in After Effects took an afternoon. And there was something perfect about it: the tool I built to watch Claude Code work, with its own trailer made *by* Claude Code.
 
 ## Did watching it actually change anything?
+
+<Margin label="The 60% rule">
+  <svg viewBox="0 0 160 90" role="img" aria-label="Agent reliability holds steady until context passes ~60%, then degrades" style={{ width: '100%', height: 'auto' }}>
+    <line x1="96" y1="8" x2="96" y2="74" stroke="var(--accent)" strokeWidth="1" strokeDasharray="3 3" />
+    <path d="M8 20 H92 C108 20 116 40 152 70" fill="none" stroke="var(--fg)" strokeWidth="2" strokeLinecap="round" />
+    <text x="96" y="86" fill="var(--muted)" fontSize="9" fontFamily="var(--font-mono)" textAnchor="middle">60%</text>
+  </svg>
+  Reliability holds flat, then rots once context creeps past the line.
+</Margin>
 
 More than I expected. There's a [60% rule](https://www.youtube.com/watch?v=xaQG-eD9d58) a lot of people who live in these agents swear by: once context creeps past ~60%, you hand off or compact. Not because the agent hits a wall — it doesn't crash, it just quietly starts to rot. It stops following instructions, contradicts itself, drops details you gave it earlier. I'd nodded along to the rule for months; now I actually follow it, because I can finally *see* the context climbing toward the line. And I know whether my skills fire on their own, instead of assuming they did and hoping.
 

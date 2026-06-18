@@ -2,6 +2,8 @@
 
 import { useEffect, useRef } from 'react'
 
+import styles from './footer-reveal.module.scss'
+
 // Per-column bar heights (% of the reveal area) — a symmetric arc that peaks
 // at the center columns and tapers to the edges (a raised half-sine). The whole
 // arc scales with scroll velocity via --p, so harder pushes make it taller and
@@ -154,14 +156,14 @@ export function FooterReveal() {
   }, [])
 
   return (
-    <div className="footer-bloom" aria-hidden="true">
+    <div className={styles.bloom} aria-hidden="true">
       {/* panel mirrors grid-page: centered, max-width 72rem, 12 columns — so the
           bars land on the grid columns with dotted guides between them */}
-      <div className="footer-bloom__panel" ref={panelRef}>
+      <div className={styles.panel} ref={panelRef}>
         {BARS.map((h, i) => (
-          <div className="footer-bloom__col" key={i}>
+          <div className={styles.col} key={i}>
             <div
-              className="footer-bloom__bar"
+              className={styles.bar}
               style={{ ['--bar-h' as string]: `${h}%` }}
             />
           </div>

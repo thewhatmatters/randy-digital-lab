@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react'
 
+import styles from './grid-overlay.module.scss'
+
 /**
  * Müller-Brockmann grid overlay. Controlled — visibility is owned by
  * <UIChrome> (toggled by the `g` key or the command-bar chip). Renders inside
@@ -26,16 +28,16 @@ export function GridOverlay({ on }: { on: boolean }) {
   const cols = Array.from({ length: colCount }, (_, i) => i + 1)
 
   return (
-    <div aria-hidden className="grid-overlay">
-      <div className="grid-page grid-overlay__page">
-        <div className="grid-overlay__baseline" />
+    <div aria-hidden className={styles.overlay}>
+      <div className={`grid-page ${styles.page}`}>
+        <div className={styles.baseline} />
         {cols.map((n) => (
           <div
             key={n}
-            className="grid-overlay__col relative"
+            className={`${styles.col} relative`}
             style={{ gridColumn: `${n} / ${n + 1}`, gridRow: 1 }}
           >
-            <span className="grid-overlay__num">{n}</span>
+            <span className={styles.num}>{n}</span>
           </div>
         ))}
       </div>

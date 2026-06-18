@@ -9,6 +9,7 @@ import {
 } from 'react'
 import { useTheme } from 'next-themes'
 import { GridOverlay } from './grid-overlay'
+import styles from './command-bar.module.scss'
 
 /* Shared state for the site's persistent controls. Lives here so a keyboard
    shortcut and a clickable command-bar chip drive the same action, and so
@@ -104,29 +105,29 @@ function CommandBar() {
   const themeActive = mounted && mode !== 'system'
 
   return (
-    <div className="cmdbar" aria-label="Site controls">
+    <div className={styles.bar} aria-label="Site controls">
       <button
         type="button"
-        className="cmd-chip"
+        className={styles.chip}
         data-chip="grid"
         data-active={gridOn}
         aria-pressed={gridOn}
         title="Toggle layout grid (g)"
         onClick={toggleGrid}
       >
-        <kbd className="cmd-key">G</kbd>
-        <span className="cmd-label">grid</span>
+        <kbd className={styles.key}>G</kbd>
+        <span className={styles.label}>grid</span>
       </button>
       <button
         type="button"
-        className="cmd-chip"
+        className={styles.chip}
         data-chip="theme"
         data-active={themeActive}
         title={`Theme: ${themeLabel} — click to cycle (t)`}
         onClick={cycleTheme}
       >
-        <kbd className="cmd-key">T</kbd>
-        <span className="cmd-label">{themeLabel}</span>
+        <kbd className={styles.key}>T</kbd>
+        <span className={styles.label}>{themeLabel}</span>
       </button>
     </div>
   )

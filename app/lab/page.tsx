@@ -1,6 +1,7 @@
 import { Fragment } from 'react'
 import { experiments } from './experiments'
 import { CopyPrompt } from 'app/components/copy-prompt'
+import styles from './page.module.scss'
 
 export const metadata = {
   title: 'Lab',
@@ -25,38 +26,38 @@ export default function Page() {
           <Fragment key={e.slug}>
             <div
               id={e.slug}
-              className="col-start-1 col-end-13 lab-frame mt-16 scroll-mt-24"
+              className={`col-start-1 col-end-13 ${styles.frame} mt-16 scroll-mt-24`}
             >
               <Experiment />
             </div>
 
             {/* description — left */}
-            <div className="col-start-1 col-end-13 md:col-end-8 lab-desc">
-              <a href={`#${e.slug}`} className="lab-meta__head">
-                <span className="lab-meta__num">{e.number}</span>
-                <h2 className="lab-meta__title">{e.title}</h2>
+            <div className="col-start-1 col-end-13 md:col-end-8">
+              <a href={`#${e.slug}`} className={styles.metaHead}>
+                <span className={styles.metaNum}>{e.number}</span>
+                <h2 className={styles.metaTitle}>{e.title}</h2>
               </a>
-              <p className="lab-meta__blurb">{e.summary}</p>
+              <p className={styles.metaBlurb}>{e.summary}</p>
             </div>
 
             {/* spec sidebar — right */}
-            <div className="col-start-1 col-end-13 md:col-start-9 md:col-end-13 lab-meta">
-              <dl className="lab-meta__rows">
-                <div className="lab-meta__row">
+            <div className="col-start-1 col-end-13 md:col-start-9 md:col-end-13">
+              <dl className={styles.metaRows}>
+                <div className={styles.metaRow}>
                   <dt>Stack</dt>
                   <dd>{e.stack.join('  ·  ')}</dd>
                 </div>
-                <div className="lab-meta__row">
+                <div className={styles.metaRow}>
                   <dt>Fonts</dt>
                   <dd>{e.fonts.join('  ·  ')}</dd>
                 </div>
-                <div className="lab-meta__row">
+                <div className={styles.metaRow}>
                   <dt>Colors</dt>
-                  <dd className="lab-swatches">
+                  <dd className={styles.swatches}>
                     {e.colors.map((c) => (
                       <span
                         key={c}
-                        className="lab-swatch"
+                        className={styles.swatch}
                         style={{ background: c }}
                         title={c}
                       />

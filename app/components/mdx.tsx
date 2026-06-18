@@ -4,6 +4,7 @@ import { MDXRemote } from 'next-mdx-remote/rsc'
 import { highlight } from 'sugar-high'
 import smartypants from 'remark-smartypants'
 import React from 'react'
+import { Margin, PullQuote, Figure } from 'app/components/margin'
 
 function Table({ data }) {
   let headers = data.headers.map((header, index) => (
@@ -98,6 +99,9 @@ let components = {
   a: CustomLink,
   code: Code,
   Table,
+  Margin,
+  PullQuote,
+  Figure,
 }
 
 export function CustomMDX(props) {
