@@ -43,6 +43,18 @@
   margin: 0 0 0.5rem;
 }
 
+/* Caption — opt-in supporting text in the margin (a chart's one-line
+   annotation, a brief aside). Muted and a touch under the 1rem body so it reads
+   as secondary, not competing with the article. Authored as <Caption> because a
+   CSS-module class can't be referenced from raw MDX. The doubled class outranks
+   `.prose p` (0,2,0 > 0,1,1) so the muted color actually lands. */
+.caption.caption {
+  color: var(--muted);
+  font-size: 0.9375rem; /* ~15px — a tad under body */
+  line-height: 1.45;
+  text-wrap: pretty;
+}
+
 /* Pull quote — a lifted line set large in the accent color. The text is a
    plain MDX paragraph; the doubled class (.pullquote.margin) outranks
    `.prose p { text-fg }` so the accent color actually lands on it. */

@@ -38,20 +38,22 @@ The clutch part was getting Claude Code to drive it *well*. I wrote a skill — 
 
 <Margin label="The 60% rule">
   <LineChart
-    label="Agent reliability holds steady until context passes ~60%, then degrades"
+    label="Agent reliability slips gently from the start, then falls off faster once context passes ~60%"
     marker={{ at: 0.6, label: '60%' }}
     points={[
-      { x: 0, y: 0.96 },
-      { x: 0.3, y: 0.95 },
-      { x: 0.5, y: 0.94 },
-      { x: 0.6, y: 0.92 },
-      { x: 0.7, y: 0.74 },
+      { x: 0, y: 0.98 },
+      { x: 0.15, y: 0.96 },
+      { x: 0.3, y: 0.93 },
+      { x: 0.45, y: 0.88 },
+      { x: 0.55, y: 0.83 },
+      { x: 0.6, y: 0.8 },
+      { x: 0.7, y: 0.67 },
       { x: 0.8, y: 0.5 },
-      { x: 0.9, y: 0.32 },
-      { x: 1, y: 0.2 },
+      { x: 0.9, y: 0.33 },
+      { x: 1, y: 0.18 },
     ]}
   />
-  Reliability holds flat, then rots once context creeps past the line.
+  <Caption>It slips from the first tokens — there's no plateau. Past the line the rot just accelerates.</Caption>
 </Margin>
 
 More than I expected. There's a [60% rule](https://www.youtube.com/watch?v=xaQG-eD9d58) a lot of people who live in these agents swear by: once context creeps past ~60%, you hand off or compact. Not because the agent hits a wall — it doesn't crash, it just quietly starts to rot. It stops following instructions, contradicts itself, drops details you gave it earlier. I'd nodded along to the rule for months; now I actually follow it, because I can finally *see* the context climbing toward the line. And I know whether my skills fire on their own, instead of assuming they did and hoping.

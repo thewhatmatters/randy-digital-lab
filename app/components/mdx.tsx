@@ -4,7 +4,7 @@ import { MDXRemote } from 'next-mdx-remote/rsc'
 import { highlight } from 'sugar-high'
 import smartypants from 'remark-smartypants'
 import React from 'react'
-import { Margin, PullQuote, Figure } from 'app/components/margin'
+import { Margin, PullQuote, Figure, Caption } from 'app/components/margin'
 import { LineChart } from 'app/components/charts/line-chart'
 
 function Table({ data }) {
@@ -103,6 +103,7 @@ let components = {
   Margin,
   PullQuote,
   Figure,
+  Caption,
   LineChart,
 }
 

@@ -40,6 +40,14 @@ export function PullQuote({
   )
 }
 
+// Caption — small, muted supporting text in the margin: a chart's one-line
+// annotation, a brief aside. Opt-in, so only what you wrap reads as secondary
+// (vs. auto-styling every margin paragraph). Carries the module's .caption
+// class, which raw MDX can't reference directly.
+export function Caption({ children }: { children: React.ReactNode }) {
+  return <p className={styles.caption}>{children}</p>
+}
+
 // Supporting image — a figure in the margin with an optional caption. Uses
 // next/image so it stays optimized; pass explicit width/height (intrinsic) and
 // it scales to the margin width.
