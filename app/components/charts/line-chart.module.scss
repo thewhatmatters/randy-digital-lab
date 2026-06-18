@@ -1,0 +1,15 @@
+// Line chart — scales to its container (the margin column or reading column);
+// the viewBox handles the coordinate space, so width:100% is all we need.
+.chart {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+// Threshold marker label (e.g. "60%"). font-size is in viewBox user units, so
+// it scales with the chart just like the strokes do.
+.markerLabel {
+  fill: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 9px;
+}

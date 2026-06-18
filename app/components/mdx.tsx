@@ -5,6 +5,7 @@ import { highlight } from 'sugar-high'
 import smartypants from 'remark-smartypants'
 import React from 'react'
 import { Margin, PullQuote, Figure } from 'app/components/margin'
+import { LineChart } from 'app/components/charts/line-chart'
 
 function Table({ data }) {
   let headers = data.headers.map((header, index) => (
@@ -102,6 +103,7 @@ let components = {
   Margin,
   PullQuote,
   Figure,
+  LineChart,
 }
 
 export function CustomMDX(props) {
@@ -113,6 +115,13 @@ export function CustomMDX(props) {
         // Editorial typography: curly quotes/apostrophes, true em/en dashes,
         // ellipses. Skips code blocks. (next-mdx-remote merges these options.)
         mdxOptions: { remarkPlugins: [smartypants] },
+        // Allow JS expression attributes in MDX (e.g. <LineChart points={[…]} />).
+        // next-mdx-remote strips ALL expressions by default (blockJS) to stop
+        // arbitrary eval from untrusted MDX — but every note here is our own
+        // first-party content, so we opt in. blockDangerousJS stays on, so
+        // genuinely dangerous calls are still removed; plain array/object
+        // literals pass through.
+        blockJS: false,
         ...(props.options || {}),
       }}
     />
