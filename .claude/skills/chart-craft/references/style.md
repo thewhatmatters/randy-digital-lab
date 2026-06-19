@@ -43,6 +43,14 @@ Remove everything that isn't data:
 
 If a viewer needs a number, place it as a floating label next to the mark.
 
+The word that matters is **-as-decoration**. A gradient or fill is allowed when
+it *carries meaning* — e.g. the line chart's `regions` treatment shades the two
+sides of a threshold marker (a soft gradient for the safe zone, a diagonal hatch
+for the degraded "noisy" zone). That's data-ink, not chrome. The test: remove
+it — if the chart says less, it earned its place; if it only looks busier, it
+was decoration. Stay monochrome and subtle (`var(--fg)`/`var(--muted)`), and
+keep the accent reserved for the one thing you're pointing at.
+
 ## Typography
 
 - **Micro-labels:** uppercase, letter-spaced, small, light weight,

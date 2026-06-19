@@ -15,13 +15,31 @@ adapt the closest entry or add a new spec to this file first.
 `app/components/charts/line-chart.tsx`
 
 - **For:** a single trend over a continuous range, optionally with one
-  threshold called out (e.g. the "60% rule": reliability flat, then rotting
-  past a marked point).
-- **Treatment:** one `var(--fg)` hairline, `curveMonotoneX` (smooth, no
-  overshoot). Optional `marker` = a dashed `var(--accent)` vertical at an x
-  value with a mono caps label. No axes.
-- **API:** `points={[{x,y}…]}`, `marker={{ at, label?, color? }}`,
-  `label="…"` (required, a11y). Prop is `points`, not `data`.
+  threshold called out (e.g. the "60% rule": reliability slips gently, then
+  drops off sharply past a marked point).
+- **Treatment:** one `var(--fg)` hairline. `curve` is `'monotone'` (smooth, the
+  default) or `'linear'` (straight segments — a deliberate, "drawn" look).
+  Optional `marker` = a dashed `var(--accent)` vertical at an x value with a
+  small mono caps label. No axes.
+- **Threshold regions (`regions`):** opt-in, requires a `marker`. Fills the area
+  *under the curve*, split at the marker: a soft vertical gradient before (the
+  "safe"/reliable zone fading) and a hairline diagonal hatch after (the
+  degraded, "noisy" zone). This is **semantic** — it encodes the two sides of
+  the threshold, not decoration — which is the only reason a gradient/fill is
+  allowed here (see style.md). Both use `var(--fg)`/`var(--muted)`; the accent
+  stays reserved for the marker line alone. Off by default so other charts stay
+  strictly hairline.
+- **API:** `points={[{x,y}…]}`, `curve="monotone"|"linear"`, `strokeWidth`,
+  `marker={{ at, label?, color? }}`, `regions` (bool), `label="…"` (required,
+  a11y). Prop is `points`, not `data`.
+- **Shape discipline — few points, not many.** With `curve="linear"`, every
+  point is a kink, so a dense `points` array reads as a *jagged, rough* polyline
+  even though each segment is straight. Use the **minimum** points that tell the
+  story: two for a single straight slide, three for one clean bend. Put the bend
+  **on the marker x** so the slope change reads as intentional, not noise. (The
+  60% chart: `(0,.93) (0.6,.82) (1,.2)` — gentle to the line, sharp after.)
+  Keep the aria-label + `<Caption>` honest about the shape: a straight line is a
+  *steady* decline; only a bend earns "falls off faster".
 
 ## 2. Bundled-edge flow — spec
 

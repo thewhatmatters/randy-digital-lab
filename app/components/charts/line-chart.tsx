@@ -1,6 +1,7 @@
+import { useId } from 'react'
 import { scaleLinear } from '@visx/scale'
-import { LinePath } from '@visx/shape'
-import { curveMonotoneX } from '@visx/curve'
+import { LinePath, AreaClosed } from '@visx/shape'
+import { curveMonotoneX, curveLinear } from '@visx/curve'
 import styles from './line-chart.module.scss'
 
 // Themed line chart — our wrapper over visx primitives (@visx/scale for the
@@ -20,7 +21,9 @@ export function LineChart({
   padding = 6,
   stroke = 'var(--fg)',
   strokeWidth = 2,
+  curve = 'monotone',
   marker,
+  regions = false,
   label,
 }: {
   points: Point[]
@@ -30,11 +33,26 @@ export function LineChart({
   padding?: number
   stroke?: string
   strokeWidth?: number
+  /** Curve interpolation — gentle monotone (default) or straight segments. */
+  curve?: 'monotone' | 'linear'
   /** A vertical reference line (e.g. the "60%" threshold), accent by default. */
   marker?: { at: number; color?: string; label?: string }
+  /**
+   * With a marker set, fill the area under the curve on each side of it: a soft
+   * gradient before (the reliable zone fading) and a diagonal hatch after (the
+   * degraded, "noisy" zone). Semantic, not decoration — opt-in per chart.
+   */
+  regions?: boolean
   /** Required: describes the chart for screen readers. */
   label: string
 }) {
+  // Unique per instance so multiple charts on a page don't share <defs> ids.
+  const uid = useId()
+  const gradId = `lc-grad-${uid}`
+  const hatchId = `lc-hatch-${uid}`
+  const leftClipId = `lc-left-${uid}`
+  const rightClipId = `lc-right-${uid}`
+
   const xs = points.map((d) => d.x)
   const ys = points.map((d) => d.y)
 
@@ -48,6 +66,8 @@ export function LineChart({
   })
 
   const markerX = marker ? xScale(marker.at) : 0
+  const showRegions = regions && !!marker
+  const curveFn = curve === 'linear' ? curveLinear : curveMonotoneX
 
   return (
     <svg
@@ -56,6 +76,64 @@ export function LineChart({
       aria-label={label}
       className={styles.chart}
     >
+      {showRegions && (
+        <defs>
+          {/* Reliable zone: a soft fade of the data ink, no second color. */}
+          <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--fg)" stopOpacity="0.14" />
+            <stop offset="100%" stopColor="var(--fg)" stopOpacity="0" />
+          </linearGradient>
+          {/* Degraded zone: hairline diagonal hatch reads as noise/texture. */}
+          <pattern
+            id={hatchId}
+            width="3.5"
+            height="3.5"
+            patternUnits="userSpaceOnUse"
+            patternTransform="rotate(45)"
+          >
+            <line
+              x1="0"
+              y1="0"
+              x2="0"
+              y2="3.5"
+              stroke="var(--muted)"
+              strokeWidth="0.5"
+            />
+          </pattern>
+          <clipPath id={leftClipId}>
+            <rect x="0" y="0" width={markerX} height={height} />
+          </clipPath>
+          <clipPath id={rightClipId}>
+            <rect x={markerX} y="0" width={width - markerX} height={height} />
+          </clipPath>
+        </defs>
+      )}
+
+      {showRegions && (
+        <>
+          <g clipPath={`url(#${leftClipId})`}>
+            <AreaClosed
+              data={points}
+              x={(d) => xScale(d.x)}
+              y={(d) => yScale(d.y)}
+              yScale={yScale}
+              curve={curveFn}
+              fill={`url(#${gradId})`}
+            />
+          </g>
+          <g clipPath={`url(#${rightClipId})`}>
+            <AreaClosed
+              data={points}
+              x={(d) => xScale(d.x)}
+              y={(d) => yScale(d.y)}
+              yScale={yScale}
+              curve={curveFn}
+              fill={`url(#${hatchId})`}
+            />
+          </g>
+        </>
+      )}
+
       {marker && (
         <g>
           <line
@@ -84,7 +162,7 @@ export function LineChart({
         data={points}
         x={(d) => xScale(d.x)}
         y={(d) => yScale(d.y)}
-        curve={curveMonotoneX}
+        curve={curveFn}
         stroke={stroke}
         strokeWidth={strokeWidth}
         strokeLinecap="round"
