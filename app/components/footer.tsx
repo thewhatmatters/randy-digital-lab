@@ -11,8 +11,9 @@ gsap.registerPlugin(ScrollTrigger)
 
 const EXPLORE = [
   { label: 'Base', href: '/' },
-  { label: 'Notes', href: '/notes' },
+  { label: 'Work', href: '/work' },
   { label: 'Lab', href: '/lab' },
+  { label: 'Notes', href: '/notes' },
 ]
 
 const CONNECT = [
