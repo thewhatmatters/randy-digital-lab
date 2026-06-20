@@ -1,10 +1,11 @@
 'use client'
 
-import { useLayoutEffect, useRef } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { Link } from 'next-view-transitions'
 import { WorldClock } from './world-clock'
+import { FooterMap } from './footer-map'
 import styles from './footer.module.scss'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -24,6 +25,8 @@ const CONNECT = [
 
 export default function Footer() {
   const root = useRef<HTMLElement>(null)
+  // hovered world-clock city → drives the footer map (null = back to Austin)
+  const [activeCity, setActiveCity] = useState<string | null>(null)
 
   useLayoutEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
@@ -61,7 +64,10 @@ export default function Footer() {
           A portfolio of work, notes on what I&rsquo;m thinking about, and a lab
           of small interactive experiments. Still taking shape.
         </p>
-        <WorldClock />
+        {/* interactive map — spans the 4 world-clock columns; defaults to
+            Austin (accent), animates to a city on hover (next step). */}
+        <FooterMap className={styles.map} activeCity={activeCity} />
+        <WorldClock onCity={setActiveCity} />
         <p className={`md:col-span-full ${styles.status}`}>
           <span className={styles.statusDot} aria-hidden="true" />
           Available for work

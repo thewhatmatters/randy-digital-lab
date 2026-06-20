@@ -51,6 +51,23 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
   text-wrap: pretty;
 }
 
+// Interactive map slot — spans the 4 world-clock columns, sits above the clock
+// row. Holds the lazy-loaded MapLibre canvas (FooterMap). No border, no fade:
+// the floating-outline map is transparent, so the page background already reads
+// as the ocean and the strip blends on its own.
+.map {
+  height: 4rem;
+  margin-bottom: 1.25rem; // breath down to the clocks
+  overflow: hidden;
+}
+
+@media (min-width: 48rem) {
+  // span the first 4 subgrid tracks — the same columns the clocks occupy
+  .map {
+    grid-column: 1 / 5;
+  }
+}
+
 .col {
   display: flex;
   flex-direction: column;

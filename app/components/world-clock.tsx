@@ -17,7 +17,12 @@ const randTime = () =>
 // A row of live world clocks (HH:MM:SS, 24h). On first scroll-into-view the
 // digits briefly scramble, then settle to the live time — a flip-board moment.
 // Reduced-motion: straight to live, no scramble. Stable SSR placeholder.
-export function WorldClock() {
+export function WorldClock({
+  onCity,
+}: {
+  /** fires the hovered city name (or null on leave) — drives the footer map */
+  onCity?: (city: string | null) => void
+}) {
   const ref = useRef<HTMLDListElement>(null)
   const [now, setNow] = useState<Date | null>(null)
   const [scrambling, setScrambling] = useState(false)
@@ -73,7 +78,12 @@ export function WorldClock() {
   return (
     <dl ref={ref} className={styles.clock}>
       {ZONES.map((z) => (
-        <div key={z.city} className={styles.zone}>
+        <div
+          key={z.city}
+          className={styles.zone}
+          onMouseEnter={() => onCity?.(z.city)}
+          onMouseLeave={() => onCity?.(null)}
+        >
           <dt className={styles.time} suppressHydrationWarning>
             {fmt(z.tz)}
           </dt>

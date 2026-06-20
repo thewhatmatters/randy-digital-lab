@@ -1,0 +1,37 @@
+// "Home" marker for the footer map — an accent dot with a bg halo (so it reads
+// on the basemap) and a soft pulse ring. Reduced-motion drops the pulse.
+.marker {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  // 2px bg halo keeps the dot legible over map tiles; second shadow pulses
+  box-shadow:
+    0 0 0 2px var(--bg),
+    0 0 0 0 color-mix(in srgb, var(--accent) 55%, transparent);
+  animation: marker-pulse 2.4s ease-out infinite;
+}
+
+@keyframes marker-pulse {
+  0% {
+    box-shadow:
+      0 0 0 2px var(--bg),
+      0 0 0 0 color-mix(in srgb, var(--accent) 55%, transparent);
+  }
+  70% {
+    box-shadow:
+      0 0 0 2px var(--bg),
+      0 0 0 8px transparent;
+  }
+  100% {
+    box-shadow:
+      0 0 0 2px var(--bg),
+      0 0 0 0 transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marker {
+    animation: none;
+  }
+}
