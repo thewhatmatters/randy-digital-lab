@@ -62,6 +62,10 @@ export default function Footer() {
           of small interactive experiments. Still taking shape.
         </p>
         <WorldClock />
+        <p className={`md:col-span-full ${styles.status}`}>
+          <span className={styles.statusDot} aria-hidden="true" />
+          Available for work
+        </p>
       </div>
 
       {/* row 2 right — link columns, tops aligned with the description */}

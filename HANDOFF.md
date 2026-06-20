@@ -1,4 +1,4 @@
-# Handoff — Services bento + Work route + nav reorder
+# Handoff — Services bento + Work route + nav/footer sync
 
 _Updated 2026-06-20 · short session on top of the home build-out_
 
@@ -6,8 +6,9 @@ _Updated 2026-06-20 · short session on top of the home build-out_
 
 Continue Randy's personal site (Next 16 App Router + Tailwind v4). This session
 added a **Services bento** to the home page, scaffolded a placeholder **/work**
-route, reordered the primary nav, and nudged footer spacing. Randy will do the
-**visuals pass later today** (real imagery + final polish).
+route, reordered the primary nav, synced the footer (added Work + an
+availability indicator), and nudged footer spacing. Randy will do the **visuals
+pass later today** (real imagery + final polish).
 
 ## Current state (shipped this session — committed + pushed)
 
@@ -25,63 +26,67 @@ route, reordered the primary nav, and nudged footer spacing. Randy will do the
    `Work` heading + intro + a mono **COMING SOON** marker where the project
    index will go. Prerenders static.
 3. **Nav reordered** (`app/components/nav.tsx`) — now `01 base · 02 work ·
-   03 lab · 04 notes`. Added `/work`; numbering is index-derived
-   (`String(i+1)`), placement array extended to 4 subgrid slots (col 1/3/5/7).
-   Uses `next-view-transitions` Link.
-4. **Footer bottom spacing** (`app/components/footer.module.scss`) —
-   `margin-bottom` bumped from flat `1.5rem` → `clamp(2.5rem, 7vh, 5rem)` so it
-   doesn't kiss the viewport edge.
+   03 lab · 04 notes`. Added `/work`; numbering index-derived (`String(i+1)`),
+   placement array extended to 4 subgrid slots (col 1/3/5/7).
+4. **Footer synced** (`app/components/footer.tsx` + `.module.scss`):
+   - EXPLORE column now `Base · Work · Lab · Notes` (Work added, order matches nav).
+   - **Availability indicator** — `● AVAILABLE FOR WORK` placed **under the
+     world-clock row** in the left intro column (`md:col-span-full`). Reuses the
+     leftover `.status` + `.statusDot` (pulsing `#29a36a`, same semantic green as
+     the hero cue) + its reduced-motion guard; `.status` given its own mono-caps
+     type treatment (it previously inherited from the removed status bar).
+   - Bottom `margin-bottom` bumped `1.5rem` → `clamp(2.5rem, 7vh, 5rem)` so the
+     footer no longer kisses the viewport edge.
 
 Verified: `pnpm build` passes; `/`, `/work` prerender static; headless
-screenshots of the bento + Work page checked via `automate-browser`.
+screenshots of the bento, Work page, and footer checked via `automate-browser`.
 
 ## Next steps (Randy: visuals later today)
 
 1. **Services bento** — swap the 5 `.media` placeholders for **real art**
    (replace the `.media` block with `<img>`/`<figure>`; drop the surface/label).
-2. **Footer EXPLORE column is out of sync** — still lists Base / Notes / Lab,
-   missing **Work** and not reordered. Update to `Base · Work · Lab · Notes` in
-   `footer.tsx`. Flagged to Randy, not yet done.
-3. **/work data layer** — when real projects exist: MDX per project in
+2. **/work data layer** — when real projects exist: MDX per project in
    `app/work/posts/` (or `projects/`) + a `utils.ts` like `notes/utils.ts`;
    replace the COMING SOON block with a numbered project index.
-4. Earlier-standing: swap the two footer **logo placeholders** for real
-   randy.digital + whatmatters art.
+3. Earlier-standing: swap the two footer **logo placeholders**
+   (RANDY.DIGITAL / WHATMATTERS dashed boxes) for real art.
 
 ## Key decisions (and why)
 
-- **Page named "Work"** (not Projects/Portfolio/Selected) — short lowercase
-  editorial noun matching `base/lab/notes`; covers both design + engineering
-  honestly. Sits at nav #02 (primary content after home).
-- **Nav order base · work · lab · notes** — Randy's call; work is primary,
-  notes last.
-- **Bento keeps borders** — Randy previewed a borderless variant and rejected
-  it ("definitely need the border"). Tiles are hairline-bordered.
-- **Bento beat the earlier 2×2 quadrant** — the first Services attempt (big
-  empty placeholder boxes) was rejected for reading as a templated SaaS feature
-  grid; the small 100×100 placeholders + asymmetric bento fit the grid/aesthetic.
+- **Page named "Work"** — short lowercase editorial noun matching
+  `base/lab/notes`; covers both design + engineering. Nav #02 (primary content).
+- **Nav order base · work · lab · notes** — Randy's call; work primary, notes last.
+- **Bento keeps borders** — Randy previewed a borderless variant and rejected it
+  ("definitely need the border"). Tiles are hairline-bordered.
+- **Availability indicator under the clocks** — Randy first asked whether it fit
+  in CONNECT, then moved it under the world clocks. It reads as a status line
+  (mono caps, like the clock labels), not a link, so it belongs in the identity
+  column rather than the social-links column.
+- **Bento beat the earlier 2×2 quadrant** — first Services attempt (big empty
+  placeholder boxes) was rejected as templated SaaS chrome.
 
 ## Don't redo (rejected this session)
 
-- **2×2 quadrant Services with large empty placeholder boxes** — built, then
-  deleted; read as templated SaaS chrome, fought the hairline/flush-left system.
+- **2×2 quadrant Services with large empty placeholder boxes** — built, deleted.
 - **Borderless bento tiles** — previewed at Randy's request, rejected.
-- **05 Systems alone on row 3** (from a 3×5-col misread) — corrected to the
-  clean 7+5 / 4+4+4 two-row tiling above.
+- **Availability indicator in the CONNECT column** — tried, then moved under the
+  world clocks instead.
+- **05 Systems alone on row 3** (3×5-col misread) — corrected to 7+5 / 4+4+4.
 
 ## Files & commands in play
 
 - Services: `app/components/services.{tsx,module.scss}`; placement in the
   `SERVICES` array (each tile's `col`/`row` is one line).
 - Work: `app/work/page.tsx`. Nav: `app/components/nav.tsx`.
-- Footer: `app/components/footer.module.scss` (spacing). EXPLORE column lives in
-  `app/components/footer.tsx` (the sync TODO).
+- Footer: `app/components/footer.{tsx,module.scss}`; clocks in
+  `app/components/world-clock.tsx`.
 - Home: `app/page.tsx`. `pnpm dev` / `pnpm build`. Headless verify via
   `automate-browser` (Lenis intercepts `window.scrollTo`; use element
   `scroll_into_view` / element screenshot — reduced-motion disables Lenis).
 
 ## Git state
 
-Branch `main` (tracks `origin/main`). Committing + pushing this session's work
-now (footer spacing, nav reorder, `page.tsx`, new `services.*` + `app/work/`).
-After push: tree clean, in sync.
+Branch `main` (tracks `origin/main`). Earlier this session pushed `908adf8`
+(bento + /work + nav) and `cb235ff` (footer EXPLORE + Work). Committing +
+pushing the availability indicator + footer type now. After push: tree clean,
+in sync.
