@@ -1,0 +1,96 @@
+// Notes index. Mobile: date stacked above the title. Desktop (≥48rem): date
+// and title land on the PAGE's 12-column grid (repeat(var(--grid-cols)) + the
+// shared --grid-gutter), the same geometry as the Experience table and the
+// .grid-page utility — so both index sections share the grid.
+//
+// Motion mirrors the Experience block (same ease, keyframe, stagger, reduced-
+// motion path) so the two index sections feel like one family: rows rise+fade
+// in on load; hovering a row sends the date → accent and nudges the title right.
+// The mono date here plays the role the number plays in Experience.
+
+// Same curve as the Experience block — keep them identical for consistency.
+$ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr;
+  row-gap: 0.125rem;
+  padding-block: 0.5rem;
+  align-items: baseline;
+
+  // staggered entrance — capped so long lists never crawl
+  animation: rise-in 0.45s $ease both;
+  animation-delay: min(calc(var(--i, 0) * 45ms), 400ms);
+}
+
+.date {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  white-space: nowrap;
+  transition: color 0.18s $ease;
+}
+
+.title {
+  color: var(--fg);
+  letter-spacing: -0.01em;
+  transition: transform 0.18s $ease;
+}
+
+// Hover — the link "wakes": date lights to accent, title nudges right.
+.row:hover {
+  .date {
+    color: var(--accent);
+  }
+
+  .title {
+    transform: translateX(3px);
+  }
+}
+
+@media (min-width: 48rem) {
+  .row {
+    grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
+    column-gap: var(--grid-gutter);
+    row-gap: 0;
+  }
+
+  .date {
+    grid-column: 1 / 3;
+    grid-row: 1;
+  }
+
+  .title {
+    grid-column: 3 / 11;
+    grid-row: 1;
+  }
+}
+
+// Reduced-motion: drop spatial movement; the accent colour cue stays.
+@media (prefers-reduced-motion: reduce) {
+  .row {
+    animation: none;
+  }
+
+  .row:hover .title {
+    transform: none;
+  }
+}

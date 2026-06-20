@@ -1,11 +1,13 @@
-import Link from 'next/link'
+import type { CSSProperties } from 'react'
+import { Link } from 'next-view-transitions'
 import { formatDate, getBlogPosts } from 'app/notes/utils'
+import styles from './posts.module.scss'
 
 export function BlogPosts() {
   let allBlogs = getBlogPosts()
 
   return (
-    <div>
+    <ul className={styles.list}>
       {allBlogs
         .sort((a, b) => {
           if (
@@ -15,22 +17,20 @@ export function BlogPosts() {
           }
           return 1
         })
-        .map((post) => (
-          <Link
-            key={post.slug}
-            className="flex flex-col space-y-1 mb-4"
-            href={`/notes/${post.slug}`}
-          >
-            <div className="w-full flex flex-col md:flex-row md:items-baseline space-x-0 md:space-x-2">
-              <p className="font-mono text-sm text-muted w-[150px] shrink-0 whitespace-nowrap tabular-nums">
+        .map((post, i) => (
+          <li key={post.slug}>
+            <Link
+              className={styles.row}
+              href={`/notes/${post.slug}`}
+              style={{ '--i': i } as CSSProperties}
+            >
+              <span className={styles.date}>
                 {formatDate(post.metadata.publishedAt, false)}
-              </p>
-              <p className="text-neutral-900 dark:text-neutral-100 tracking-tight">
-                {post.metadata.title}
-              </p>
-            </div>
-          </Link>
+              </span>
+              <span className={styles.title}>{post.metadata.title}</span>
+            </Link>
+          </li>
         ))}
-    </div>
+    </ul>
   )
 }

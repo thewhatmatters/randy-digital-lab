@@ -12,10 +12,23 @@
    excluded — they float past the measure. The measure is a notes-private token
    declared on the article so its descendants inherit it. */
 .article {
-  --reading-measure: 40rem; /* ~66ch — the body text column */
+  --reading-measure: 40rem; /* mobile/tablet — generous; no margin floating yet */
 
   & > :where(p, h1, h2, h3, h4, h5, h6, ul, ol, blockquote) {
     max-width: var(--reading-measure);
+  }
+}
+
+/* At the breakpoint where the margin floats into cols 9–13, snap the reading
+   measure to the GRID: exactly 7 columns (lines 1 → 8), matching the header's
+   `col-end-8` and leaving column 8 as the gutter before the margin. Without
+   this the text capped at a magic 40rem and spilled ~half a column past line 8,
+   colliding visually with the marginalia. Derived from the same track + gutter
+   as the .margin width, so the two always stay complementary across breakpoints.
+   Width of N columns in a 12-col track = (N·track − (12−N)·gutter) / 12. */
+@media (min-width: 64rem) {
+  .article {
+    --reading-measure: calc((7 * 100% - 5 * var(--grid-gutter)) / 12);
   }
 }
 

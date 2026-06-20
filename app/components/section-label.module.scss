@@ -1,0 +1,12 @@
+// "Mono label" type role (DESIGN.md): uppercase, tracking-wide, muted mono —
+// the eyebrow above a section / index.
+.label {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 1.25rem;
+}

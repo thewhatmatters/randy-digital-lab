@@ -1,0 +1,210 @@
+// Work index table. Mobile: a stacked block per row (no · role · years on top,
+// company/focus beneath). Desktop (≥48rem): cells land on the PAGE's 12-column
+// grid — repeat(var(--grid-cols)) with the shared --grid-gutter (same geometry
+// as the .grid-page utility) — so the columns align with the masthead, bio, and
+// notes above. Placed by column LINE, per the project's grid discipline.
+//
+// Motion (CSS tier — no library, stays a Server Component): rows rise+fade in on
+// load, staggered by --i; hovering a row "wakes" it (number → accent, role nudges
+// right, metadata brightens). Compositor-only (transform/opacity), one shared
+// ease, fully disabled under prefers-reduced-motion. See /add-motion.
+
+// One curve everywhere — decisive start, soft landing.
+$ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.table {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+// Shared row geometry — mobile-first stacked layout (3 columns).
+.row,
+.head {
+  display: grid;
+  grid-template-columns: 2.25rem 1fr auto;
+  column-gap: 1rem;
+  row-gap: 0.25rem;
+  align-items: baseline;
+  padding: 0.875rem 0;
+  border-top: 1px solid var(--border);
+
+  // staggered entrance — capped so long lists never crawl
+  animation: rise-in 0.45s $ease both;
+  animation-delay: min(calc(var(--i, 0) * 45ms), 400ms);
+}
+
+// The header row only makes sense once columns align — hide it on mobile.
+.head {
+  display: none;
+}
+
+// Last row gets a closing rule so the table reads as a bounded block.
+.table .row:last-child {
+  border-bottom: 1px solid var(--border);
+}
+
+// Mobile cell placement (the 3-column stack).
+.no {
+  grid-column: 1;
+  grid-row: 1;
+}
+.role {
+  grid-column: 2;
+  grid-row: 1;
+}
+.years {
+  grid-column: 3;
+  grid-row: 1;
+}
+.company {
+  grid-column: 2;
+  grid-row: 2;
+}
+.focus {
+  grid-column: 2;
+  grid-row: 3;
+}
+
+// Cell typography — mono carries the technical register (numbers, metadata).
+.no {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  transition: color 0.18s $ease;
+}
+
+.role {
+  color: var(--fg);
+  letter-spacing: -0.01em;
+  transition: transform 0.18s $ease;
+}
+
+.company {
+  color: var(--muted);
+  transition: color 0.18s $ease;
+}
+
+.focus {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  color: var(--muted);
+  transition: color 0.18s $ease;
+}
+
+.years {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+// Hover — the row "wakes up". Number lights to accent, role nudges right, the
+// muted metadata brightens toward fg. (Header row excluded.)
+.row:hover {
+  .no {
+    color: var(--accent);
+  }
+
+  .role {
+    transform: translateX(3px);
+  }
+
+  .company,
+  .focus {
+    color: var(--fg);
+  }
+}
+
+// The present role — the one accent. Number + tag in accent, role in medium.
+.present {
+  .no {
+    color: var(--accent);
+  }
+
+  .role {
+    font-weight: 500;
+  }
+}
+
+.tag {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+// Desktop: snap onto the page's 12-column grid and place each cell by line.
+@media (min-width: 48rem) {
+  .row,
+  .head {
+    grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
+    column-gap: var(--grid-gutter);
+    row-gap: 0;
+  }
+
+  .no {
+    grid-column: 1 / 2;
+    grid-row: 1;
+  }
+  .role {
+    grid-column: 2 / 6;
+    grid-row: 1;
+  }
+  .company {
+    grid-column: 6 / 8;
+    grid-row: 1;
+  }
+  .focus {
+    grid-column: 8 / 11;
+    grid-row: 1;
+  }
+  .years {
+    grid-column: 11 / 13;
+    grid-row: 1;
+  }
+
+  .head {
+    display: grid;
+    padding-bottom: 0.625rem;
+    border-top: 0;
+
+    // header labels: caps mono micro-labels
+    .no,
+    .role,
+    .company,
+    .focus,
+    .years {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+  }
+}
+
+// Reduced-motion: drop all spatial movement — no entrance, no hover shift.
+// Colour cues (number/metadata brightening) are vestibular-safe, so they stay.
+@media (prefers-reduced-motion: reduce) {
+  .row,
+  .head {
+    animation: none;
+  }
+
+  .row:hover .role {
+    transform: none;
+  }
+}
