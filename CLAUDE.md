@@ -43,10 +43,24 @@ spirit of [lab01.dev](https://lab01.dev/)).
   (pure SVG, zero client JS) and styled with tokens only. Authored in notes
   inside `<Margin>`; supporting text uses `<Caption>`. See **`/chart-craft`**
   for the style contract + the `blockJS: false` MDX requirement.
-- **Motion:** layer it — CSS for hover/press, **View Transitions API** for
-  route/shared-element changes, **Motion** (independent successor to Framer
-  Motion) for interruptible gesture/scroll microinteractions. Always honor
-  `prefers-reduced-motion`. Motion components must be `'use client'`.
+- **Motion:** layered, and now a deliberately heavier "kinetic" stack on the
+  home intro (an opt-in departure from the original restraint — see the home
+  hero). Tiers:
+  - **CSS** for hover/press + small entrances/staggers (the shared `rise-in`
+    ease `cubic-bezier(0.22,1,0.36,1)` on Experience/Notes/Stack rows).
+  - **GSAP + ScrollTrigger** (`gsap`) for the home hero — masked line-reveal +
+    scroll choreography (pinned/parallaxed media). Animation islands are
+    `'use client'`; isolate them, keep everything else a Server Component.
+  - **Lenis** (`lenis`) smooth/inertia scroll, driven by GSAP's ticker so
+    ScrollTrigger stays in sync — `app/components/smooth-scroll.tsx`.
+  - **`next-view-transitions`** for route crossfades (App-Router-safe wrapper
+    over `document.startViewTransition`; **Barba does NOT work on App Router**).
+    Use its `Link` for internal nav; crossfade CSS in `global.css` §12.
+  - A first-load **preloader** veil (`app/components/preloader.tsx`) fires
+    `preloader:done` so the hero reveal plays after the wipe.
+  - **Always honor `prefers-reduced-motion`** — every piece has a reduced path
+    (Lenis disabled, GSAP set to final state, preloader instant, VT cut).
+  - Tradeoff (accepted): more client JS + some Core Web Vitals cost; watch CWV.
 - **Deploy:** Vercel. Keep Speed Insights + Web Analytics on; watch Core Web
   Vitals.
 

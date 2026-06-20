@@ -91,17 +91,24 @@ Type scale ≈ 1.25 (major third), base 16px.
 
 ## Motion
 
-Layered (CSS / View Transitions / Motion). Honored by `/add-motion`.
+Layered, with a deliberately **kinetic** home intro (opt-in; heavier than the
+rest of the site by design). CSS for the small stuff; GSAP + Lenis for the hero.
 
-- **Durations:** micro (hover/press) `150ms`; entrance/exit `250ms`.
-- **Easing:** `cubic-bezier(0.2, 0, 0, 1)` (ease-out) for entrances.
-- **Page transitions:** View Transitions API — subtle crossfade between routes;
-  shared-element move on the numbered index → detail where it earns it.
-- **In-component:** Motion for interruptible microinteractions, staggered list
-  reveals on the index, scroll-linked accents. Lab experiments own their own
-  motion.
+- **Shared ease:** `cubic-bezier(0.22, 1, 0.36, 1)` — used by the CSS `rise-in`
+  entrance (Experience/Notes/Stack rows + hover nudges) and the route crossfade.
+- **Durations:** micro (hover/press) `~180ms`; entrance/exit `~250–450ms`;
+  hero reveal `~0.95s`; preloader wipe `~0.8s`.
+- **Home hero (kinetic):** masked line-reveal of the display headline +
+  scroll-choreographed pinned/parallaxed media, via **GSAP + ScrollTrigger**
+  (`app/components/hero.tsx`). A first-load **preloader** veil gates the reveal.
+- **Smooth scroll:** **Lenis**, GSAP-ticker-driven (`smooth-scroll.tsx`).
+- **Page transitions:** **`next-view-transitions`** crossfade (App-Router-safe
+  `startViewTransition`; Barba is incompatible with App Router). CSS: `global.css` §12.
 - **Hard rules:** animate `transform`/`opacity` only; never layout properties.
-  Always respect `prefers-reduced-motion: reduce` (disable non-essential motion).
+  Always respect `prefers-reduced-motion: reduce` — Lenis off, GSAP jumps to the
+  final state, preloader instant, crossfade cut.
+- **Tradeoff:** more client JS + some Core Web Vitals cost (accepted); keep an
+  eye on CWV via Speed Insights.
 
 ## Voice
 

@@ -1,108 +1,97 @@
-# Handoff — Chart refinement: regions, linear curve, caption
+# Handoff — Home build-out: kinetic intro, experience, studio footer
 
-_Updated 2026-06-18 · session refresh checkpoint_
+_Updated 2026-06-20 · session refresh checkpoint_
 
 ## Goal
 
-Rebuild Randy's personal site (Next.js App Router + Tailwind v4): portfolio,
-MDX **notes**, a **lab** of experiments. This session refined the 60% chart in
-the "Building Conan" note and extended the `<LineChart>` component, then
-captured the new conventions in the `chart-craft` skill.
+Rebuild Randy's personal site (Next 16 App Router + Tailwind v4). This session
+heavily built out the **home page**: a kinetic intro, a real Experience table, a
+numbered grid nav, and a studio-style world-clock footer — plus a project-wide
+motion stack. Randy drove the direction iteratively (lots of reject/redo).
 
-## Current state (what shipped this session)
+## Current state (shipped this session — all committed + pushed)
 
-All changes below are committed + pushed (see Git state). The work refines the
-chart system shipped last session.
+1. **Motion stack adopted** (heavy, by request — Randy chose "full Adcker"):
+   `gsap` + `lenis` (smooth scroll, `smooth-scroll.tsx`, GSAP-ticker-driven) +
+   `next-view-transitions` (route crossfade — **Barba is incompatible with App
+   Router**, this is the Next-native replacement; CSS in `global.css` §12).
+   All reduced-motion-aware. CWV cost accepted.
+2. **Kinetic hero** (`hero.tsx`): masked line-reveal of the display headline
+   **"Pixels to / production."** + bio (matches the site description) + green
+   pulsing "Available for work" dot. Plays after the **preloader** veil
+   (`preloader.tsx`, once/session, fires `preloader:done`). No video (removed).
+3. **Numbered grid nav** (`nav.tsx`): 01 base / 02 notes / 03 lab on grid lines
+   1·3·5 (subgrid; `column-gap: normal` to inherit the gutter — don't set 0).
+4. **Experience** (`experience.tsx`): 9 real roles, grid-aligned 4-col table
+   (No./Role/Company/Focus/Years), current roles render open-ended "2024 –"
+   (no "NOW"), WhatMatters is the single accent. Rise-in stagger + hover.
+5. **Notes index** (`posts.tsx`) + shared **`SectionLabel`** + `/notes` intro;
+   both index sections grid-aligned. **Note-body reading measure** fixed to a
+   grid-derived 7 cols (`margin.module.scss`) so prose stops at line 8.
+6. **Studio footer** (`footer.tsx`, pengon.dev style): logo-lockup placeholders
+   (RANDY.DIGITAL / WHATMATTERS), description, **live world clocks**
+   (`world-clock.tsx`: SF/LA · **Austin** accent · Paris · Tokyo, 1-col each on
+   grid lines, scramble-settles on first view), EXPLORE + CONNECT columns (real
+   social URLs). The columns' top aligns with the description (lockup on its own
+   row). **Footer motion**: scroll-into-view stagger, link hover (underline wipe
+   + ↗ slide), reveal-bloom parallax (`--bloom` set by `footer-reveal.tsx`).
+7. **StackMatrix** chart (`charts/stack-matrix.tsx`) — BUILT + registered in
+   mdx, but **hidden on the home page** (kept for later).
+8. **Docs**: CLAUDE.md + DESIGN.md motion sections rewritten for the real stack.
 
-1. **`<LineChart>` — threshold-region treatment (`regions` prop).** Opt-in,
-   requires a `marker`. Fills the area *under the curve*, split at the marker:
-   a soft vertical gradient before (the reliable zone fading) and a hairline
-   diagonal hatch after (the degraded/"noisy" zone). Semantic, not decoration —
-   monochrome (`--fg`/`--muted`), accent stays reserved for the marker line.
-   Uses `useId()` for unique `<defs>` ids; stays a pure Server Component (note
-   still prerenders static). `app/components/charts/line-chart.tsx`.
-2. **`<LineChart>` — `curve` prop (`'monotone'` | `'linear'`).** Straight
-   segments for a deliberate "drawn" look; both the line and the two area fills
-   share the selected curve. Default stays `monotone` to hold the style
-   contract.
-3. **Marker label shrunk.** `9px` → `6px` (viewBox units) + letter-spacing, so
-   "60%" reads as a quiet micro-label. `line-chart.module.scss`.
-4. **60% chart reshaped (the big iteration).** Now `curve="linear"`,
-   `strokeWidth={1.5}`, `regions`, and **3 points**: `(0,.93) (0.6,.82) (1,.2)`
-   — a gentle slope into the marker, one clean bend ON the marker x, then a
-   sharp drop. KEY LEARNING: with linear curve, jaggedness comes from *too many
-   points* (every point is a kink), NOT from the curve type. Few points = clean.
-5. **Caption rewritten to stand alone.** Final:
-   _"Context rot: as an agent's context window fills, its reliability decays —
-   slipping from the first tokens, then accelerating past the 60% line."_ Names
-   the phenomenon (context rot), mechanism (context window filling), and shape —
-   readable without the article. aria-label describes the shape literally for
-   screen readers. `app/notes/posts/building-conan.mdx`.
-6. **`chart-craft` skill updated to match (code is canonical, docs downstream).**
-   `references/catalog.md` line entry: new `curve`/`regions`/`strokeWidth` API,
-   the region treatment, and a "few points, not many" shape-discipline note.
-   `references/style.md`: clarified the "no gradients" rule as
-   *gradients-as-decoration*, with the semantic-fill exception + a "remove it —
-   does the chart say less?" test.
-
-Verified: `pnpm build` passes (compiles, note prerenders static) after each
-change; chart confirmed visually in BOTH light and dark via headless
-screenshots (`automate-browser`). Dark is token-driven via
-`[data-theme='dark']` (next-themes) — toggled in the screenshot script, renders
-correctly.
+Verified each step: `pnpm build` passes, `/` + `/notes` prerender static
+(client islands hydrate), light/dark + reduced-motion checked via headless
+screenshots (`automate-browser`).
 
 ## Next steps
 
-1. Build the other catalog chart types on demand (flow/rings/pyramid/
-   proportional-circles) per `/chart-craft` when a note needs them.
-2. Refresh the Paper canvas — it now LAGS the code (no regions/linear line,
-   newer caption). Run `/design-token-drift` first; code is canonical.
-3. Voice pass on notes; portfolio/projects index; remaining lab islands.
+1. **Swap footer logo placeholders** for real randy.digital + whatmatters art
+   (replace the two `.logo` divs in `footer.tsx` with `<img>`/SVG; drop the
+   dashed placeholder styling).
+2. Voice/polish pass; build the `/lab` experiments; portfolio/projects index.
+3. Optional: bring StackMatrix back somewhere, or other catalog charts.
 
 ## Key decisions (and why)
 
-- **Region fills are semantic, so allowed** — the gradient/hatch encode the two
-  sides of the 60% threshold; that's data-ink, not chrome. This is the one
-  sanctioned exception to chart-craft's "no gradients" rule, now documented.
-- **Few points over many for linear charts** — a dense `points` array reads as
-  jagged because every point is a kink. Minimum points that tell the story; put
-  the single bend on the marker x so it reads intentional.
-- **Caption must stand alone** — Randy's bar: a caption carries the whole idea
-  without the surrounding prose. Name the subject and the phenomenon, no bare
-  "It".
-- **Default curve stays monotone** — `linear` is opt-in so the smooth house
-  style remains the default for other charts.
+- **Heavy motion is intentional** — Randy explicitly opted into the rich,
+  client-heavy direction over the original restraint. Reduced-motion always has
+  a real path; CWV watched via Speed Insights.
+- **next-view-transitions over Barba** — Barba hijacks routing, incompatible
+  with Next App Router/RSC. Use its `Link` for internal nav.
+- **Footer = studio invite, not billboard** — landed on the pengon.dev
+  world-clock layout after rejecting (in order) a giant wordmark, a "corporate"
+  CTA, and a Matter.js draggable-photo guestbook.
 
 ## Open questions / risks
 
-- A straight (2-point) line would read as a *steady* decline, not accelerating —
-  the 3-point bend is what earns "accelerating past 60%". Keep caption + shape
-  in agreement if the points change.
-- Charts still depend on `blockJS: false` in `mdx.tsx` (next-mdx-remote strips
-  expression props otherwise) — a major bump could regress this silently.
+- Footer logos are **placeholders**; world-clock + nav alignment relies on
+  subgrid + `column-gap: normal` (a 0 gap silently breaks line alignment).
+- Motion stack depends on `blockJS:false` (charts) staying set, and on the
+  client islands not regressing the static prerender.
 
 ## Files & commands in play
 
-- Chart: `app/components/charts/line-chart.tsx` + `.module.scss`.
-- Note: `app/notes/posts/building-conan.mdx` (the `<LineChart>` + `<Caption>`).
-- Skill docs: `.claude/skills/chart-craft/references/{catalog,style}.md`.
-- MDX map: `app/components/mdx.tsx` (note `blockJS: false`).
-- `pnpm dev` / `pnpm build`. Screenshots via `automate-browser` skill
-  (set `data-theme='dark'` on `<html>` for dark; dev may run on :3000/:3001).
+- Hero/intro: `app/components/{hero,preloader,smooth-scroll}.tsx` + scss;
+  `app/layout.tsx`; `app/global.css` (Lenis §11, View-Transitions §12).
+- Footer: `app/components/{footer,world-clock,footer-reveal}.tsx` + scss.
+- Index: `app/components/{experience,posts,section-label}.tsx` + scss;
+  `app/components/margin.module.scss`; `app/notes/page.tsx`; `app/page.tsx`.
+- Nav: `app/components/nav.tsx`. Charts: `app/components/charts/stack-matrix.*`.
+- `pnpm dev` / `pnpm build`. Headless verify via `automate-browser`
+  (Lenis intercepts `window.scrollTo` in normal mode → use element.screenshot /
+  scroll_into_view; reduced-motion disables Lenis).
 
-## Don't redo
+## Don't redo (rejected this session)
 
-- **Many-point linear line** — looks jagged/rough; reverted to 3 points. Don't
-  re-densify.
-- **Bare-pronoun caption** ("It slips…") — no antecedent, fails the
-  stands-alone bar. Name the subject.
-- **"falls off fast / steady slide" caption phrasings** — weaker than naming
-  context rot directly.
-- Earlier rejects still standing: flat-then-cliff 60% curve, implicit
-  margin-prose muting, sticky margins, serif body / drop cap / byline on notes.
+- **Matter.js guestbook cards** in the footer — built then removed (dep gone).
+- **Giant-wordmark footer** and **"corporate" CTA footer** — both rejected.
+- **Bundled-edge flow chart** for the stack — rejected for the dot matrix.
+- **Centered footer status bar** — removed; footer is flush-left on the grid.
+- Hero **sticky video** — removed. Hero **bottom-anchored** layout — moved to
+  top-loaded. Headline scroll-out fade — removed (felt inconsistent).
 
 ## Git state
 
 Branch `main` (tracks `origin/main`), in sync after this session's push. Tree
-clean. Commit: chart regions + linear curve + standalone caption + chart-craft
-docs.
+clean. New deps: `gsap`, `lenis`, `next-view-transitions` (matter-js was added
+then removed). Committed in focused commits + pushed.
