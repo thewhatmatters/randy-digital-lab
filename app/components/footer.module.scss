@@ -6,7 +6,7 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
 
 .footer {
   padding-top: clamp(3rem, 8vh, 6rem);
-  margin-bottom: 1.5rem;
+  margin-bottom: clamp(2.5rem, 7vh, 5rem);
   row-gap: clamp(1.25rem, 3vh, 2rem);
   align-items: start;
   // reveal-bloom coupling: drift up faintly as the overscroll aurora rises

@@ -2,18 +2,20 @@ import { Link } from 'next-view-transitions'
 
 const navItems = [
   { path: '/', name: 'base' },
-  { path: '/notes', name: 'notes' },
+  { path: '/work', name: 'work' },
   { path: '/lab', name: 'lab' },
+  { path: '/notes', name: 'notes' },
 ]
 
 // Numbered, grid-aligned primary nav. Mobile: a simple numbered row. md+: each
 // item snaps to the page's column lines (subgrid) — 01 at col 1, 02 at col 3,
-// 03 at col 5 — matching the editorial 01/02/03 index rhythm used across the
-// site (Experience, Notes).
+// 03 at col 5, 04 at col 7 — matching the editorial 01/02/03 index rhythm used
+// across the site (Experience, Notes).
 const placement = [
   'md:col-start-1 md:col-end-3',
   'md:col-start-3 md:col-end-5',
   'md:col-start-5 md:col-end-7',
+  'md:col-start-7 md:col-end-9',
 ]
 
 export function Navbar() {
