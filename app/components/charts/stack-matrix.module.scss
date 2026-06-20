@@ -1,0 +1,151 @@
+// Presence matrix. Mobile-first: each tool is a row of caps-mono stage tags
+// (the dot grid can't breathe at phone widths). Desktop (≥48rem): the real
+// tools × stages dot grid, columns placed on the page's 12-column grid
+// (repeat(var(--grid-cols)) + --grid-gutter) so it aligns with everything else.
+//
+// Motion mirrors Experience/Notes (same ease + rise-in stagger + reduced-motion
+// path) so it joins the same family. See /add-motion.
+$ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.matrix {
+  // local override so a dropped-in matrix can theme its dots if ever needed
+}
+
+.rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+// ── Mobile: tool name + its stage tags, inline ──────────────────────────────
+.head {
+  display: none; // column headers only make sense once the grid is on
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.625rem;
+  padding-block: 0.625rem;
+  border-top: 1px solid var(--border);
+
+  // staggered entrance — capped so long lists never crawl
+  animation: rise-in 0.45s $ease both;
+  animation-delay: min(calc(var(--i, 0) * 45ms), 400ms);
+}
+
+.rows .row:last-child {
+  border-bottom: 1px solid var(--border);
+}
+
+.tool {
+  color: var(--fg);
+  letter-spacing: -0.01em;
+  transition: transform 0.18s $ease;
+}
+
+// On mobile the cell wrapper dissolves so its tag flows inline in the row.
+.cell {
+  display: contents;
+}
+
+.dot {
+  display: none; // mobile shows tags, not dots
+}
+
+.cellTag {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+// The accent tool — the single highlight.
+.accent {
+  .tool {
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .cellTag {
+    color: var(--accent);
+  }
+}
+
+// Hover — the row "wakes": name nudges right (matches Experience/Notes).
+.row:hover .tool {
+  transform: translateX(3px);
+}
+
+// ── Desktop: the dot grid on the page's 12 columns ──────────────────────────
+@media (min-width: 48rem) {
+  .head,
+  .row {
+    display: grid;
+    grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
+    column-gap: var(--grid-gutter);
+    align-items: center;
+    gap: 0;
+  }
+
+  .head {
+    padding-bottom: 0.75rem;
+  }
+
+  .stage {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  .tool {
+    grid-column: 1 / 4; // mirrors NAME_END in stack-matrix.tsx
+  }
+
+  .cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .dot {
+    display: block;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--fg);
+  }
+
+  .cellTag {
+    display: none; // desktop uses the dots
+  }
+
+  .accent .dot {
+    background: var(--accent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row {
+    animation: none;
+  }
+  .row:hover .tool {
+    transform: none;
+  }
+}

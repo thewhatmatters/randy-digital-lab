@@ -6,6 +6,7 @@ import smartypants from 'remark-smartypants'
 import React from 'react'
 import { Margin, PullQuote, Figure, Caption } from 'app/components/margin'
 import { LineChart } from 'app/components/charts/line-chart'
+import { StackMatrix } from 'app/components/charts/stack-matrix'
 
 function Table({ data }) {
   let headers = data.headers.map((header, index) => (
@@ -105,6 +106,7 @@ let components = {
   Figure,
   Caption,
   LineChart,
+  StackMatrix,
 }
 
 export function CustomMDX(props) {
