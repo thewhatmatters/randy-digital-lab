@@ -366,3 +366,48 @@ table {
 .title {
   text-wrap: pretty;
 }
+
+/* ── 11 · Lenis smooth scroll (see components/smooth-scroll.tsx) ──────────────
+   Base rules Lenis needs to drive the window scroll. Only active once the JS
+   adds the `lenis` classes to <html>; native scroll is untouched otherwise
+   (and under prefers-reduced-motion, where the provider never initializes). */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: clip;
+}
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+/* ── 12 · View Transitions (route crossfade — see next.config.ts + layout) ────
+   A subtle fade + rise between routes, replacing a JS page-transition library.
+   Only runs when motion is welcome; reduced-motion gets an instant cut. */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root) {
+    animation: vt-fade-out 0.28s ease both;
+  }
+  ::view-transition-new(root) {
+    animation: vt-rise-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
+
+@keyframes vt-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes vt-rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}

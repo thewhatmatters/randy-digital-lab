@@ -64,6 +64,8 @@ export function FooterReveal() {
       main.style.transform = lift > 0.1 ? `translate3d(0, ${-lift}px, 0)` : ''
       panel.style.setProperty('--p', String(p))
       panel.style.opacity = lift > 0.1 ? String(Math.min(1, p * 1.3)) : ''
+      // expose bloom progress so the footer can react (parallax). See footer.module.scss.
+      document.documentElement.style.setProperty('--bloom', String(p))
     }
 
     const reset = () => {
@@ -74,6 +76,7 @@ export function FooterReveal() {
       main.style.transform = ''
       panel.style.opacity = ''
       panel.style.setProperty('--p', '0')
+      document.documentElement.style.setProperty('--bloom', '0')
     }
 
     const frame = (ts: number) => {

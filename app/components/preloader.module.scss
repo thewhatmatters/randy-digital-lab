@@ -1,0 +1,26 @@
+// First-load veil. Covers everything, wipes up to reveal. The safety keyframe
+// guarantees it clears even if the JS never runs (no-JS / failure) so content is
+// never permanently blocked; GSAP wipes it well before the safety fires.
+.preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background: var(--bg);
+  animation: pl-safety 0.1s 3s forwards;
+}
+
+@keyframes pl-safety {
+  to {
+    transform: translateY(-100%);
+  }
+}
+
+.word {
+  font-family: var(--font-mono);
+  font-size: 0.9375rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg);
+}

@@ -1,4 +1,5 @@
 import './global.css'
+import { ViewTransitions } from 'next-view-transitions'
 import type { Metadata, Viewport } from 'next'
 import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
@@ -8,6 +9,8 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import Footer from './components/footer'
 import { FooterReveal } from './components/footer-reveal'
 import { UIChrome } from './components/command-bar'
+import { SmoothScroll } from './components/smooth-scroll'
+import { Preloader } from './components/preloader'
 import { ThemeProvider } from 'next-themes'
 import { baseUrl } from './sitemap'
 
@@ -71,7 +74,10 @@ export default function RootLayout({
             its own 72rem content box. The old global max-w-xl lived here.
             ThemeProvider drives light/dark/auto via the [data-theme] attribute
             (no-flash inline script); UIChrome adds the fixed command bar + grid
-            overlay and owns their shared toggle state. */}
+            overlay and owns their shared toggle state. ViewTransitions wraps
+            navigations in document.startViewTransition (crossfade in global.css
+            §12). */}
+        <ViewTransitions>
         <ThemeProvider
           attribute="data-theme"
           defaultTheme="system"
@@ -79,6 +85,8 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <UIChrome>
+           <Preloader />
+           <SmoothScroll>
             {/* Aurora bloom pinned behind the page (z-0). Hidden until you push
                 past the footer, when <main> lifts to uncover it. See
                 footer-reveal.tsx. */}
@@ -95,8 +103,10 @@ export default function RootLayout({
               <Analytics />
               <SpeedInsights />
             </main>
+           </SmoothScroll>
           </UIChrome>
         </ThemeProvider>
+        </ViewTransitions>
       </body>
     </html>
   )
