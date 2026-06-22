@@ -14,7 +14,7 @@ export default function Page() {
         <div className="col-start-1 col-end-13 mt-8">
           <Experience />
         </div>
-        {/* services — bento on the 12-column grid */}
+        {/* services — editorial 3-column row list */}
         <div className="col-start-1 col-end-13 mt-16">
           <Services />
         </div>

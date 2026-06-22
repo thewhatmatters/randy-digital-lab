@@ -1,13 +1,11 @@
 // Services bento. Mobile: a single stacked column. Desktop (≥48rem): tiles land
-// on the page's 12-column grid (repeat(12) on the shared --grid-gutter, same
-// geometry as the .grid-page utility and Experience), each placed by line via
-// the per-tile --col / --row custom props. Tiles are hairline-bordered (light,
-// no heavy fill) with a small 100×100 placeholder so they never read as empty
-// boxes.
+// on the page's 12-column grid, each placed by line via the per-tile --col /
+// --row custom props. Hairline-bordered tiles; each holds a line pictogram, a
+// label, and a first-person blurb.
 //
 // Motion (CSS tier — no library, stays a Server Component): tiles rise+fade in
-// on load, staggered by --i; hovering a tile "wakes" it (index → accent, title
-// nudges right, edges brighten). Compositor-only, one shared ease, disabled
+// on load, staggered by --i; hovering a tile "wakes" it (border + icon → fg,
+// label → accent, blurb brightens). Compositor-only, one shared ease, disabled
 // under prefers-reduced-motion. See /add-motion.
 
 $ease: cubic-bezier(0.22, 1, 0.36, 1);
@@ -36,68 +34,57 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: clamp(1.25rem, 2.5vw, 1.75rem);
+  padding: 1rem;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   transition: border-color 0.18s $ease;
 
-  // staggered entrance
   animation: rise-in 0.5s $ease both;
   animation-delay: min(calc(var(--i, 0) * 70ms), 400ms);
 }
 
-// 100×100 image placeholder — token-only surface square. Swap for a real
-// <img>/figure when the art exists.
-.media {
-  width: 100px;
-  height: 100px;
-  margin-bottom: clamp(1rem, 2vw, 1.5rem);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  display: grid;
-  place-items: center;
-  transition: border-color 0.18s $ease;
+.icon {
+  display: block;
+  width: clamp(2rem, 2.6vw, 2.5rem);
+  margin-bottom: clamp(1.5rem, 4vw, 2.5rem); // space down to the label
+  color: var(--fg);
+  transition: transform 0.18s $ease;
+
+  svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
 }
 
-.mediaLabel {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.06em;
-  color: var(--muted);
-}
-
-.title {
+.label {
   margin: 0;
-  font-size: clamp(1.375rem, 2.2vw, 1.75rem);
+  font-size: clamp(1.25rem, 2vw, 1.625rem);
   font-weight: 600;
-  line-height: 1.05;
-  letter-spacing: -0.02em;
+  line-height: 1.1;
+  letter-spacing: -0.015em;
   color: var(--fg);
   transition: transform 0.18s $ease;
 }
 
 .blurb {
   margin: 0.5rem 0 0;
-  max-width: 32ch;
+  max-width: 40ch;
+  font-size: 0.875rem;
+  line-height: 1.5;
   color: var(--muted);
   text-wrap: pretty;
   transition: color 0.18s $ease;
 }
 
-// Hover — the tile wakes: index square + tile edge brighten toward fg, title
-// nudges right, blurb brightens.
+// Hover — the tile wakes: edge + icon brighten, label nudges, blurb brightens.
 .tile:hover {
   border-color: var(--fg);
 
-  .media {
-    border-color: var(--fg);
+  .icon {
+    transform: translateY(-3px);
   }
-  .mediaLabel {
-    color: var(--accent);
-  }
-  .title {
+  .label {
     transform: translateX(3px);
   }
   .blurb {
@@ -105,7 +92,7 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
   }
 }
 
-// Desktop: snap onto the page's 12-column grid; place each tile by line.
+// Desktop: place each tile by line on the page's 12-column grid.
 @media (min-width: 48rem) {
   .bento {
     grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
@@ -120,12 +107,12 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
   }
 }
 
-// Reduced-motion: drop spatial movement; colour cues stay (vestibular-safe).
 @media (prefers-reduced-motion: reduce) {
   .tile {
     animation: none;
   }
-  .tile:hover .title {
+  .tile:hover .icon,
+  .tile:hover .label {
     transform: none;
   }
 }

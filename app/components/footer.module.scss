@@ -47,6 +47,8 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
 .desc {
   max-width: 34rem;
   margin: 0 0 1.5rem; // gap down to the clocks
+  font-size: 0.875rem;
+  line-height: 1.5;
   color: var(--muted);
   text-wrap: pretty;
 }
