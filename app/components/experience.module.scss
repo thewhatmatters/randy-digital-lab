@@ -23,10 +23,35 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
   }
 }
 
+// While the intro is armed the whole section (label + table) collapses to 0 height —
+// nothing shows below the hero, no reserved whitespace. On `intro-revealed` (after the
+// hero) it expands to its real height, cascaded by --section-order, pushing the page
+// into place. The .inner wrapper is the clipped track so the content keeps its layout.
+.experience {
+  display: grid;
+  grid-template-rows: 1fr;
+}
+
+.inner {
+  min-height: 0; // let the grid row collapse below the content height
+  overflow: hidden; // clip label + rows while the section collapses / expands
+}
+
 .table {
   list-style: none;
   margin: 0;
   padding: 0;
+}
+
+:global(html.intro-armed) .experience {
+  grid-template-rows: 0fr;
+  // --section-order cascades the expand down the page (set per section in page.tsx).
+  transition: grid-template-rows 0.6s cubic-bezier(0.22, 1, 0.36, 1)
+    calc(var(--section-order, 0) * 0.55s);
+}
+
+:global(html.intro-armed.intro-revealed) .experience {
+  grid-template-rows: 1fr;
 }
 
 // Shared row geometry — mobile-first stacked layout (3 columns).
@@ -39,10 +64,29 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
   align-items: baseline;
   padding: 0.875rem 0;
   border-top: 1px solid var(--border);
+}
 
-  // staggered entrance — capped so long lists never crawl
-  animation: rise-in 0.45s $ease both;
-  animation-delay: min(calc(var(--i, 0) * 45ms), 400ms);
+// Entrance is gated on the intro veil. `intro-armed` is set before paint when JS is
+// on and motion is allowed, so the rows stay hidden behind the preloader; once the
+// veil clears the preloader adds `intro-done` and they rise in, staggered by --i.
+// No-JS / reduced-motion never arm, so the rows simply render in place (below).
+:global(html.intro-armed) {
+  .row,
+  .head {
+    opacity: 0;
+  }
+}
+
+:global(html.intro-armed.intro-revealed) {
+  .row,
+  .head {
+    // staggered entrance — capped so long lists never crawl, offset by the section's
+    // position so each section's rows come in after the one above.
+    animation: rise-in 0.45s $ease both;
+    animation-delay: calc(
+      var(--section-order, 0) * 550ms + min(calc(var(--i, 0) * 45ms), 400ms)
+    );
+  }
 }
 
 // The header row only makes sense once columns align — hide it on mobile.
@@ -196,11 +240,13 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
   }
 }
 
-// Reduced-motion: drop all spatial movement — no entrance, no hover shift.
-// Colour cues (number/metadata brightening) are vestibular-safe, so they stay.
+// Reduced-motion: drop all spatial movement — no entrance, no hover shift. Force the
+// rows visible in case the page was somehow armed (motion toggled after load), so the
+// gated entrance can never leave them stuck hidden. Colour cues stay (vestibular-safe).
 @media (prefers-reduced-motion: reduce) {
   .row,
   .head {
+    opacity: 1;
     animation: none;
   }
 

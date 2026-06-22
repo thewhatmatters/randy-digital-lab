@@ -70,6 +70,15 @@ export default function RootLayout({
       )}
     >
       <body className="antialiased">
+        {/* Arm the intro before paint: components whose entrance should wait for the
+            preloader (e.g. Experience) hide themselves while `intro-armed` is set and
+            play once the preloader adds `intro-done`. Only arms when JS is on AND
+            motion is allowed, so no-JS / reduced-motion render in place. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('intro-armed')}}catch(e){}`,
+          }}
+        />
         {/* Full-width shell: each section composes `grid-page`, which centers
             its own 72rem content box. The old global max-w-xl lived here.
             ThemeProvider drives light/dark/auto via the [data-theme] attribute

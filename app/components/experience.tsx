@@ -93,9 +93,10 @@ const ROLES: Role[] = [
 export function Experience() {
   return (
     <section aria-labelledby="experience-label" className={styles.experience}>
-      <SectionLabel id="experience-label">Experience</SectionLabel>
+      <div className={styles.inner}>
+        <SectionLabel id="experience-label">Experience</SectionLabel>
 
-      <ol className={styles.table}>
+        <ol className={styles.table}>
         {/* column headers — desktop only; decorative for AT (data is labelled
             per-cell below via the visible text) */}
         <li
@@ -125,7 +126,8 @@ export function Experience() {
             </span>
           </li>
         ))}
-      </ol>
+        </ol>
+      </div>
     </section>
   )
 }

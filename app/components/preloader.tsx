@@ -33,7 +33,14 @@ const BLUR = 20 // px the page is blurred by before snapping into focus
 
 function signalDone() {
   ;(window as typeof window & { __introDone?: boolean }).__introDone = true
+  document.documentElement.classList.add('intro-done')
   window.dispatchEvent(new Event('preloader:done'))
+  // The gated sections (Experience, Services, …) reveal on `intro-revealed`, which
+  // the Hero adds when it finishes — so the hero plays first. On pages with no Hero,
+  // nothing would fire it, so reveal immediately here as the fallback.
+  if (!document.querySelector('[data-hero]')) {
+    document.documentElement.classList.add('intro-revealed')
+  }
 }
 
 export function Preloader() {

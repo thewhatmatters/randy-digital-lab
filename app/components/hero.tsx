@@ -2,6 +2,7 @@
 
 import { useLayoutEffect, useRef } from 'react'
 import { gsap } from 'gsap'
+import { Button } from './button'
 import styles from './hero.module.scss'
 
 // Kinetic intro. The signature move is a masked, staggered line-reveal of the
@@ -9,7 +10,7 @@ import styles from './hero.module.scss'
 // stagger in after, once the preloader has wiped away. Client island (GSAP);
 // the rest of the page stays Server Components. Fully reduced-motion aware —
 // everything just renders in place, no transforms.
-const HEADLINE = ['Pixels to', 'production.']
+const HEADLINE = ['Pixels to', 'Production.']
 
 export function Hero() {
   const root = useRef<HTMLElement>(null)
@@ -29,7 +30,13 @@ export function Hero() {
       gsap.set(fades, { y: 18, opacity: 0 })
 
       const play = () => {
-        const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
+        const tl = gsap.timeline({
+          defaults: { ease: 'power3.out' },
+          // The hero goes first; when it lands, signal the gated sections
+          // (Experience, Services, …) to expand + rise in after it.
+          onComplete: () =>
+            document.documentElement.classList.add('intro-revealed'),
+        })
         tl.to(lines, { yPercent: 0, duration: 0.95, stagger: 0.12 })
           .to(fades, { y: 0, opacity: 1, duration: 0.7, stagger: 0.12 }, '-=0.45')
       }
@@ -43,7 +50,7 @@ export function Hero() {
   }, [])
 
   return (
-    <section ref={root} className={styles.hero} aria-label="Intro">
+    <section ref={root} data-hero className={styles.hero} aria-label="Intro">
       <div className={`grid-page ${styles.inner}`}>
         <h1 className={`${styles.headline} col-start-1 col-end-13`}>
           {HEADLINE.map((l) => (
@@ -60,6 +67,19 @@ export function Hero() {
           A portfolio of work, notes on what I&rsquo;m thinking about, and a lab
           of small interactive experiments. Still taking shape.
         </p>
+
+        <div
+          data-fade
+          className={`${styles.cta} col-start-1 col-end-13 md:col-end-7`}
+        >
+          <Button
+            variant="accent"
+            href="mailto:hey@randy.digital"
+            trailingIcon="↗"
+          >
+            Let&rsquo;s work together
+          </Button>
+        </div>
 
         <p
           data-fade

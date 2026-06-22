@@ -89,9 +89,10 @@ const SERVICES: Service[] = [
 export function Services() {
   return (
     <section aria-labelledby="services-label" className={styles.services}>
-      <SectionLabel id="services-label">Services</SectionLabel>
+      <div className={styles.inner}>
+        <SectionLabel id="services-label">Services</SectionLabel>
 
-      <ul className={styles.bento}>
+        <ul className={styles.bento}>
         {SERVICES.map((s, i) => (
           <li
             key={s.label}
@@ -115,7 +116,8 @@ export function Services() {
             </div>
           </li>
         ))}
-      </ul>
+        </ul>
+      </div>
     </section>
   )
 }

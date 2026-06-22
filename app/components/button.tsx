@@ -7,6 +7,9 @@ type BaseProps = {
   variant?: Variant
   /** Leading icon — always rendered on the left, before the label. */
   icon?: ReactNode
+  /** Trailing icon — rendered on the right, after the label (e.g. the ↗ on
+   *  external links). Slides out diagonally on hover. */
+  trailingIcon?: ReactNode
   children: ReactNode
   className?: string
   'aria-label'?: string
@@ -29,7 +32,7 @@ type ButtonProps = BaseProps & {
  * always leading (left) so every button reads consistently.
  */
 export function Button(props: LinkProps | ButtonProps) {
-  const { variant = 'default', icon, children, className } = props
+  const { variant = 'default', icon, trailingIcon, children, className } = props
   const classes = [styles.btn, styles[variant], className].filter(Boolean).join(' ')
 
   const inner = (
@@ -40,6 +43,11 @@ export function Button(props: LinkProps | ButtonProps) {
         </span>
       )}
       <span>{children}</span>
+      {trailingIcon && (
+        <span className={styles.trailing} aria-hidden="true">
+          {trailingIcon}
+        </span>
+      )}
     </>
   )
 

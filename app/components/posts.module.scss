@@ -34,10 +34,22 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
   row-gap: 0.125rem;
   padding-block: 0.5rem;
   align-items: baseline;
+}
 
-  // staggered entrance — capped so long lists never crawl
-  animation: rise-in 0.45s $ease both;
-  animation-delay: min(calc(var(--i, 0) * 45ms), 400ms);
+// Entrance gated on the intro veil (see experience.module.scss). Rows stay hidden
+// behind the preloader, then rise in (staggered by --i) once it signals `intro-done`.
+// No-JS / reduced-motion never arm `<html>`, so the rows just render in place.
+:global(html.intro-armed) {
+  .row {
+    opacity: 0;
+  }
+}
+
+:global(html.intro-armed.intro-revealed) {
+  .row {
+    animation: rise-in 0.45s $ease both;
+    animation-delay: min(calc(var(--i, 0) * 45ms), 400ms);
+  }
 }
 
 .date {
@@ -87,6 +99,7 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
 // Reduced-motion: drop spatial movement; the accent colour cue stays.
 @media (prefers-reduced-motion: reduce) {
   .row {
+    opacity: 1;
     animation: none;
   }
 

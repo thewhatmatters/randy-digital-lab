@@ -22,6 +22,20 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
   }
 }
 
+// While the intro is armed the whole section (label + bento) collapses to 0 height —
+// nothing shows below the hero, no reserved whitespace. On `intro-revealed` (after the
+// hero) it expands to its real height, cascaded by --section-order, pushing the page
+// into place. The .inner wrapper is the clipped track so the content keeps its layout.
+.services {
+  display: grid;
+  grid-template-rows: 1fr;
+}
+
+.inner {
+  min-height: 0; // let the grid row collapse below the content height
+  overflow: hidden; // clip label + tiles while the section collapses / expands
+}
+
 .bento {
   list-style: none;
   margin: 0;
@@ -29,6 +43,17 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
   display: grid;
   grid-template-columns: 1fr;
   gap: 1rem;
+}
+
+:global(html.intro-armed) .services {
+  grid-template-rows: 0fr;
+  // --section-order cascades the expand down the page (set per section in page.tsx).
+  transition: grid-template-rows 0.6s cubic-bezier(0.22, 1, 0.36, 1)
+    calc(var(--section-order, 0) * 0.55s);
+}
+
+:global(html.intro-armed.intro-revealed) .services {
+  grid-template-rows: 1fr;
 }
 
 // A tool card: filled surface, soft radius, holding [panel][body].
@@ -40,9 +65,24 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
   border: 1px solid var(--border);
   border-bottom-width: 2px; // keycap-style grounded edge (matches command bar)
   border-radius: 0.75rem; // softer, keycap-like rounding (var(--radius) reads sharp at tile scale)
+}
 
-  animation: rise-in 0.5s $ease both;
-  animation-delay: min(calc(var(--i, 0) * 70ms), 400ms);
+// Entrance gated on the intro veil (see experience.module.scss). Tiles stay hidden
+// behind the preloader, then rise in once it signals `intro-done`. No-JS / reduced-
+// motion never arm `<html>`, so the tiles just render in place.
+:global(html.intro-armed) {
+  .tile {
+    opacity: 0;
+  }
+}
+
+:global(html.intro-armed.intro-revealed) {
+  .tile {
+    animation: rise-in 0.5s $ease both;
+    animation-delay: calc(
+      var(--section-order, 0) * 550ms + min(calc(var(--i, 0) * 70ms), 400ms)
+    );
+  }
 }
 
 // The framed visual panel — an inset "screen" (page bg) set into the tile. Grows
@@ -145,6 +185,7 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
 
 @media (prefers-reduced-motion: reduce) {
   .tile {
+    opacity: 1;
     animation: none;
   }
   .tile:hover .icon,
