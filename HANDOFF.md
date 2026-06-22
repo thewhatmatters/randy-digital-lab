@@ -58,13 +58,25 @@ This is the **original order** (we did a long back-and-forth reordering, then
 Randy said "go back to the original order"). DOM order: Design, Development,
 Strategy, Motion. Widths: Design/Motion = span 7; Development/Strategy = span 5.
 
-## Tile anatomy (services.{tsx,scss}) — unchanged this session
+## Tile anatomy (services.{tsx,scss})
 
 Tile = `var(--bg)` + `1px var(--border)` + `border-bottom-width:2px` (keycap
-edge) + `border-radius:0.75rem` (soft). Panel = inset `var(--surface)` screen,
-`border-radius:0.5rem`. Hover border → `color-mix(in srgb, var(--fg) 24%,
-var(--border))` (shared with button/command-bar). Label `clamp(1.125rem,1.5vw,
-1.25rem)` = 20px desktop.
+edge) + `border-radius:0.75rem` (soft). Hover border → `color-mix(in srgb,
+var(--fg) 24%, var(--border))` (shared with button/command-bar). Label
+`clamp(1.125rem,1.5vw,1.25rem)` = 20px desktop. Blurb `max-width: 52ch` (reading
+measure, widened from 40ch so span-7 tiles fill). `.body` padding
+`0.875rem 0.625rem 1.375rem` (the +1rem bottom is deliberate breathing room).
+
+- **Tile bg is `--bg`, NOT `--surface`** — Randy asked; we A/B'd `--surface` and
+  reverted (flat gray slab, the thing we'd moved away from).
+- **Dead code:** `.panel { background: var(--surface); border … }` + its "inset
+  screen" comment are stale — every tile now uses the full-bleed `panelMedia`
+  visual which paints over the panel. Harmless; safe to strip whenever.
+
+**Copy (this session):** all four blurbs rewritten — **no first person ("I")**,
+each names how **AI is leveraged** in that step (research, exploration,
+boilerplate, motion timing), **no em dashes** (colons/commas instead), trimmed
+short. Voice is pronoun-less declarative (could switch to "we" if wanted).
 
 ## Deep-research artifact
 
@@ -93,7 +105,8 @@ source — leave it standalone unless Randy wants it indexed).
 
 ## Git state
 
-Branch `main` (tracks `origin/main`). **Committing + pushing now.** Modified:
-`design-canvas.{tsx,scss}`, `services.tsx`. New: `motion-timeline.{tsx,scss}`,
-`strategy-sankey.{tsx,scss}`, `docs/research-strategy-sankey-flow.md`. After
-push: tree clean, in sync. (Prior pushes this arc: `8adff0f`, `51ab91f`.)
+Branch `main` (tracks `origin/main`). The four-visuals build shipped in
+`983f27d` (pushed). **Committing + pushing now:** a Services copy + spacing pass
+— only `services.tsx` (blurb rewrites) + `services.module.scss` (52ch measure,
++1rem `.body` bottom padding, `--surface` experiment reverted). After push: tree
+clean, in sync. (Prior pushes this arc: `8adff0f`, `51ab91f`, `983f27d`.)

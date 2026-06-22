@@ -51,7 +51,7 @@ const SERVICES: Service[] = [
   {
     label: 'Strategy',
     blurb:
-      'Product thinking and positioning before pixels. I figure out what to build and why before deciding how it looks.',
+      'Product thinking before pixels: what to build, and why. AI speeds the research and surfaces the signal early.',
     icon: MARKS[2],
     visual: <StrategySankey />,
     col: '1 / 6', // span 5
@@ -60,7 +60,7 @@ const SERVICES: Service[] = [
   {
     label: 'Design',
     blurb:
-      'Interfaces and identities with a point of view. I root the work in real stories so it reads as intentional, not decorative.',
+      'Interfaces and identities with a point of view, rooted in real stories, never decorative. AI widens the exploration; taste narrows it down.',
     icon: MARKS[0],
     visual: <DesignCanvas />,
     col: '6 / 13', // span 7
@@ -69,7 +69,7 @@ const SERVICES: Service[] = [
   {
     label: 'Motion',
     blurb:
-      'Considered animation that earns its place. I use motion to guide attention and add life, never just for flourish.',
+      'Considered animation that earns its place, guiding attention and adding life. AI prototypes the timing, so motion gets found, not guessed.',
     icon: MARKS[3],
     visual: <MotionTimeline />,
     col: '1 / 8', // span 7
@@ -78,7 +78,7 @@ const SERVICES: Service[] = [
   {
     label: 'Development',
     blurb:
-      'Production-grade builds — fast, accessible, maintainable. I translate design systems into interfaces that hold up in the real world.',
+      'Production-grade builds: fast, accessible, maintainable. AI clears the boilerplate so craft lands where it counts.',
     icon: MARKS[1],
     visual: <CodeWindow />,
     col: '8 / 13', // span 5
