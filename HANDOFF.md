@@ -14,11 +14,16 @@ placeholders (Strategy, Motion, Systems). Next obvious task: **Motion**'s visual
 ## Tile anatomy (current, all five tiles)
 
 `app/components/services.{tsx,module.scss}` — each tile is a **tool card**:
-- **Tile** = filled `var(--surface)`, `var(--radius)`, `padding: 0.25rem` (a 4px
-  frame around the panel — Randy's spec, was 8px). No hairline border anymore.
-- **Panel** = an inset framed "screen" on `var(--bg)` + hairline border. Two
-  variants: default centres a pictogram (the 3 placeholders); `panelMedia`
-  (`padding:0`, `flex:0 0 auto`) full-bleeds a visual that **overflows + clips**.
+- **Tile** = `var(--bg)` + `1px solid var(--border)` with `border-bottom-width:
+  2px` (keycap-style grounded edge, matches the command-bar key), `border-radius:
+  0.75rem` (softer/rounder — `var(--radius)`≈6px reads sharp at tile scale),
+  `padding: 0.25rem` (4px frame). _Was a flat `--surface` fill with no border;
+  Randy found that too flat — moved the gray inward (see Panel) for depth + air._
+- **Panel** = an inset "screen" on `var(--surface)` + hairline border,
+  `border-radius: 0.5rem` (nests in the tile frame). Two variants: default
+  centres a pictogram (the 3 placeholders, which read as little artboards on the
+  gray screen); `panelMedia` (`padding:0`, `flex:0 0 auto`) full-bleeds a visual
+  that **overflows + clips** (the gray is hidden behind the window).
 - **Body** = label + blurb on the tile surface, below the panel. Label is
   `clamp(1.125rem, 1.5vw, 1.25rem)` → **20px desktop** (shrunk from 26px at
   Randy's request; the `clamp` MAX is the lever, the `vw` was pinned).
@@ -88,8 +93,7 @@ transitions, `cursor:pointer`, reduced-motion drops the movement).
 
 ## Git state
 
-Branch `main` (tracks `origin/main`, was in sync). This session being **committed
-+ pushed now**: modified `services.{tsx,module.scss}`; new
-`code-window.{tsx,module.scss}`, `design-canvas.{tsx,module.scss}`; deleted
-`file-tree.{tsx,module.scss}` (were untracked — just absent). After push: tree
-clean, in sync.
+Branch `main` (tracks `origin/main`). The tool-windows work shipped in commit
+`8adff0f` (pushed). The tile-softening pass (tile → `--bg` + keycap border +
+0.75rem radius; gray moved to the panel) is a **follow-up commit + push now** —
+only `services.module.scss` + this `HANDOFF.md`. After push: tree clean, in sync.

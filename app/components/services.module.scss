@@ -36,8 +36,10 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
   display: flex;
   flex-direction: column;
   padding: 0.25rem;
-  background: var(--surface);
-  border-radius: var(--radius);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-bottom-width: 2px; // keycap-style grounded edge (matches command bar)
+  border-radius: 0.75rem; // softer, keycap-like rounding (var(--radius) reads sharp at tile scale)
 
   animation: rise-in 0.5s $ease both;
   animation-delay: min(calc(var(--i, 0) * 70ms), 400ms);
@@ -53,9 +55,9 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
   justify-content: center;
   min-height: clamp(8rem, 15vw, 11rem);
   padding: 0.875rem;
-  background: var(--bg);
+  background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: calc(var(--radius) - 1px);
+  border-radius: 0.5rem; // nests inside the tile radius minus the 0.25rem frame
   overflow: hidden;
   transition: border-color 0.18s $ease;
 }
