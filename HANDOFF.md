@@ -1,112 +1,95 @@
-# Handoff — Services bento: all four facet "tool" visuals complete
+# Handoff — Preloader: slot-machine drum intro with blur-to-focus reveal
 
-_Updated 2026-06-22 · home Services build-out_
+_Updated 2026-06-22 · home/site preloader build_
 
 ## Goal
 
-Randy's personal site (Next 16 App Router + Tailwind v4). The home **Services
-bento** is now feature-complete: each of the four tiles *demonstrates* its facet
-with a depicted-tool visual loaded with the site's own material, instead of a
-placeholder icon. This session built the **Strategy Sankey** (with a
-`/deep-research`-grounded flow model) and the **Motion timeline**, plus a lot of
-layout/polish iteration. Randy signed off ("looks pretty bad ass"). Committing +
-pushing now.
+Replace the old wordmark preloader with a **Love, Death + Robots-style intro**: a
+slot-machine reel of three icons that spin and clack into place, unique per page,
+then reveal the page. Randy signed off ("Love it"). This session built it end to
+end and iterated heavily on the reel mechanic and the reveal style.
 
-## The four visuals (all Server Components unless noted; theme-aware via tokens)
+## What shipped (this session)
 
-Each is a fixed-size element that overflows its tile panel and is clipped (the
-`panelMedia` variant in services.module.scss = `padding:0`, full-bleed). One
-accent moment each. Shared muted palette across Motion + Strategy: indigo
-`#635aa6` · steel `#47729e` · sage `#5d7d54` · clay `#9a6a4f`.
+Three files — all the preloader work, currently **uncommitted on `main`**:
 
-- **`design-canvas.{tsx,scss}`** (Design) — a depicted Paper canvas: sidebar
-  (Pages + layer tree, `01·Color` active), tool rail (cursor active + tools),
-  board = the **real Light/Dark token swatches from `global.css`**. Each row now
-  **leads with the accent swatch** (`--accent`) for a hit of colour. Tool-rail
-  hover scales the **icon only** (not the box) so hover ≈ active size.
-- **`code-window.{tsx,scss}`** (Development) — a depicted IDE showing the real
-  `margin.tsx` source via **sugar-high** `highlight()` (same lib as the site's
-  MDX). Active tab marked in `--accent`.
-- **`motion-timeline.{tsx,scss}`** (Motion) — a depicted video/motion editor.
-  **CLIENT island** (`'use client'`): on hover a rAF loop scrubs the playhead +
-  counts the frame/timecode up; the transport **play button toggles to pause**
-  and back (click pauses/resumes); mouse-out snaps to default; reduced-motion
-  sits it out. Driven via refs (no per-frame re-render). Tracks = the site's
-  real motion stack: `hero-reveal.tsx` (filmstrip) + 4 colour-coded clips
-  `rise-in` (indigo, ease-curve icon, **square left corners** = continues
-  off-left) · `stagger` (steel) · `lenis-scroll` (sage) · `view-transition`
-  (clay) — offset to read as the rise-in stagger; the last trails off-canvas.
-  Ruler = **mm:ss labels** (`00:01…00:05`) centred per second; playhead at
-  `4.53rem` = frame 32 (00:01.02), aligned to the per-second scale
-  (`REM_PER_SEC = 4.25`). NO vertical gridlines (tried, removed at Randy's ask).
-- **`strategy-sankey.{tsx,scss}`** (Strategy) — a hand-authored SVG Sankey
-  (computed ribbon geometry) on a **dot-grid canvas** (small + light: `11px`
-  grid, `9%` fg). 4 columns / 3 visible groupings: **Capabilities** (AI/Design/
-  Dev, source-coloured) → **Activities** (Personalize/Position/Systems, neutral)
-  → **Outcomes** (Market Fit/Loyalty/Brand, accent) → converge into **Business
-  Value** which runs **off the right edge** (fixed `40rem` SVG, canvas clips).
-  Labels carry a `var(--bg)` paint-order halo. Model grounded in
-  `docs/research-strategy-sankey-flow.md`.
+- **`app/components/reel-glyphs.tsx`** (NEW) — a **12-mark glyph pool** drawn in the
+  Services pictogram idiom (`viewBox 40`, `stroke 2`, round joins, `currentColor`) +
+  `triadForPath(pathname)`. Per-section triads keyed by first path segment:
+  `home [0,1,7]` (diamond·cross·half-disc — the LD+R heart/✕/robot homage),
+  `work [3,4,9]`, `notes [11,6,5]`, `lab [8,10,2]`. Sub-routes inherit their
+  section's triad; unknown sections hash to a stable triad. **The pool + assignments
+  are deliberately first-draft — meant for Randy's redline** (just index triples into
+  `POOL`).
+- **`app/components/preloader.tsx`** (rewritten) — the intro logic. `'use client'`,
+  GSAP timeline in `useLayoutEffect`.
+- **`app/components/preloader.module.scss`** (rewritten) — the 3×3 drum + masks.
 
-## Current layout (services.tsx `SERVICES`, DOM order = visual order)
+## The final effect (the arc, in order)
 
-Pinwheel — both rows span-5-left + span-7-right is NOT it; final is:
-- **Top:** Design `1/8` (span 7, 578px) · Development `8/13` (span 5, 406px) — row 1
-- **Bottom:** Strategy `1/6` (span 5, 406px) · Motion `6/13` (span 7, 578px) — row 2
+1. **3×3 slot machine.** Three reels are **closed 12-face drums** — a true cylinder,
+   one pool glyph per face, `THETA = 30°` (12×30 = 360°, no wrap, no blanks).
+   `RADIUS = 119px` from the tiling condition `r = (h/2)/tan(θ/2)` so faces meet.
+   Each drum spins `TURNS = 3` full revolutions then settles its **result face on the
+   center row** with a `back.out(1.4)` overshoot clack. Drums offset `slot*0.16`s
+   left-to-right. `z:-RADIUS` recenters so the front glyph sits flat at full size.
+2. **3 visible rows.** Slot window is `$cell * 3` (12rem) tall with `perspective:
+   22rem`, so the center row faces front and the rows above/below **tilt away on the
+   drum** (the thing Randy specifically wanted). `.strip` is `preserve-3d`; `.cell` is
+   absolute, centered (`top:50%; margin-top:-$cell*0.5`), placed via inline
+   `transform: rotateX(i*THETA) translateZ(RADIUS)`; `backface-visibility:hidden`.
+3. **Off-center rows fade out after landing.** A `--rowfade` CSS var drives each slot's
+   fade-mask band width. It starts wide (`12%` — neighbors visible while spinning) and
+   GSAP tightens it to **`38%` after landing** (0.5s) so the band sits in the gap
+   between the result glyph's ink (~42–58%) and the neighbor ink (~23%/~76%) →
+   **only the result row remains**, no remnants. Mask feather `$feather: 8%`.
+4. **Hold** `HOLD = 0.9`s on the lone result triad.
+5. **Blur-to-focus reveal** (Randy's chosen reveal, beat iris + column-bands). Opaque
+   `.cover` fades while the veil's `backdrop-filter: blur(20px→0)` (driven via a JS
+   proxy + `applyBlur`) resolves the page from soft to sharp. Reel fades + `scale 0.96`.
+6. `preloader:done` (+ `window.__introDone`) fires on complete so the Hero plays its
+   masked reveal AFTER. `el.style.display='none'`.
 
-This is the **original order** (we did a long back-and-forth reordering, then
-Randy said "go back to the original order"). DOM order: Design, Development,
-Strategy, Motion. Widths: Design/Motion = span 7; Development/Strategy = span 5.
+## Key decisions (and why)
 
-## Tile anatomy (services.{tsx,scss})
-
-Tile = `var(--bg)` + `1px var(--border)` + `border-bottom-width:2px` (keycap
-edge) + `border-radius:0.75rem` (soft). Hover border → `color-mix(in srgb,
-var(--fg) 24%, var(--border))` (shared with button/command-bar). Label
-`clamp(1.125rem,1.5vw,1.25rem)` = 20px desktop. Blurb `max-width: 52ch` (reading
-measure, widened from 40ch so span-7 tiles fill). `.body` padding
-`0.875rem 0.625rem 1.375rem` (the +1rem bottom is deliberate breathing room).
-
-- **Tile bg is `--bg`, NOT `--surface`** — Randy asked; we A/B'd `--surface` and
-  reverted (flat gray slab, the thing we'd moved away from).
-- **Dead code:** `.panel { background: var(--surface); border … }` + its "inset
-  screen" comment are stale — every tile now uses the full-bleed `panelMedia`
-  visual which paints over the panel. Harmless; safe to strip whenever.
-
-**Copy (this session):** all four blurbs rewritten — **no first person ("I")**,
-each names how **AI is leveraged** in that step (research, exploration,
-boilerplate, motion timing), **no em dashes** (colons/commas instead), trimmed
-short. Voice is pronoun-less declarative (could switch to "we" if wanted).
-
-## Deep-research artifact
-
-`docs/research-strategy-sankey-flow.md` — the Sankey flow model (capability maps
-→ value chain → outcomes → value), 10 sources, weighted node table + rationale.
-NOT yet added to `docs/sources/INDEX.md` (it's a research output, not an ingested
-source — leave it standalone unless Randy wants it indexed).
-
-## Next steps / open threads
-
-1. **Motion `view-transition` clip** is mostly off-canvas (offset 54%); Randy was
-   offered pulling it in — left trailing for now. Revisit if he wants more shown.
-2. **/work** data layer still a placeholder (MDX + `utils.ts` like `notes/`).
-3. Footer map CARTO **attribution** still off; two footer **logo placeholders**.
-4. Consider an `/audit-ui` pass on the Services section (a11y/CWV) — lots of new
-   client JS in the Motion island + 4 rich visuals; watch bundle/CWV.
+- **Plays on EVERY full page load**, not once-per-session. The old `sessionStorage
+  introSeen` guard locked Randy out of seeing it after first visit (he only saw a
+  pre-hydration flash). Dropped it. Safe because the preloader lives in the
+  **persistent root layout** → client-side `next-view-transitions` nav never remounts
+  it (in-app nav crossfades). If repeat-refresh ever feels heavy, re-add a gentler cap.
+- **Icons start `opacity:0` (CSS)**, revealed by JS only when the spin begins → the
+  reduced-motion / suppressed paths show no flash of static glyphs. Reduced-motion
+  dismisses instantly.
+- **No-JS safety**: `animation: pl-safety 0.1s 5s` lifts the veil if JS never runs
+  (bumped from 3s → 5s so it never fires mid-intro; intro completes ~3.3s).
+- **Closed 12-face drum** chosen over a flat translateY strip because a gentle-pitch
+  flat reel didn't read as "tilted" — a steep 30° closed cylinder makes the drum
+  unmistakable without wrap-overlap.
+- **Reveal explored 4 ways** (iris, blur, column-bands, mosaic). Randy A/B'd iris vs
+  blur vs bands → **chose blur-to-focus**. Iris/bands code is fully in this session's
+  history if ever wanted.
 
 ## Verify / commands
 
-- `pnpm dev` (running) · `pnpm exec tsc --noEmit` (clean — run from project root;
-  the shell `cd`s into skill dirs, so `cd` back first).
-- Headless verify via `automate-browser`: Lenis intercepts `scrollTo` → use
-  element `scroll_into_view_if_needed`; force theme via
-  `localStorage.setItem('theme','light'|'dark')` in an init script; `.hover()`
-  for hover/scrub states. Strategy tile panel measured ~394–406px wide.
+- `pnpm exec tsc --noEmit` — **clean** (run from project root; the shell `cd`s into
+  the automate-browser skill dir during headless checks, so `cd` back first).
+- `pnpm dev` running. Headless verify via `automate-browser`: `localStorage.setItem
+  ('theme','dark')` in an init script; do NOT clear sessionStorage anymore (guard is
+  gone). Reel lands ~1.3s, rowfade done ~2.0s, reveal ~2.9s, `preloader:done` ~3.4s.
+
+## Next steps / open threads
+
+1. **Icon-pool redline** — the 12 marks + per-route `TRIADS` in `reel-glyphs.tsx` are
+   first-draft; Randy may want to tune which glyphs/triads.
+2. **backdrop-blur CWV check** — blur-to-focus is the one reveal with real GPU cost.
+   Fold into an `/audit-ui` pass (handoff already flagged the Services section too).
+3. **Internal-nav mini-reel** — only the crossfade today; `triadForPath` is already
+   route-aware if a lighter route-change reel is wanted later.
+4. Tuning knobs all labelled in code: `TURNS`, `HOLD`, `BLUR`, `perspective`,
+   `--rowfade` target (`38`), `$feather`.
 
 ## Git state
 
-Branch `main` (tracks `origin/main`). The four-visuals build shipped in
-`983f27d` (pushed). **Committing + pushing now:** a Services copy + spacing pass
-— only `services.tsx` (blurb rewrites) + `services.module.scss` (52ch measure,
-+1rem `.body` bottom padding, `--surface` experiment reverted). After push: tree
-clean, in sync. (Prior pushes this arc: `8adff0f`, `51ab91f`, `983f27d`.)
+Branch `main` (tracks `origin/main`). **Committing + pushing now** (Randy asked):
+the three preloader files above. Before this: tree was clean at `15ce0ca`. After
+push: tree clean, in sync.

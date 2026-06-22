@@ -1,14 +1,21 @@
-// First-load veil. Covers everything, wipes up to reveal. The safety keyframe
-// guarantees it clears even if the JS never runs (no-JS / failure) so content is
-// never permanently blocked; GSAP wipes it well before the safety fires.
+// First-load veil. An opaque .cover hides the page during the reel; on reveal it
+// fades while the veil's backdrop-filter blur (driven by JS) resolves to 0, so the
+// page focuses in. The veil itself is transparent so the backdrop-filter has the
+// page to blur. The safety keyframe guarantees it clears even if the JS never runs
+// (no-JS / failure) so content is never permanently blocked.
 .preloader {
   position: fixed;
   inset: 0;
   z-index: 100;
   display: grid;
   place-items: center;
-  background: var(--bg);
-  animation: pl-safety 0.1s 3s forwards;
+  // Half-width of the opaque band in each reel's fade mask. Starts wide (neighbour
+  // rows visible while the drum spins) and GSAP tightens it after landing toward the
+  // centre row (~33%) so the off-centre rows fade out and the result stands alone.
+  --rowfade: 12%;
+  // No-JS / failure fallback only: clears the veil so content is never permanently
+  // blocked. Delayed well past the scripted intro (~3.3s) so it never fires mid-reel.
+  animation: pl-safety 0.1s 5s forwards;
 }
 
 @keyframes pl-safety {
@@ -17,10 +24,72 @@
   }
 }
 
-.word {
-  font-family: var(--font-mono);
-  font-size: 0.9375rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--fg);
+// Opaque fill that hides the page during the reel, then fades to reveal it.
+.cover {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: var(--bg);
+}
+
+// The slot machine: three reels (drums) in a row, each a tall window showing 3 rows
+// of glyphs. Cells sit on a horizontal cylinder (perspective on the window, the drum
+// rotated by GSAP) so the centre row faces front while the rows above/below tilt away.
+$cell: 4rem;
+$rows: 3; // visible rows per reel
+
+.reel {
+  position: relative;
+  z-index: 1; // above .cover
+  display: flex;
+  gap: 0.625rem;
+  // Hidden until JS starts the spin, so the suppressed / reduced-motion paths never
+  // flash the server-rendered static glyphs. The animating path sets opacity:1.
+  opacity: 0;
+}
+
+.slot {
+  width: $cell;
+  height: $cell * $rows;
+  overflow: hidden;
+  perspective: 22rem; // smaller = more pronounced tilt on the off-centre rows
+  // Fade top + bottom; the opaque band's width is driven by --rowfade so GSAP can
+  // widen it during the spin (neighbour rows visible) and tighten it after landing
+  // (neighbour rows fade out, leaving the centre result row).
+  $feather: 8%; // width of the soft edge just outside the opaque band
+  $fade: linear-gradient(
+    to bottom,
+    transparent calc(var(--rowfade) - #{$feather}),
+    #000 var(--rowfade),
+    #000 calc(100% - var(--rowfade)),
+    transparent calc(100% - var(--rowfade) + #{$feather})
+  );
+  -webkit-mask-image: $fade;
+  mask-image: $fade;
+}
+
+.strip {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d; // cells keep their 3D placement on the drum
+  will-change: transform;
+}
+
+.cell {
+  position: absolute;
+  inset-inline: 0;
+  top: 50%;
+  height: $cell;
+  margin-top: -$cell * 0.5; // centre each cell on the drum axis before its transform
+  display: grid;
+  place-items: center;
+  backface-visibility: hidden; // rear cells (rotated past 90°) drop out cleanly
+  -webkit-backface-visibility: hidden;
+
+  svg {
+    display: block;
+    width: 2.5rem;
+    height: 2.5rem;
+    color: var(--fg);
+  }
 }
