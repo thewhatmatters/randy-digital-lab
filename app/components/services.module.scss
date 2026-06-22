@@ -1,11 +1,12 @@
-// Services bento. Mobile: a single stacked column. Desktop (≥48rem): tiles land
-// on the page's 12-column grid, each placed by line via the per-tile --col /
-// --row custom props. Hairline-bordered tiles; each holds a line pictogram, a
-// label, and a first-person blurb.
+// Services bento. Each tile is a "tool card": a framed panel (the facet's
+// visual — Development shows a file tree; the others a centred pictogram) over a
+// label + blurb that sit directly on the tile surface, unboxed. Mobile: a single
+// stacked column. Desktop (≥48rem): tiles land on the page's 12-column grid,
+// each placed by line via the per-tile --col / --row custom props.
 //
 // Motion (CSS tier — no library, stays a Server Component): tiles rise+fade in
-// on load, staggered by --i; hovering a tile "wakes" it (border + icon → fg,
-// label → accent, blurb brightens). Compositor-only, one shared ease, disabled
+// on load, staggered by --i; hovering a tile "wakes" it (panel edge + icon → fg,
+// label → nudge, blurb brightens). Compositor-only, one shared ease, disabled
 // under prefers-reduced-motion. See /add-motion.
 
 $ease: cubic-bezier(0.22, 1, 0.36, 1);
@@ -30,23 +31,48 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
   gap: 1rem;
 }
 
+// A tool card: filled surface, soft radius, holding [panel][body].
 .tile {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  padding: 1rem;
-  border: 1px solid var(--border);
+  padding: 0.25rem;
+  background: var(--surface);
   border-radius: var(--radius);
-  transition: border-color 0.18s $ease;
 
   animation: rise-in 0.5s $ease both;
   animation-delay: min(calc(var(--i, 0) * 70ms), 400ms);
 }
 
+// The framed visual panel — an inset "screen" (page bg) set into the tile. Grows
+// to fill the tile height so panels share a baseline across a row; the file tree
+// can push it taller. Default centres its content (the pictogram placeholders).
+.panel {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: clamp(8rem, 15vw, 11rem);
+  padding: 0.875rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) - 1px);
+  overflow: hidden;
+  transition: border-color 0.18s $ease;
+}
+
+// Media variant (the code window): no inset, content pinned top-left and allowed
+// to overflow — the panel's overflow:hidden + radius clip it to a viewport. Fixed
+// natural height comes from the window itself.
+.panelMedia {
+  flex: 0 0 auto;
+  padding: 0;
+  align-items: stretch;
+  justify-content: flex-start;
+}
+
 .icon {
   display: block;
-  width: clamp(2rem, 2.6vw, 2.5rem);
-  margin-bottom: clamp(1.5rem, 4vw, 2.5rem); // space down to the label
+  width: clamp(2rem, 3vw, 2.75rem);
   color: var(--fg);
   transition: transform 0.18s $ease;
 
@@ -57,9 +83,15 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
   }
 }
 
+// Text block below the panel — sits on the tile surface with a little more side
+// inset than the panel, and a gap down from it.
+.body {
+  padding: 0.875rem 0.625rem 0.375rem;
+}
+
 .label {
   margin: 0;
-  font-size: clamp(1.25rem, 2vw, 1.625rem);
+  font-size: clamp(1.125rem, 1.5vw, 1.25rem);
   font-weight: 600;
   line-height: 1.1;
   letter-spacing: -0.015em;
@@ -77,10 +109,12 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
   transition: color 0.18s $ease;
 }
 
-// Hover — the tile wakes: edge + icon brighten, label nudges, blurb brightens.
+// Hover — the card wakes: panel edge + icon brighten, label nudges, blurb lifts.
 .tile:hover {
-  border-color: var(--fg);
-
+  .panel {
+    // shared hover-border wake (matches button / command-bar)
+    border-color: color-mix(in srgb, var(--fg) 24%, var(--border));
+  }
   .icon {
     transform: translateY(-3px);
   }

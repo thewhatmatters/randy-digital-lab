@@ -1,4 +1,6 @@
 import type { CSSProperties, ReactNode } from 'react'
+import { CodeWindow } from './code-window'
+import { DesignCanvas } from './design-canvas'
 import { SectionLabel } from './section-label'
 import styles from './services.module.scss'
 
@@ -15,6 +17,8 @@ type Service = {
   label: string
   blurb: string
   icon: ReactNode
+  /** an interactive/illustrative "tool" panel rendered in place of the icon */
+  visual?: ReactNode
   /** desktop grid-column, e.g. '1 / 8' (span 7) */
   col: string
   /** desktop grid-row */
@@ -51,6 +55,7 @@ const SERVICES: Service[] = [
     blurb:
       'Interfaces and identities with a point of view. I root the work in real stories so it reads as intentional, not decorative.',
     icon: MARKS[0],
+    visual: <DesignCanvas />,
     col: '1 / 8', // span 7
     row: 1,
   },
@@ -59,6 +64,7 @@ const SERVICES: Service[] = [
     blurb:
       'Production-grade builds — fast, accessible, maintainable. I translate design systems into interfaces that hold up in the real world.',
     icon: MARKS[1],
+    visual: <CodeWindow />,
     col: '8 / 13', // span 5
     row: 1,
   },
@@ -102,11 +108,19 @@ export function Services() {
               { '--col': s.col, '--row': s.row, '--i': i } as CSSProperties
             }
           >
-            <span className={styles.icon} aria-hidden="true">
-              {s.icon}
-            </span>
-            <h3 className={styles.label}>{s.label}</h3>
-            <p className={styles.blurb}>{s.blurb}</p>
+            <div
+              className={`${styles.panel} ${s.visual ? styles.panelMedia : ''}`}
+            >
+              {s.visual ?? (
+                <span className={styles.icon} aria-hidden="true">
+                  {s.icon}
+                </span>
+              )}
+            </div>
+            <div className={styles.body}>
+              <h3 className={styles.label}>{s.label}</h3>
+              <p className={styles.blurb}>{s.blurb}</p>
+            </div>
           </li>
         ))}
       </ul>

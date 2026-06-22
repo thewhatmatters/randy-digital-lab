@@ -1,0 +1,204 @@
+// CodeWindow — a depicted IDE. Fixed intrinsic size; the parent panel clips it,
+// so the editor bleeds off the right and bottom edges. Theme-aware: the chrome
+// is painted with the site's semantic tokens (--ide-* alias them so the rest of
+// the file reads like an editor), and the code inherits the site's own themed
+// sugar-high palette — the same colours its code blocks use. Light on light,
+// dark on dark; the only accent moment is the open tab's marker.
+
+.window {
+  // chrome → semantic tokens (aliased), so it follows light/dark
+  --ide-bg: var(--bg);
+  --ide-bar: var(--surface);
+  --ide-line: var(--border);
+  --ide-fg: var(--fg);
+  --ide-dim: var(--muted);
+
+  width: 46rem; // wider than the panel on purpose → clipped right
+  height: 19.5rem; // taller than the panel → clipped bottom
+  display: flex;
+  flex-direction: column;
+  background: var(--ide-bg);
+  color: var(--ide-fg);
+  font-family: var(--font-mono);
+  user-select: none;
+}
+
+// ── Tabs ──────────────────────────────────────────────────────────────────
+.tabs {
+  display: flex;
+  flex: 0 0 auto;
+  background: var(--ide-bar);
+  border-bottom: 1px solid var(--ide-line);
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+  color: var(--ide-dim);
+  border-right: 1px solid var(--ide-line);
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+
+  &:hover:not(.tabActive) {
+    color: var(--ide-fg);
+    background: color-mix(in srgb, var(--ide-fg) 6%, transparent);
+  }
+}
+
+.tabActive {
+  background: var(--ide-bg);
+  color: var(--ide-fg);
+  // a thin top accent like an active editor tab — the one colour moment
+  box-shadow: inset 0 1.5px 0 0 var(--accent);
+}
+
+.tabName {
+  line-height: 1;
+}
+
+.close {
+  margin-left: 0.15rem;
+  font-size: 0.85rem;
+  line-height: 1;
+  color: var(--ide-dim);
+}
+
+// ── Breadcrumb ────────────────────────────────────────────────────────────
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex: 0 0 auto;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.6875rem;
+  color: var(--ide-dim);
+  border-bottom: 1px solid var(--ide-line);
+  white-space: nowrap;
+}
+.sep {
+  opacity: 0.6;
+}
+.symbol {
+  color: var(--ide-fg);
+}
+
+// ── Body: explorer + editor ───────────────────────────────────────────────
+.body {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.explorer {
+  flex: 0 0 11.5rem;
+  background: var(--ide-bar);
+  border-right: 1px solid var(--ide-line);
+  padding: 0.5rem 0;
+  font-size: 0.75rem;
+  overflow: hidden;
+}
+
+.explorerHead {
+  padding: 0 0.75rem 0.4rem;
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ide-dim);
+}
+
+.rootRow,
+.row {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  height: 1.55rem;
+  white-space: nowrap;
+}
+.rootRow {
+  padding: 0 0.5rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--ide-fg);
+}
+.rootName {
+  text-transform: uppercase;
+  font-size: 0.6875rem;
+}
+
+.row {
+  color: var(--ide-dim);
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+
+  &:hover:not(.rowActive) {
+    color: var(--ide-fg);
+    background: color-mix(in srgb, var(--ide-fg) 6%, transparent);
+  }
+}
+.rowActive {
+  background: color-mix(in srgb, var(--ide-fg) 8%, transparent);
+  color: var(--ide-fg);
+}
+.rowName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chevron {
+  flex: 0 0 0.75rem;
+  width: 0.75rem;
+  height: 0.75rem;
+  color: var(--ide-dim);
+}
+.chevronSpacer {
+  flex: 0 0 0.75rem;
+}
+
+.glyph {
+  flex: 0 0 auto;
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+// ── Editor ────────────────────────────────────────────────────────────────
+.editor {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  font-size: 0.78rem;
+  line-height: 1.45rem;
+}
+
+.gutter {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem 0.75rem 0;
+  text-align: right;
+  color: color-mix(in srgb, var(--ide-dim) 65%, transparent);
+  user-select: none;
+}
+
+.code {
+  margin: 0;
+  padding: 0.5rem 0 0;
+  white-space: pre; // no wrap → long lines run off the right edge
+  tab-size: 2;
+
+  code {
+    font-family: inherit;
+  }
+}
+
+// The depicted UI elements (tabs, explorer rows) only shift colour on hover —
+// no motion to gate for reduced-motion.

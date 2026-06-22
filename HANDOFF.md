@@ -1,87 +1,95 @@
-# Handoff — Services icon-bento (text+icons) + footer map + Work route
+# Handoff — Services bento as interactive "tool" windows
 
-_Updated 2026-06-21 · home/footer build-out_
+_Updated 2026-06-22 · home Services rework_
 
 ## Goal
 
 Randy's personal site (Next 16 App Router + Tailwind v4). This stretch reworked
-the **home Services section** (long detour: bento → graphic/video tile →
-text-only list → back to an **icon bento**) and earlier built an **interactive
-footer map** and the **/work** route. Next visible task: swap the Services
-**placeholder icons** for real bold pictograms.
+the **home Services bento** so each tile *demonstrates* its facet instead of
+describing it — a framed "tool" panel over the label + blurb. Two facets now
+ship real depicted-tool visuals (Design, Development); three are still icon
+placeholders (Strategy, Motion, Systems). Next obvious task: **Motion**'s visual
+(plot the real `cubic-bezier(0.22, 1, 0.36, 1)` rise-in ease as a curve).
 
-## Current state (home Services — latest, uncommitted until this push)
+## Tile anatomy (current, all five tiles)
 
-`app/components/services.{tsx,module.scss}` — an **icon bento** on the page's
-12-col grid:
-- Layout (per-tile `--col`/`--row`): row 1 `Design` cols 1–7 (span 7) +
-  `Development` cols 8–12 (span 5); row 2 `Strategy` 1–4 · `Motion` 5–8 ·
-  `Systems` 9–12. Hairline-bordered tiles, `var(--radius)`.
-- Each tile: a **monochrome line pictogram** (top) + Title-case label + a longer
-  **first-person blurb**. Blurb is **0.875rem / line-height 1.5** (the app's
-  small-secondary size, matches Experience metadata).
-- **Tile padding: flat `1rem`** (Randy's pick over the earlier clamp).
-- Hover-wake (border + icon → fg, label nudge, blurb brightens), rise-in
-  stagger, reduced-motion-aware. Pure markup + tokens → **Server Component**.
-- **Icons are PLACEHOLDERS** — geometric marks (circle/square/triangle/globe/
-  house) in the `MARKS` array in services.tsx. **← next task: real pictograms.**
+`app/components/services.{tsx,module.scss}` — each tile is a **tool card**:
+- **Tile** = filled `var(--surface)`, `var(--radius)`, `padding: 0.25rem` (a 4px
+  frame around the panel — Randy's spec, was 8px). No hairline border anymore.
+- **Panel** = an inset framed "screen" on `var(--bg)` + hairline border. Two
+  variants: default centres a pictogram (the 3 placeholders); `panelMedia`
+  (`padding:0`, `flex:0 0 auto`) full-bleeds a visual that **overflows + clips**.
+- **Body** = label + blurb on the tile surface, below the panel. Label is
+  `clamp(1.125rem, 1.5vw, 1.25rem)` → **20px desktop** (shrunk from 26px at
+  Randy's request; the `clamp` MAX is the lever, the `vw` was pinned).
+- **Hover** = panel border → `color-mix(in srgb, var(--fg) 24%, var(--border))`,
+  the **shared site hover-border** (matches `button` / `command-bar`, NOT a
+  one-off `--fg` or `--muted`). Plus rise-in stagger, reduced-motion-aware.
+- Layout unchanged: r1 Design `1/8` (span7) + Development `8/13` (span5);
+  r2 Strategy `1/5` · Motion `5/9` · Systems `9/13`.
 
-Also this session: **footer description** (`A portfolio of work…`,
-`footer.module.scss .desc`) set to the same **0.875rem/1.5** so the two read as
-one type system.
+## The two tool visuals (the heart of this session)
 
-## Don't redo (rejected this Services detour)
+Both are **Server Components (zero client JS)**, theme-aware via semantic tokens,
+fixed intrinsic size anchored top-left so they bleed past the panel and clip —
+"a viewport into the real tool, with the site's own material loaded." Each has a
+single **accent moment** and **decorative hover micro-states** (cheap 0.15s
+transitions, `cursor:pointer`, reduced-motion drops the movement).
 
-- **Graphic/video tile** — imported a Paper `ShaderDithering` dot-sphere, made it
-  a **transparent animated WebP** (the long road: mp4 has no alpha → blurry
-  `fill-outline` → VP9-alpha kept dropping → animated WebP was the only
-  cross-browser transparent format; ~700K, high-entropy noise compresses badly).
-  Randy rejected it. **`public/services/design.webp` deleted; `public/` removed.**
-  Lesson if revisited: transparency + every browser = animated WebP only, and
-  it's heavy.
-- **Text-only variants** (editorial 3-col list; oversized wordmarks; run-in
-  manifesto) — built the 3-col list; Randy liked it but wanted the **bento box
-  back**, keeping the icon idea. Current state = bento + icons + original copy.
-- **first-person LONG labels** like "digital spaces"/"design systems" — reverted
-  to original Title-case Design/Development/Strategy/Motion/Systems.
+- **`code-window.{tsx,module.scss}`** (Development) — a depicted IDE. Tabs
+  (active `margin.tsx` 2nd so it's visible, accent top-bar), breadcrumb,
+  explorer (monochrome React/doc glyphs), line-numbered editor showing the
+  **real `margin.tsx` source** highlighted by **sugar-high** (`highlight()`,
+  the same lib the site's MDX code blocks use; inherits the themed `--sh-*`).
+  `--ide-*` SCSS vars alias the semantic tokens. Window `46rem × 19.5rem`.
+  Hover: tabs + explorer rows tint.
+- **`design-canvas.{tsx,module.scss}`** (Design) — the mirror: a depicted Paper
+  canvas. Sidebar (Pages + layer tree, `01·Color` active), tool rail (cursor
+  active + 8 tools + `Aa`), board = **real Light/Dark token swatches from
+  `global.css`** (`--bg/surface/fg/muted/border/accent` w/ hex + role). `01` in
+  accent. `--ui-*` alias semantic tokens. Window `48rem × 19.5rem`. Hover: tools
+  scale `1.1`, rows tint, **swatches lift `-3px` + drop shadow**.
+
+## Key decisions (and the corrections behind them)
+
+- **Detour on the Development visual**: file-tree → almost-VS-Code (always-dark,
+  hardcoded colours + bright language icons) → Randy: "I didn't want the colours
+  exactly… still themed for light/dark, the original colours we had." Final =
+  theme-aware monochrome chrome + site's own `--sh-*` syntax + one accent. The
+  old `file-tree.{tsx,scss}` was **deleted**.
+- **Swatch fills are literal hex** (both Light+Dark rows shown) = documentation;
+  only the *chrome* is theme-reactive. Same logic as the code window showing
+  literal source.
+- **Hover micro-states are decorative only** — Randy wanted them to *feel*
+  interactive, explicitly "not that they can do anything."
 
 ## Next steps
 
-1. **Real pictograms** — replace the 5 placeholder SVGs in `MARKS`
-   (services.tsx). Source TBD: Randy provides SVGs / export from Paper / pull a
-   bold open set (Phosphor bold, Iconoir) / draw a custom eye-occult set.
-2. **/work data layer** — MDX per project + `utils.ts` like `notes/`; replace the
-   COMING SOON placeholder with a numbered index.
-3. **Footer map** — CARTO **attribution** still off (parked; add
-   `© OpenStreetMap · CARTO` before prod). `ZOOM`/`HAIRLINE` are the knobs.
-4. Earlier-standing: swap the two footer **logo placeholders** for real art.
-
-## Earlier shipped (already pushed)
-
-- **Interactive footer map** (`footer-map.{tsx,module.scss}`, commit b896e33):
-  MapLibre strip above the world clocks, floating CARTO outlines (transparent
-  ocean = page bg, crisp coastline + country hairlines), hover a clock city →
-  flyTo + accent marker → back to Austin; theme-aware, lazy-loaded,
-  reduced-motion jump. Tunables `ZOOM=0.8`, `HAIRLINE=0.8`, `CITY_COORDS`.
-- **/work** placeholder route; **nav** `01 base · 02 work · 03 lab · 04 notes`;
-  **footer** EXPLORE synced + `● AVAILABLE FOR WORK` indicator under the clocks.
+1. **Motion visual** — real ease curve (`cubic-bezier(0.22,1,0.36,1)`) plotted,
+   ball tracing it. Same mould: `panelMedia` + a Server-Component window + one
+   accent + decorative hover. Carry the hover treatment into row 2 as built.
+2. **Systems visual** — type ramp / grid / token sheet (more of the real system).
+3. **Strategy visual** — softest to literalise (flow/annotation board).
+4. Standing from before: **/work** data layer (MDX + `utils.ts` like `notes/`);
+   footer map CARTO **attribution** still off; swap 2 footer logo placeholders.
 
 ## Files & commands in play
 
-- Services: `app/components/services.{tsx,module.scss}` (`MARKS` = icons,
-  `SERVICES` = copy + col/row). Home: `app/page.tsx`.
-- Footer: `app/components/footer.{tsx,module.scss}`,
-  `footer-map.{tsx,module.scss}`, `world-clock.{tsx,module.scss}`.
-- Work: `app/work/page.tsx`. Nav: `app/components/nav.tsx`.
-- `pnpm dev` / `pnpm build`. Headless verify via `automate-browser` (Lenis
-  intercepts `window.scrollTo`; use element `scroll_into_view`/screenshot. Map
-  `ZOOM` only re-reads on a full reload — Fast Refresh keeps the old instance).
-- Dep added earlier: `maplibre-gl`. `ffmpeg` (homebrew) used for the abandoned
-  WebP pipeline.
+- Services: `app/components/services.{tsx,module.scss}` (`MARKS`=placeholder
+  icons, `SERVICES`=copy + col/row + optional `visual`). Home: `app/page.tsx`.
+- Visuals: `app/components/code-window.{tsx,module.scss}`,
+  `app/components/design-canvas.{tsx,module.scss}`.
+- Highlighter: `sugar-high` `highlight()` (also used in `app/components/mdx.tsx`).
+  Tokens: `app/global.css` (`--sh-*` light+dark, semantic palette).
+- `pnpm dev` / `pnpm exec tsc --noEmit` (clean). Headless verify via
+  `automate-browser` (Lenis intercepts `scrollTo` → use element
+  `scroll_into_view_if_needed`; force theme via `localStorage.setItem('theme',…)`
+  in an init script; `.hover()` to capture hover states).
 
 ## Git state
 
-Branch `main` (tracks `origin/main`). Prior pushes this work: 908adf8, cb235ff,
-226eced, b896e33. Committing + pushing the Services icon-bento + footer type now
-(services.{tsx,scss}, footer.module.scss, page.tsx; design.webp deleted). After
-push: tree clean, in sync.
+Branch `main` (tracks `origin/main`, was in sync). This session being **committed
++ pushed now**: modified `services.{tsx,module.scss}`; new
+`code-window.{tsx,module.scss}`, `design-canvas.{tsx,module.scss}`; deleted
+`file-tree.{tsx,module.scss}` (were untracked — just absent). After push: tree
+clean, in sync.
