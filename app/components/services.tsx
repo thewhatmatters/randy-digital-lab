@@ -1,7 +1,9 @@
 import type { CSSProperties, ReactNode } from 'react'
 import { CodeWindow } from './code-window'
 import { DesignCanvas } from './design-canvas'
+import { MotionTimeline } from './motion-timeline'
 import { SectionLabel } from './section-label'
+import { StrategySankey } from './strategy-sankey'
 import styles from './services.module.scss'
 
 // Services bento — five capabilities placed on the page's 12-column grid as
@@ -42,22 +44,36 @@ const MARKS: ReactNode[] = [
     <circle cx="20" cy="20" r="13" />
     <path d="M7 20h26M20 7v26M11 11c4 4 14 4 18 0M11 29c4-4 14-4 18 0" />
   </svg>,
-  <svg key="4" viewBox="0 0 40 40" {...S}>
-    <path d="M8 32V20l12-9 12 9v12" />
-    <path d="M16 32v-8h8v8" />
-  </svg>,
 ]
 
 // Title-case labels + longer first-person blurbs. Edit freely.
 const SERVICES: Service[] = [
+  {
+    label: 'Strategy',
+    blurb:
+      'Product thinking and positioning before pixels. I figure out what to build and why before deciding how it looks.',
+    icon: MARKS[2],
+    visual: <StrategySankey />,
+    col: '1 / 6', // span 5
+    row: 1,
+  },
   {
     label: 'Design',
     blurb:
       'Interfaces and identities with a point of view. I root the work in real stories so it reads as intentional, not decorative.',
     icon: MARKS[0],
     visual: <DesignCanvas />,
-    col: '1 / 8', // span 7
+    col: '6 / 13', // span 7
     row: 1,
+  },
+  {
+    label: 'Motion',
+    blurb:
+      'Considered animation that earns its place. I use motion to guide attention and add life, never just for flourish.',
+    icon: MARKS[3],
+    visual: <MotionTimeline />,
+    col: '1 / 8', // span 7
+    row: 2,
   },
   {
     label: 'Development',
@@ -66,30 +82,6 @@ const SERVICES: Service[] = [
     icon: MARKS[1],
     visual: <CodeWindow />,
     col: '8 / 13', // span 5
-    row: 1,
-  },
-  {
-    label: 'Strategy',
-    blurb:
-      'Product thinking and positioning before pixels. I figure out what to build and why before deciding how it looks.',
-    icon: MARKS[2],
-    col: '1 / 5', // cols 1–4
-    row: 2,
-  },
-  {
-    label: 'Motion',
-    blurb:
-      'Considered animation that earns its place. I use motion to guide attention and add life, never just for flourish.',
-    icon: MARKS[3],
-    col: '5 / 9', // cols 5–8
-    row: 2,
-  },
-  {
-    label: 'Systems',
-    blurb:
-      'Grid systems where type, color, and components make sense — so teams stay in lockstep as the product grows.',
-    icon: MARKS[4],
-    col: '9 / 13', // cols 9–12
     row: 2,
   },
 ]

@@ -1,0 +1,109 @@
+// StrategySankey — a Sankey flow on a dot-pattern canvas (a whiteboarding/design
+// surface, fitting "Strategy = thinking before pixels"). Theme-aware via tokens;
+// ribbons are translucent --fg so overlaps build tone naturally, and the
+// converging Product–Market Fit node + its ribbons carry the one accent moment.
+
+.canvas {
+  position: relative;
+  width: 100%;
+  height: 19.5rem; // matches the Motion window beside it in row 2
+  overflow: hidden;
+  background-color: var(--bg);
+  // dot grid — small + light
+  background-image: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--fg) 9%, transparent) 0.7px,
+    transparent 0.9px
+  );
+  background-size: 11px 11px;
+  background-position: -1px -1px;
+}
+
+// Fixed width → the Business Value lane runs off the right edge (canvas clips).
+.svg {
+  display: block;
+  width: 40rem;
+  height: 100%;
+}
+
+// Flow ribbons — coloured by source capability; the converging flow into
+// Product–Market Fit goes accent. Muted, desaturated hues (shared with the
+// Motion clips) so the section stays one family.
+.ribbonAi,
+.ribbonDesign,
+.ribbonDev,
+.ribbonMid,
+.ribbonAccent {
+  fill-opacity: 0.5;
+  transition: fill-opacity 0.18s ease;
+}
+.ribbonAi {
+  fill: #635aa6;
+}
+.ribbonDesign {
+  fill: #47729e;
+}
+.ribbonDev {
+  fill: #5d7d54;
+}
+.ribbonMid {
+  fill: var(--fg);
+  fill-opacity: 0.12;
+}
+.ribbonAccent {
+  fill: var(--accent);
+  fill-opacity: 0.55;
+}
+
+// Nodes — thin bars tinted to their source; the convergence node is the accent.
+.node {
+  fill: var(--muted);
+}
+.nodeAi {
+  fill: #635aa6;
+}
+.nodeDesign {
+  fill: #47729e;
+}
+.nodeDev {
+  fill: #5d7d54;
+}
+.nodeAccent {
+  fill: var(--accent);
+}
+
+// Labels carry a bg-coloured halo (paint-order) so they read over the ribbons.
+.label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  fill: var(--fg);
+  paint-order: stroke;
+  stroke: var(--bg);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+.labelMuted {
+  fill: var(--muted);
+}
+
+// Hover wake — the whole flow deepens, the accent convergence most.
+.canvas:hover {
+  .ribbonAi,
+  .ribbonDesign,
+  .ribbonDev {
+    fill-opacity: 0.62;
+  }
+  .ribbonAccent {
+    fill-opacity: 0.72;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ribbonAi,
+  .ribbonDesign,
+  .ribbonDev,
+  .ribbonMid,
+  .ribbonAccent {
+    transition: none;
+  }
+}

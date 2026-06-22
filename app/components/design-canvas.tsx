@@ -9,21 +9,22 @@ import styles from './design-canvas.module.scss'
 // Pure markup → Server Component.
 
 type Token = { name: string; hex: string; use: string }
+// Lead each row with the accent for a hit of colour; neutrals follow.
 const LIGHT: Token[] = [
+  { name: '--accent', hex: '#e5484d', use: 'links, focus, signal' },
   { name: '--bg', hex: '#ffffff', use: 'page background' },
   { name: '--surface', hex: '#f5f5f5', use: 'cards, code, insets' },
   { name: '--fg', hex: '#111111', use: 'primary text' },
   { name: '--muted', hex: '#737373', use: 'metadata, mono labels' },
   { name: '--border', hex: '#e5e5e5', use: 'hairlines, dividers' },
-  { name: '--accent', hex: '#e5484d', use: 'links, focus, signal' },
 ]
 const DARK: Token[] = [
+  { name: '--accent', hex: '#ff6369', use: 'links, focus, signal' },
   { name: '--bg', hex: '#0a0a0a', use: 'page background' },
   { name: '--surface', hex: '#171717', use: 'cards, code, insets' },
   { name: '--fg', hex: '#ededed', use: 'primary text' },
   { name: '--muted', hex: '#a3a3a3', use: 'metadata, mono labels' },
   { name: '--border', hex: '#262626', use: 'hairlines, dividers' },
-  { name: '--accent', hex: '#ff6369', use: 'links, focus, signal' },
 ]
 
 // Left panel: pages, then the layer tree of the open page.

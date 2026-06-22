@@ -1,0 +1,326 @@
+// MotionTimeline — third of the depicted-tool trio. Fixed intrinsic size, clipped
+// by the panel; chrome on the site's semantic tokens (--tl-* alias them) so it
+// follows light/dark. One accent moment: the playhead. Uniform row heights keep
+// the left track-heads aligned with the right lanes.
+
+$ease: cubic-bezier(0.22, 1, 0.36, 1);
+$row: 2.5rem;
+$head: 12rem;
+
+.timeline {
+  --tl-bg: var(--bg);
+  --tl-bar: var(--surface);
+  --tl-line: var(--border);
+  --tl-fg: var(--fg);
+  --tl-dim: var(--muted);
+
+  width: 52rem; // wider than the panel → clipped right
+  height: 19.5rem; // taller than the panel → clipped bottom
+  display: flex;
+  flex-direction: column;
+  background: var(--tl-bg);
+  color: var(--tl-fg);
+  font-family: var(--font-mono);
+  user-select: none;
+}
+
+// ── Transport bar ─────────────────────────────────────────────────────────
+.transport {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  height: 2.85rem;
+  padding: 0 0.85rem;
+  background: var(--tl-bar);
+  border-bottom: 1px solid var(--tl-line);
+}
+
+.zoom {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.zoomIcon {
+  width: 0.85rem;
+  height: 0.85rem;
+  color: var(--tl-dim);
+}
+.slider {
+  position: relative;
+  width: 5rem;
+  height: 3px;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--tl-fg) 16%, transparent);
+}
+.sliderKnob {
+  position: absolute;
+  left: 22%;
+  top: 50%;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  background: var(--tl-fg);
+  transform: translate(-50%, -50%);
+}
+
+.select {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  height: 1.65rem;
+  padding: 0 0.5rem;
+  font-size: 0.72rem;
+  color: var(--tl-fg);
+  border: 1px solid var(--tl-line);
+  border-radius: 5px;
+}
+.caret {
+  width: 0.7rem;
+  height: 0.7rem;
+  color: var(--tl-dim);
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 0.1rem;
+  margin-left: 0.4rem;
+}
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 5px;
+  color: var(--tl-dim);
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+
+  svg {
+    width: 0.95rem;
+    height: 0.95rem;
+    transition: transform 0.15s ease;
+  }
+  &:hover {
+    color: var(--tl-fg);
+    background: color-mix(in srgb, var(--tl-fg) 7%, transparent);
+    svg {
+      transform: scale(1.1);
+    }
+  }
+}
+
+// ── Body ──────────────────────────────────────────────────────────────────
+.body {
+  flex: 1 1 auto;
+  display: flex;
+  min-height: 0;
+}
+
+// Left column — timecode + track heads
+.heads {
+  flex: 0 0 $head;
+  background: var(--tl-bar);
+  border-right: 1px solid var(--tl-line);
+  overflow: hidden;
+}
+.timecode {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 2.5rem;
+  padding: 0 0.85rem;
+  border-bottom: 1px solid var(--tl-line);
+}
+.tc {
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--tl-fg);
+}
+.frame {
+  font-size: 0.72rem;
+  color: var(--tl-dim);
+}
+.headRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: $row;
+  padding: 0 0.85rem;
+  color: var(--tl-dim);
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+
+  &:hover {
+    color: var(--tl-fg);
+    background: color-mix(in srgb, var(--tl-fg) 6%, transparent);
+  }
+}
+.eye {
+  flex: 0 0 auto;
+  width: 0.95rem;
+  height: 0.95rem;
+}
+.trackName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.82rem; // media track (hero-reveal)
+}
+// Sequence layers read a step smaller than their media parent.
+.trackNameSub {
+  font-size: 0.72rem;
+}
+
+// Right column — ruler + lanes (relative, so the playhead can span it)
+.lanes {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+}
+.ruler {
+  position: relative;
+  height: 2.5rem;
+  border-bottom: 1px solid var(--tl-line);
+}
+// mm:ss label, centred on its second.
+.tick {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.7rem;
+  color: var(--tl-dim);
+  white-space: nowrap;
+}
+
+// The one accent moment — the playhead sweeps the whole lane stack. Top sits at
+// the lanes' top edge so the arrow touches the bottom of the transport bar.
+.playhead {
+  position: absolute;
+  left: 4.53rem; // frame 32 (00:01.02) on the REM_PER_SEC scale — just past 00:01
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--accent);
+  z-index: 2;
+  will-change: transform; // driven by the hover scrub (JS)
+}
+.playheadGrip {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 7px solid var(--accent);
+}
+
+.lane {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: $row;
+  border-bottom: 1px solid color-mix(in srgb, var(--tl-line) 60%, transparent);
+}
+
+// Media track — a filmstrip of frame cells, running off the right edge.
+.filmstrip {
+  display: flex;
+  height: 1.85rem;
+  margin: 0;
+}
+.frameCell {
+  flex: 0 0 3.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--tl-fg) 5%, transparent);
+  border-right: 1px solid var(--tl-line);
+  color: var(--tl-dim);
+
+  svg {
+    width: 0.9rem;
+    height: 0.9rem;
+    opacity: 0.55;
+  }
+}
+
+// Sequence clips — colour-coded event bars (icon + label), offset to read as the
+// rise-in stagger. White content sits on the tone fill in both themes.
+.clip {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: 11rem;
+  height: 1.7rem;
+  padding: 0 0.55rem;
+  border-radius: 4px;
+  color: #fff;
+  cursor: pointer;
+  transition:
+    filter 0.15s ease,
+    transform 0.15s ease;
+
+  &:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+  }
+}
+// Square the left corners so the clip reads as continuing off-screen left.
+.clipOpenLeft {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.clipIcon {
+  flex: 0 0 auto;
+  width: 0.85rem;
+  height: 0.85rem;
+}
+.clipLabel {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: #fff;
+  white-space: nowrap;
+}
+
+// Event tones — muted editor colours; fixed (they're content, like the swatches).
+.toneRise {
+  background: #635aa6; // indigo
+  border: 1px solid color-mix(in srgb, #fff 26%, transparent);
+}
+.toneStagger {
+  background: #47729e; // steel blue
+  border: 1px solid color-mix(in srgb, #fff 26%, transparent);
+}
+.toneScroll {
+  background: #5d7d54; // sage
+  border: 1px solid color-mix(in srgb, #fff 26%, transparent);
+}
+.toneView {
+  background: #9a6a4f; // clay
+  border: 1px solid color-mix(in srgb, #fff 26%, transparent);
+}
+
+// Reduced motion — keep the colour cues, drop the movement.
+@media (prefers-reduced-motion: reduce) {
+  .btn svg {
+    transition: none;
+  }
+  .clip {
+    transition-property: filter;
+  }
+  .btn:hover svg,
+  .clip:hover {
+    transform: none;
+  }
+}
