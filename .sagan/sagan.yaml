@@ -1,0 +1,92 @@
+# .sagan/sagan.yaml — per-project fleet config (installed by sagan-wire)
+# Template version: 0.5.1 — probe reports this; --update keys
+# on .sagan/.template-manifest.json, not this line.
+# v0 HONESTY: `enforced:` is aspirational — the PM (a model) interprets
+# everything below. Runtime enforcement is future Conan work.
+
+template_version: "0.5.1"
+runtime: claude-code-session        # v0 stand-in; target is conan
+validation: pm-interpreted
+enforced: []                        # target: [round_caps, critic_isolation, human_gates, containment_floors]
+
+pm:
+  binding: { provider: claude-code }
+  state: ledger                     # events.jsonl + tickets, appended continuously
+  surface_decisions: structured-questions
+  # PROVIDER-NEUTRAL PM REQUIREMENT: at any human gate or open decision, the
+  # PM presents ALL outstanding questions as a structured question set with a
+  # recommended default per question — never buried in prose. In Claude Code
+  # this is the AskUserQuestion tool; other PM bindings must implement an
+  # equivalent.
+
+providers:
+  claude: { containment: prompt-gated }
+
+bindings:
+  frontend: { provider: claude }
+  backend:  { provider: claude }
+  copy:     { provider: claude }
+  critic:   { provider: claude, isolation: fresh-subagent }
+  verify:   { provider: claude }    # never the builder subagent
+
+rules:
+  ac_before_dispatch: required
+  builder_neq_verifier: required
+  ship_requires: [critic_approved, verify_evidence_sha]
+
+critique:
+  policy: risk-based
+  mandatory: [user-visible, mergeable]
+  verdict: [APPROVED, REVISE, NEEDS_EVIDENCE, ESCALATE]
+  circuit_breakers:
+    max_rounds: { correctness: 5, quality: 3 }
+    on_cap: ESCALATE
+    quality_extension: human-authorized
+    same_finding_failures: 3        # -> ESCALATE strategy-may-be-wrong
+
+handoff:
+  context_packs: pointers           # paths + ticket id, never paraphrased content
+
+gates:
+  promote: per-ticket
+  # The human sees what they sign off on — the promote-gate needs-you MUST
+  # ship a preview bundle, never evidence-by-filename:
+  promote_preview:
+    captures: open                  # PM opens verify's gate-named captures for the human
+    live: local-serve               # PM serves the built artifact at the evidence SHA
+    serve_command: "pnpm start"  # e.g. "python3 -m http.server 4321 --directory site/dist";
+                                    # empty -> PM picks a sensible static server and says so
+  # Project gate commands — verify runs THIS project's floor:
+  verify_commands:
+    test: "(none configured)"
+    typecheck: "pnpm exec tsc --noEmit"
+    build: "pnpm build"
+
+memory:
+  scratch: .sagan/memory/
+  synthesis: .sagan/MEMORY.md
+  promote_to: CLAUDE.md    # AGENTS.md if the project has one, else CLAUDE.md
+
+ticket:
+  store: local-files           # local-files (.sagan/tickets/) or linear
+  blocks: [ac, method, frontend, backend, copy, qa, decisions]
+  required_fields: [ac, builder_id, verifier_id, evidence_sha]
+  mirror:                           # tracker -> local markdown (read by /sagan-plan),
+    path: .sagan/tickets            #   so every worker resolves the ticket as a POINTER
+    commit: ignore                  #   ignore | commit — live tracker ids in the repo
+    writeback: verbatim             #   verbatim | off. Never "summary": a summarized
+                                    #   write-back is the paraphrase this design forbids.
+    # ONE WRITER PER FIELD. The tracker owns intent (title/status/priority/
+    # assignee/description); the repo owns execution (the blocks below +
+    # builder_id, verifier_id, evidence_sha). A fetch regenerates the first and
+    # never touches the second.
+    owned_by_repo: [ac, method, frontend, backend, copy, qa, decisions]
+
+scope:
+  modes: [ticket, sprint]
+  default: ticket
+  sprint: planning-only             # batch AC authoring + the decision round across
+                                    # N tickets; builds still run ONE AT A TIME.
+                                    # Concurrent builders need worktrees, a
+                                    # file-disjointness check and a sprint-level
+                                    # round cap — none of which exist at v0.

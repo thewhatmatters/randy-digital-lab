@@ -44,3 +44,8 @@ next-env.d.ts
 # python bytecode (skill scripts)
 __pycache__/
 *.pyc
+
+# sagan-wire commit policy: audit trail committed, evidence media ignored
+.sagan/ledger/*/
+!.sagan/ledger/events.jsonl
+.sagan/memory/

@@ -131,3 +131,13 @@ underlying file when a listed source is relevant.
 
 @docs/sources/INDEX.md
 <!-- ingest-source:end -->
+
+<!-- sagan-wire:start -->
+## Sagan overlay
+
+This project is wired to the Sagan orchestration standard. The overlay is
+self-contained in `.sagan/` — read `.sagan/sagan.yaml` (roles, gates, rules)
+before any fleet work. Tickets: `.sagan/tickets/`. Ledger:
+`.sagan/ledger/events.jsonl`. Open a run with `/sagan-plan`, drive it with
+`/sagan-run`. Un-wire: delete `.sagan/` and this block.
+<!-- sagan-wire:end -->

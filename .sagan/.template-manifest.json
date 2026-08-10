@@ -1,0 +1,21 @@
+{
+  "template_version": "0.5.1",
+  "files": {
+    "sagan.yaml": "fa3adde7ed715c067d060527d090f16fdf89e3e5f1b18507f623370045e02c49",
+    "MEMORY.md": "8cc7e519a5c0b393d94553988220354dd3385d29a43dfff813811b6b92aa0182",
+    "roles/frontend.md": "614c4df56bdfbc1407fb1717b0b6887a53b972df4ebdeb084f6ff6a91628d6f7",
+    "roles/critic.md": "86c1b67f96d29e2621f7c33d17360967e9f57a4e27b66d74080e09cef0457e2b",
+    "roles/verify.md": "7f46c09aa00ed22b3b6672310ddbad011e7c31e56ff9f3acf821e26ea03d5e16",
+    "roles/copy.md": "7a12a7d11f51f35994c354f5de04ccd4e27be53e9f90853b35991d5cf784898f",
+    "tickets/T-000-example.md": "81e0f40ebe18e949ed93af6bb4be3346855ca0d37ed7fce1e9181761f1f68629"
+  },
+  "sources": {
+    "sagan.yaml": "sagan.yaml",
+    "MEMORY.md": "MEMORY.md",
+    "roles/frontend.md": "roles/frontend.md",
+    "roles/critic.md": "roles/critic.md",
+    "roles/verify.md": "roles/verify.md",
+    "roles/copy.md": "roles/copy.md",
+    "tickets/T-000-example.md": "tickets/T-000-example.md"
+  }
+}
