@@ -42,6 +42,38 @@ insights are proposed to the vault through its gate.)
   next heading); critics must be handed block-scoped excerpts if true
   isolation matters — a whole-file Read leaks excluded blocks (r2b critic
   disclosed exactly this).
+## T-004 — Tile carousel + position handoff (run-20260811-105606, promoted round 1 + gate fold-in)
+
+- **"Measure live, don't encode twice" paid out:** the tile→modal morph
+  needed ZERO edits for slide continuity — it reads live rects, so the
+  problem reduced to "both ends render slide N" (props, not geometry).
+- **Client-boundary pattern:** helpers exported from a `'use client'`
+  module can't be called in Server Components — shared rules live in a
+  directive-free sibling module both sides import
+  (`work-carousel-position.ts`).
+- **Sibling-control-over-a-link pattern:** hover chains don't cross
+  siblings — the hover wake must live on the WRAPPER (`:hover`/
+  `:focus-within`), or the card flickers when the cursor reaches an
+  arrow. Cross-module class skinning is chunk-order-fragile: keep
+  overrides at ≥(0,2,0) specificity so the cascade never depends on
+  import order.
+- **Sync at event time, not teardown time:** broadcasting the modal's
+  index on every change (vs on close) made all three close paths
+  identical for free and warms the tile image before the reverse morph.
+- **Verify craft additions:** rest-state captures need `__introDone` +
+  ~2.5s settle + computed-opacity readback (entrance stagger poisons
+  early frames); disabled buttons vanish from tab order — stage slide ≥2
+  before transcribing; evidence on a dirty tree must name the dirty file
+  list. Spec note: name the interactions allowed to end an "at-rest"
+  network state (hover-preload changes the waterfall a probe sees).
+- **Carry-forwards (open):** arrow-layer inset duplicates `_card.scss`
+  constants (~1px drift if the card frame changes — a styles test or
+  shared variable); `thumbnail == images[0]` is discipline-only (a
+  validation rule when frontmatter validation lands); modal paging not
+  mirrored to the address bar (polish, judged beyond the bar); tile
+  swipe deliberately omitted (drag-in-link vs tap conflict — revisit
+  only on real mobile feedback).
+
 ## T-003 — Hygiene carry-forwards (run-20260811-095412, promoted round 1)
 
 - **Test the seam, not an extraction:** both content pipelines hard-code

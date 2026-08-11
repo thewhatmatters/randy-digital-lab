@@ -86,7 +86,11 @@ export default async function WorkProject({ params }) {
         }}
       />
       <div className={`col-start-1 col-end-13 ${styles.sheet}`}>
-        <WorkCarousel images={images} title={title} priority framed />
+        {/* indexFromUrl, not searchParams: this page must stay statically
+            generated, so the carousel adopts ?i=N client-side after
+            hydration (the static slide-0 image stays the LCP; the jump is
+            transition-suppressed). Plain /work/[slug] opens at slide 0. */}
+        <WorkCarousel images={images} title={title} priority framed indexFromUrl />
         <WorkDetailContent project={project} variant="page" />
       </div>
     </section>

@@ -46,6 +46,15 @@
   }
 }
 
+// The tile — one grid cell: the card link plus its sibling arrow layer
+// (T-004: arrows are never nested inside the link). It anchors the layer,
+// owns the entrance (so the arrows rise with the card, not before it), and
+// hosts the hover/focus wake (so pausing on an arrow — outside the link —
+// holds the wake instead of dropping it).
+.tile {
+  position: relative;
+}
+
 // The card — Services tile anatomy: shell holding [media panel][body].
 .card {
   @include card-shell;
@@ -54,17 +63,17 @@
   text-decoration: none;
 }
 
-// Entrance gated on the intro veil (same contract as posts/experience): cards
+// Entrance gated on the intro veil (same contract as posts/experience): tiles
 // stay hidden while `intro-armed`, rise in staggered once `intro-revealed`.
-// No-JS / reduced-motion never arm <html>, so cards just render in place.
+// No-JS / reduced-motion never arm <html>, so tiles just render in place.
 :global(html.intro-armed) {
-  .card {
+  .tile {
     opacity: 0;
   }
 }
 
 :global(html.intro-armed.intro-revealed) {
-  .card {
+  .tile {
     animation: rise-in 0.45s $ease both;
     animation-delay: min(calc(var(--i, 0) * 45ms), 400ms);
   }
@@ -107,10 +116,12 @@
 }
 
 // Hover/focus — the card wakes exactly like a Services tile: panel edge
-// brightens, title nudges, summary lifts. :focus-visible gets the same cue
-// so keyboard reaches parity (the default focus ring stays).
-.card:hover,
-.card:focus-visible {
+// brightens, title nudges, summary lifts. Keyed off the TILE (not the link):
+// the arrow buttons are siblings of the link, and the wake must hold while
+// the cursor or focus is on them — one object waking, not two fighting.
+// :focus-within keeps keyboard parity for both the link and the arrows.
+.tile:hover,
+.tile:focus-within {
   .thumb {
     border-color: $wake-border;
   }
@@ -122,15 +133,72 @@
   }
 }
 
+// The tile's carousel arrows — the SAME .arrow object the modal carousel
+// uses (composed classes, see work-tile.tsx), so the control you used on the
+// tile is the one you find after the morph, in the same position. This layer
+// only adds placement + the gate decisions: hover-revealed on fine pointers,
+// always visible (and ≥44px) on coarse ones.
+//
+// The layer mirrors the media panel's border box: same 0.25rem card-frame
+// inset, same border-box 16:10 — so the arrows center on the image, tracked
+// by construction. Click-transparent; only the buttons take the pointer.
+.arrowLayer {
+  position: absolute;
+  top: 0.25rem;
+  left: 0.25rem;
+  right: 0.25rem;
+  aspect-ratio: 16 / 10;
+  pointer-events: none;
+}
+
+// Hidden at rest on fine pointers (AC 9b: the resting grid reads exactly as
+// T-002 shipped it); revealed by the tile's own wake — hover anywhere on the
+// tile, or focus inside it. Selectors stay ≥(0,3,0) so they outrank the
+// donor module's .arrow rules regardless of chunk order.
+.tile .tileArrow {
+  pointer-events: auto;
+  opacity: 0;
+
+  &:disabled {
+    opacity: 0;
+  }
+}
+
+.tile:hover,
+.tile:focus-within {
+  .tileArrow {
+    opacity: 1;
+
+    &:disabled {
+      opacity: 0.35;
+    }
+  }
+}
+
+// Coarse pointers: no hover to reveal with — arrows are simply there (gate
+// decision), grown to a ≥44px target (WCAG 2.5.5, same rule as the chips).
+@media (hover: none), (pointer: coarse) {
+  .tile .tileArrow {
+    width: 2.75rem;
+    height: 2.75rem;
+    opacity: 1;
+
+    &:disabled {
+      opacity: 0.35;
+    }
+  }
+}
+
 // Reduced-motion: no entrance, no hover transforms. The color wake still
-// lands (its transition is a fade between two static states).
+// lands (its transition is a fade between two static states), and the arrow
+// reveal is likewise an opacity fade, not motion.
 @media (prefers-reduced-motion: reduce) {
-  .card {
+  .tile {
     opacity: 1;
     animation: none;
   }
-  .card:hover .title,
-  .card:focus-visible .title {
+  .tile:hover .title,
+  .tile:focus-within .title {
     transform: none;
   }
 }
