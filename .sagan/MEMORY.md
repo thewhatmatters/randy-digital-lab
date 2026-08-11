@@ -42,6 +42,30 @@ insights are proposed to the vault through its gate.)
   next heading); critics must be handed block-scoped excerpts if true
   isolation matters — a whole-file Read leaks excluded blocks (r2b critic
   disclosed exactly this).
+## T-005 — lib/dates.ts (run-20260811-152912, promoted round 1; from the architecture review's top pick)
+
+- **The review→grilling→ticket pipeline works:** five design decisions
+  locked in the grilling loop meant a one-question gate and a
+  zero-ambiguity dispatch; CONTEXT.md's "Newest-first" entry gave the
+  builder vocabulary to code against.
+- **Import-move spec shape:** name the known importers AND mandate "grep
+  for others" — it caught a third formatDate importer. Pin the STRONGER
+  grep invariant when the refactor achieves one (zero `.sort(` under
+  app/ beat the AC's narrower phrasing).
+- **Mutation-demo house recipe (blessed):** loop apply → scoped test →
+  transcript → restore-from-saved-copy (not git checkout — new files
+  are untracked), then diff against pristine.
+- **"Expect DIFFERENT" is a hypothesis, not a criterion:** verify
+  predicted a /work order diff; reality was byte-identical (the old
+  undefined order happened to match spec). Report empirical results
+  against the AC's wording, never force the predicted shape onto data.
+- **Carry-forwards (open, → frontmatter-validation ticket / candidate
+  #1):** NaN publishedAt silently bypasses the slug tiebreak (deferral
+  judged correct — contract undecided); newestFirst parses date-only as
+  UTC vs formatDate's local (normalize at the boundary); formatDate's
+  relative-branch month/day arithmetic is boundary-buggy and clockless
+  (subtraction candidate, → #7 ticket).
+
 ## T-004 — Tile carousel + position handoff (run-20260811-105606, promoted round 1 + gate fold-in)
 
 - **"Measure live, don't encode twice" paid out:** the tile→modal morph

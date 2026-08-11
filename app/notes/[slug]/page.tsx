@@ -1,7 +1,8 @@
 import { notFound } from 'next/navigation'
 import { CustomMDX } from 'app/components/mdx'
-import { formatDate, getBlogPosts } from 'app/notes/utils'
+import { getBlogPosts } from 'app/notes/utils'
 import { baseUrl } from 'app/sitemap'
+import { formatDate } from 'lib/dates'
 import styles from 'app/components/margin.module.scss'
 
 export async function generateStaticParams() {

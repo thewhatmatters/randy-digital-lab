@@ -1,8 +1,12 @@
 import { getWorkProjects } from 'app/work/utils'
+import { newestFirst } from 'lib/dates'
 import { WorkTile } from './work-tile'
 import styles from './work-index.module.scss'
 
-// Work index — a 2-up card grid (gate decision), newest first, in the
+// Work index — a 2-up card grid (gate decision), Newest-first (lib/dates:
+// publishedAt descending, slug ascending on ties — with all three projects
+// sharing one date, the grid order is knav → perchhq → shift by
+// specification), in the
 // Services card language (round-2.6 decision): each tile is the same "tool
 // card" object as a Services tile — rounded keycap-bordered card, the 16:10
 // image inside its own inset media panel, title + muted one-liner below in
@@ -22,12 +26,7 @@ import styles from './work-index.module.scss'
 // renders only images[0] — by the work-schema convention that IS the
 // thumbnail — so the resting grid and its network cost are unchanged.
 export function WorkProjects() {
-  let projects = getWorkProjects().sort((a, b) => {
-    if (new Date(a.metadata.publishedAt) > new Date(b.metadata.publishedAt)) {
-      return -1
-    }
-    return 1
-  })
+  let projects = newestFirst(getWorkProjects())
 
   return (
     <ul className={styles.grid}>

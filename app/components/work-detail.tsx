@@ -1,6 +1,6 @@
 import { CustomMDX } from 'app/components/mdx'
 import { Button } from 'app/components/button'
-import { formatDate } from 'app/notes/utils'
+import { formatDate } from 'lib/dates'
 import type { WorkMetadata } from 'app/work/utils'
 import styles from './work-detail.module.scss'
 
