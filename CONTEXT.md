@@ -23,9 +23,18 @@ _Avoid_: placeholder (ambiguous with UI placeholders), dummy
 
 **Newest-first**:
 The one ordering rule for content listings and feeds: `publishedAt`
-descending, tied entries broken by slug ascending. Owned by
-`newestFirst()` in `lib/dates.ts`; no caller re-implements it.
+descending, tied entries broken by slug ascending; a date-only
+`publishedAt` means LOCAL midnight everywhere (`asLocalInstant`, shared
+by ordering and rendering). Owned by `newestFirst()` in `lib/dates.ts`;
+no caller re-implements it.
 _Avoid_: sort by date, chronological (backwards)
+
+**Validation floor**:
+The per-pipeline required-field list (notes: title/publishedAt/summary;
+work: + thumbnail/images≥1) enforced by the shared content reader; a
+breach is a `ContentFileError` naming the file and problem, failing the
+build loudly.
+_Avoid_: schema check (too generic), frontmatter linting
 
 **Morph**:
 The shared-element transition where a work tile's current slide grows

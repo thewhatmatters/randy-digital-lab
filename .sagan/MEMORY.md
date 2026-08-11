@@ -42,6 +42,39 @@ insights are proposed to the vault through its gate.)
   next heading); critics must be handed block-scoped excerpts if true
   isolation matters — a whole-file Read leaks excluded blocks (r2b critic
   disclosed exactly this).
+## T-006 — parser contract deepening (run-20260811-164147, promoted round 1)
+
+- **Gate-locked design → single-round build:** four pre-decided choices
+  left one judgment call, and it arrived pre-framed with a hard
+  constraint ("rendered strings don't change") that made the answer
+  derivable (local midnight, not UTC — UTC shifts rendered dates west of
+  Greenwich). Decision quality at the gate is what buys one-round
+  circuits.
+- **Contract-changing tickets must name which old pins die:** the T-003
+  colon-path fixture pinned behavior the new contract makes an error;
+  the ticket's explicit "quirk pins get REPLACED deliberately" license
+  is what let the builder proceed without an escalation. Always say it.
+- **Null-then-throw seam:** pure functions return null/issues; the layer
+  that knows the file path throws the named error. The right shape for
+  "no blind TypeError" without threading paths into pure code.
+- **An equivalent mutant is a result, not a failed check:** verify's
+  surviving mutant was correctly diagnosed as unreachable defensive
+  code guarding a stated contract term — keep it, comment it, report
+  it. Also: mutation demos can be TZ-dependent; state the environment
+  under which a mutation is observable.
+- **Probe scripts ride the test harness:** `node
+  --experimental-strip-types --import ./tests/register.mjs <script>`
+  lets any verification probe import lib modules exactly like the app.
+- **Role-spec gap flagged twice:** the frontend rubric (semantic HTML,
+  375px) is dead weight for data-layer tickets — a library/module
+  rubric variant is wanted; the spec also hardcodes the Dieter persona
+  while staffing is per-dispatch. Overlay improvement for sagan.
+- **Carry-forwards (open, post-T-006):** calendar-validity pin (Feb-30
+  rolls valid) + fence-anchor fix → future validation ticket; BlockItem
+  typing of unvalidated optional lists → candidate #6; formatDate
+  relative-branch subtraction (zero callers pass true) → candidate #7;
+  skip-warning dedupe (repeats per build render) — cosmetic.
+
 ## T-005 — lib/dates.ts (run-20260811-152912, promoted round 1; from the architecture review's top pick)
 
 - **The review→grilling→ticket pipeline works:** five design decisions

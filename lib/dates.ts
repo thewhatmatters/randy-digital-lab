@@ -13,12 +13,26 @@ type Dated = {
   slug: string
 }
 
+/**
+ * The ONE interpretation of a `publishedAt` string (T-006 date agreement):
+ * a date-only value means LOCAL midnight — the same `T00:00:00` injection
+ * formatDate has always applied, now shared with newestFirst's comparator
+ * (which used to hand date-only strings to `new Date()` raw, i.e. UTC —
+ * the two readers disagreed by the machine's UTC offset). Local, not UTC,
+ * is deliberate: formatDate renders through toLocaleString, so a UTC
+ * interpretation would shift every date-only entry to the previous day
+ * anywhere west of UTC. Local keeps rendered date strings byte-identical.
+ */
+export function asLocalInstant(date: string): Date {
+  return new Date(date.includes('T') ? date : `${date}T00:00:00`)
+}
+
 // Internal on purpose (not exported): callers get the sorted copy, never
 // the raw comparator — the tiebreak is part of the rule, not an option.
 function byNewestFirst(a: Dated, b: Dated): number {
   const delta =
-    new Date(b.metadata.publishedAt).getTime() -
-    new Date(a.metadata.publishedAt).getTime()
+    asLocalInstant(b.metadata.publishedAt).getTime() -
+    asLocalInstant(a.metadata.publishedAt).getTime()
   if (delta !== 0) return delta
   // Equal publishedAt → slug ascending, so listings with shared dates
   // (today: all three work projects) have a specified, stable order.
@@ -35,10 +49,7 @@ export function newestFirst<T extends Dated>(items: T[]): T[] {
 
 export function formatDate(date: string, includeRelative = false) {
   let currentDate = new Date()
-  if (!date.includes('T')) {
-    date = `${date}T00:00:00`
-  }
-  let targetDate = new Date(date)
+  let targetDate = asLocalInstant(date)
 
   let yearsAgo = currentDate.getFullYear() - targetDate.getFullYear()
   let monthsAgo = currentDate.getMonth() - targetDate.getMonth()

@@ -9,9 +9,12 @@
 // 3. input non-mutation           — mutation: sort in place (drop the copy)
 // 4. single-item and empty lists  — mutation: early-return the same reference
 // 5. formatDate moved behavior    — mutation: month 'long' → 'short'
+// 6. date agreement (T-006)       — mutation: comparator back to raw
+//    new Date(publishedAt), i.e. UTC for date-only strings
+//    (transcript in .sagan/ledger/T-006/qabuild/)
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
-import { newestFirst, formatDate } from 'lib/dates'
+import { newestFirst, formatDate, asLocalInstant } from 'lib/dates'
 
 /** Minimal Dated shape — mirrors {metadata: {publishedAt}, slug}. */
 const entry = (slug: string, publishedAt: string) => ({
@@ -116,6 +119,58 @@ describe('newestFirst — single-item and empty lists', () => {
     const result = newestFirst(input)
     assert.deepEqual(result, [])
     assert.notEqual(result, input, 'empty result must still be a copy')
+  })
+})
+
+describe('date agreement — date-only publishedAt is LOCAL midnight everywhere (T-006)', () => {
+  // The invariant: newestFirst and formatDate read a date-only string as the
+  // SAME instant. Mechanism: both route through asLocalInstant, which keeps
+  // formatDate's longtime T00:00:00 (local) injection — chosen over UTC
+  // because formatDate renders via toLocaleString, so UTC would shift every
+  // date-only entry to the previous day anywhere west of UTC. Local keeps
+  // rendered date strings byte-identical (AC 3/AC 6).
+  it('asLocalInstant reads a date-only string as local midnight', () => {
+    assert.equal(
+      asLocalInstant('2026-08-10').getTime(),
+      new Date('2026-08-10T00:00:00').getTime()
+    )
+  })
+
+  it('asLocalInstant passes a full ISO datetime through unchanged', () => {
+    assert.equal(
+      asLocalInstant('2026-08-10T15:30:00').getTime(),
+      new Date('2026-08-10T15:30:00').getTime()
+    )
+  })
+
+  it('newestFirst ties a date-only entry with its explicit local-midnight twin (slug tiebreak decides)', () => {
+    // Under the pre-T-006 comparator (raw new Date → UTC for date-only),
+    // these two are NOT the same instant on any non-UTC machine and the
+    // tiebreak never fires — this pin fails. Under the agreement they tie,
+    // so slug ascending decides.
+    const input = [
+      entry('b-midnight', '2026-08-10T00:00:00'),
+      entry('a-dateonly', '2026-08-10'),
+    ]
+    assert.deepEqual(
+      newestFirst(input).map((e) => e.slug),
+      ['a-dateonly', 'b-midnight']
+    )
+  })
+
+  it('a same-local-day afternoon datetime sorts newer than the date-only entry', () => {
+    const input = [
+      entry('dateonly', '2026-08-10'),
+      entry('noon', '2026-08-10T12:00:00'),
+    ]
+    assert.deepEqual(
+      newestFirst(input).map((e) => e.slug),
+      ['noon', 'dateonly']
+    )
+  })
+
+  it('formatDate renders a date-only string unchanged under the shared reader', () => {
+    assert.equal(formatDate('2026-08-10'), 'August 10, 2026')
   })
 })
 

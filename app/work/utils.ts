@@ -1,5 +1,5 @@
 import path from 'path'
-import { getMDXData, type MetaItem } from 'lib/mdx'
+import { getMDXData, type ContentSchema, type MetaItem } from 'lib/mdx'
 
 // Work schema — same filesystem MDX pipeline as notes (lib/mdx.ts), with
 // extended frontmatter for case pages: a 16:10 thumbnail for the index card,
@@ -11,6 +11,10 @@ import { getMDXData, type MetaItem } from 'lib/mdx'
 //   images:
 //     - /work/<slug>/thumb.svg
 //     - /work/<slug>/carousel-02.svg
+// Since T-006 the parser reads bare list items as plain strings natively, so
+// `images` arrives as string[] straight from the parser — the old
+// RawWorkMetadata/itemToPath inverse shim is gone, and the validation floor
+// below guarantees the shape at read time.
 export type WorkMetadata = {
   title: string
   publishedAt: string
@@ -23,31 +27,26 @@ export type WorkMetadata = {
   liveUrl?: string
   /** At-a-glance rows for the detail content section. */
   meta?: MetaItem[]
-  /** Ordered carousel images (16:10 each). Normalized below; falls back to
-   *  [thumbnail] if a project declares none. */
+  /** Ordered carousel images (16:10 each). Required, ≥1 entry — enforced by
+   *  the validation floor, so every project declares its carousel
+   *  explicitly (the pre-T-006 [thumbnail] fallback is gone). */
   images: string[]
 }
 
-// What the shared parser actually produces for `images`: its block-list rule
-// reads every "- item" as a {label, value} pair split on ": " — a bare path
-// has no ": " so it lands whole in `label` (and any accidental split is
-// rejoined below). The parser stays byte-identical for notes (AC 1); the
-// work layer owns this normalization.
-type RawWorkMetadata = Omit<WorkMetadata, 'images'> & { images?: MetaItem[] }
-
-const itemToPath = (item: MetaItem) =>
-  item.value ? `${item.label}: ${item.value}` : item.label
+// Validation floor for work (T-006): notes' floor plus the case-page fields.
+// 'string-list' also rejects an image path containing ": " (it would parse
+// as a {label, value} pair) with a named error instead of mangling it.
+const workSchema: ContentSchema = {
+  title: 'scalar',
+  publishedAt: 'date',
+  summary: 'scalar',
+  thumbnail: 'scalar',
+  images: 'string-list',
+}
 
 export function getWorkProjects() {
-  return getMDXData<RawWorkMetadata>(
-    path.join(process.cwd(), 'app', 'work', 'projects')
-  ).map((project) => ({
-    ...project,
-    metadata: {
-      ...project.metadata,
-      images: project.metadata.images?.length
-        ? project.metadata.images.map(itemToPath)
-        : [project.metadata.thumbnail],
-    } as WorkMetadata,
-  }))
+  return getMDXData<WorkMetadata>(
+    path.join(process.cwd(), 'app', 'work', 'projects'),
+    workSchema
+  )
 }

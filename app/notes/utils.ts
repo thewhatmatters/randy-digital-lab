@@ -1,10 +1,11 @@
 import path from 'path'
-import { getMDXData, type MetaItem } from 'lib/mdx'
+import { getMDXData, type ContentSchema, type MetaItem } from 'lib/mdx'
 
 // The generic frontmatter parser + directory reader live in lib/mdx.ts
 // (shared with app/work/utils.ts); shared date helpers (formatDate,
 // newestFirst) live in lib/dates.ts. This file keeps ONLY the notes
-// schema; getBlogPosts() behaves exactly as before.
+// schema: the TypeScript shape below and the validation floor the shared
+// reader enforces at read time (T-006).
 
 type StackItem = MetaItem
 
@@ -35,6 +36,17 @@ type Metadata = {
   aiDegree?: string
 }
 
+// Validation floor for notes (T-006): a note missing any of these fails the
+// build with a ContentFileError naming the file and the problem.
+const notesSchema: ContentSchema = {
+  title: 'scalar',
+  publishedAt: 'date',
+  summary: 'scalar',
+}
+
 export function getBlogPosts() {
-  return getMDXData<Metadata>(path.join(process.cwd(), 'app', 'notes', 'posts'))
+  return getMDXData<Metadata>(
+    path.join(process.cwd(), 'app', 'notes', 'posts'),
+    notesSchema
+  )
 }
