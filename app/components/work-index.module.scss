@@ -1,0 +1,136 @@
+// Work index cards — the Services card language (round 2.6): each tile is the
+// same "tool card" object as a Services tile, via the shared skin in
+// _card.scss — outer rounded card (bg + keycap border), the 16:10 image set
+// into its own inset media panel (surface bg + hairline, panel radius), then
+// title + muted one-liner in the card's padding, on the Services type
+// metrics. Mobile: one column. Desktop (≥48rem): 2-up on the page grid — the
+// single column gutter is --grid-gutter, so each card spans six of the twelve
+// columns and the card's OUTER (border-box) edges land on grid lines 1/7/13
+// by construction; the image sits inset by the card frame. Row rhythm matches
+// the Services bento (gutter rows). (Round 2.4's traveling-border overlay and
+// its container-query geometry are retired — no overlay pseudo, no cqw math.)
+//
+// Motion: entrance is the same family as the notes/experience rows (rise-in
+// stagger behind the intro veil). Hover/focus is the Services wake, same
+// tokens and 0.18s house ease: panel hairline deepens to the shared
+// hover-border mix, title nudges 3px, summary brightens to fg. Transforms are
+// disabled under prefers-reduced-motion (color steps still land — the tween
+// on them is a fade, not motion).
+
+@use './card' as *;
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 48rem) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--grid-gutter);
+  }
+}
+
+// The card — Services tile anatomy: shell holding [media panel][body].
+.card {
+  @include card-shell;
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+}
+
+// Entrance gated on the intro veil (same contract as posts/experience): cards
+// stay hidden while `intro-armed`, rise in staggered once `intro-revealed`.
+// No-JS / reduced-motion never arm <html>, so cards just render in place.
+:global(html.intro-armed) {
+  .card {
+    opacity: 0;
+  }
+}
+
+:global(html.intro-armed.intro-revealed) {
+  .card {
+    animation: rise-in 0.45s $ease both;
+    animation-delay: min(calc(var(--i, 0) * 45ms), 400ms);
+  }
+}
+
+// The inset media panel (Services' framed visual, media variant: no padding,
+// image fills it edge to edge). The 16:10 aspect is enforced on this border
+// box regardless of source image. This is still the element the project modal
+// measures ([data-work-tile-image]) and grows from; the morph reads its
+// border-radius for the start clip, so the radius stays declared here (via
+// the panel mixin).
+.thumb {
+  @include card-panel;
+  display: block;
+  aspect-ratio: 16 / 10;
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+// Text block below the panel, inside the card's padding — Services body
+// inset and type metrics.
+.body {
+  @include card-body;
+  display: block;
+}
+
+.title {
+  @include card-title;
+  display: block;
+}
+
+.summary {
+  @include card-blurb;
+  display: block;
+}
+
+// Hover/focus — the card wakes exactly like a Services tile: panel edge
+// brightens, title nudges, summary lifts. :focus-visible gets the same cue
+// so keyboard reaches parity (the default focus ring stays).
+.card:hover,
+.card:focus-visible {
+  .thumb {
+    border-color: $wake-border;
+  }
+  .title {
+    transform: translateX(3px);
+  }
+  .summary {
+    color: var(--fg);
+  }
+}
+
+// Reduced-motion: no entrance, no hover transforms. The color wake still
+// lands (its transition is a fade between two static states).
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    opacity: 1;
+    animation: none;
+  }
+  .card:hover .title,
+  .card:focus-visible .title {
+    transform: none;
+  }
+}

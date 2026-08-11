@@ -1,0 +1,8 @@
+// Full-page work detail — a centered sheet at the modal's width, so the
+// direct-visit presentation and the modal are recognizably the same card.
+// All interior anatomy lives in work-detail.module.scss / the carousel.
+.sheet {
+  width: 100%;
+  max-width: 52rem;
+  margin-inline: auto;
+}

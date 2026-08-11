@@ -1,0 +1,81 @@
+// Work project modal (see work-modal.tsx). Layout only — open/close motion is
+// WAAPI in the component (transform/clip-path/opacity), so reduced motion
+// needs no rules here: the component simply never animates.
+//
+// z-order: above the command bar chips (70) — chrome must not float over a
+// modal — and below the first-load preloader veil (100), which cannot
+// coexist with it anyway.
+@use './chip' as *;
+
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  // Breathing room around the card; the page's own margin scale keeps the
+  // modal aligned with the grid's feel at every breakpoint.
+  padding: 1.5rem var(--grid-margin);
+
+  @media (min-width: 48rem) {
+    padding-block: 3rem;
+  }
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background: var(--scrim);
+}
+
+// The card. Width tuned so the content section's measure nearly fills it
+// (60rem would leave a dead right column beside 40rem prose). The panel is
+// the scroller — header and content travel together, like the reference.
+.panel {
+  position: relative;
+  width: min(52rem, 100%);
+  max-height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  // 3× house radius ≈ the reference's card rounding; the open morph reads
+  // this computed value, so the CSS stays the single source of truth.
+  border-radius: calc(var(--radius) * 3);
+}
+
+// Sticky, height-0 lane that keeps the close button pinned to the top-right
+// corner while the panel scrolls, without displacing the header image.
+.closeWrap {
+  position: sticky;
+  top: 0.75rem;
+  z-index: 2;
+  height: 0;
+  display: flex;
+  justify-content: flex-end;
+  // The lane is deliberately 0 tall, so the flex default (align-items:
+  // stretch) would size the chip's cross axis to the zero-height line —
+  // a 12px pill (padding + borders around a collapsed content box) with
+  // the 22px keycap overflowing it. flex-start lets the chip keep its
+  // natural height and simply hang below the lane. (Round 2.2: this was
+  // the "washed-out ESC pill" — geometry, not color.)
+  align-items: flex-start;
+  padding-inline-end: 0.75rem;
+}
+
+// The close control is the site's keycap-shortcut chip (shared mixins in
+// _chip.scss — same object as the corner "G grid"/"T lite" chips): ESC keycap
+// + muted "close" label. The chip's translucent surface + blur keep it
+// legible over the carousel artwork in both themes; on touch, where Esc means
+// nothing as a key, the same chip is simply the ≥44px tap-to-close button.
+.close {
+  @include chip;
+}
+
+.closeKey {
+  @include chip-key;
+}
+
+.closeLabel {
+  @include chip-label;
+}

@@ -1,0 +1,32 @@
+// Work case-page figure. Sits inside the article's reading measure (token
+// declared where the article is narrower; 40rem fallback elsewhere) and takes
+// its caption register from the house figure treatment — see
+// sagan-loop.module.scss, which this mirrors exactly.
+
+.figure {
+  margin: 2.5rem 0;
+  max-width: var(--reading-measure, 40rem);
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+.caption {
+  margin-top: 0.75rem;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+
+.fig {
+  font-family: var(--font-mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-right: 0.75em;
+}

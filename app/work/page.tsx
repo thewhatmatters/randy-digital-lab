@@ -1,3 +1,5 @@
+import { WorkProjects } from 'app/components/work-index'
+
 export const metadata = {
   title: 'Work',
   description:
@@ -14,13 +16,8 @@ export default function Page() {
         Selected work — projects across design and engineering. Case studies on
         the way.
       </p>
-
-      {/* placeholder index — replace with the project list once content exists
-          (mirror notes/: MDX per project + a numbered index here). */}
       <div className="col-start-1 col-end-13 mt-16">
-        <p className="font-mono text-xs uppercase tracking-[0.08em] text-muted">
-          Coming soon
-        </p>
+        <WorkProjects />
       </div>
     </section>
   )

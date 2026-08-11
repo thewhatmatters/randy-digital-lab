@@ -1,0 +1,61 @@
+// The "tool card" language — the Services tile skin, extracted (round 2.6 of
+// T-002) so the /work tiles are the same object, not a lookalike: a filled
+// card with the keycap border (1px sides, 2px grounded bottom edge, 0.75rem
+// rounding), an inset panel for the visual (page-surface bg + hairline,
+// 0.5rem radius nesting inside the card radius minus the 0.25rem frame), and
+// the label/blurb type metrics. Extracted verbatim from services.module.scss,
+// which stays the reference implementation; consumers add only their own
+// layout (flex/grid participation, panel sizing) and hover/entrance wiring.
+
+// Same curve as Experience/Notes/Services — one house ease.
+$ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+// The shared hover-border wake (matches button / command-bar / chips) — the
+// step a panel's hairline deepens to when its card wakes.
+$wake-border: color-mix(in srgb, var(--fg) 24%, var(--border));
+
+// Card shell: filled surface, soft radius, keycap-style grounded edge.
+@mixin card-shell {
+  padding: 0.25rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-bottom-width: 2px; // keycap-style grounded edge (matches command bar)
+  border-radius: 0.75rem; // softer, keycap-like rounding (var(--radius) reads sharp at tile scale)
+}
+
+// Inset visual panel: an inset "screen" set into the card. Skin only —
+// consumers own sizing/padding/alignment (Services centres pictograms and
+// zeroes padding for media; /work fixes a 16:10 aspect).
+@mixin card-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem; // nests inside the card radius minus the 0.25rem frame
+  overflow: hidden;
+  transition: border-color 0.18s $ease;
+}
+
+// Text block below the panel — a little more side inset than the panel, a gap
+// down from it, +1rem bottom breathing room.
+@mixin card-body {
+  padding: 0.875rem 0.625rem 1.375rem;
+}
+
+@mixin card-title {
+  margin: 0;
+  font-size: clamp(1.125rem, 1.5vw, 1.25rem);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  color: var(--fg);
+  transition: transform 0.18s $ease;
+}
+
+@mixin card-blurb {
+  margin: 0.5rem 0 0;
+  max-width: 52ch; // reading measure — wide enough for a wide card, short enough to read
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--muted);
+  text-wrap: pretty;
+  transition: color 0.18s $ease;
+}

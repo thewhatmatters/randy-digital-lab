@@ -172,6 +172,9 @@
   --muted: #737373;
   --border: #e5e5e5;
   --accent: #e5484d;
+  /* modal backdrop dim (work project modal). New token — mirror to DESIGN.md
+     + the Paper canvas; run /design-token-drift after changing. */
+  --scrim: rgb(17 17 17 / 0.45);
 
   /* syntax-highlight palette (sugar-high) — light */
   --sh-class: #2d5e9d;
@@ -197,6 +200,7 @@
   --muted: #a3a3a3;
   --border: #262626;
   --accent: #ff6369;
+  --scrim: rgb(0 0 0 / 0.6);
 
   /* syntax-highlight palette (sugar-high) — dark */
   --sh-class: #4c97f8;

@@ -8,8 +8,12 @@
 // on load, staggered by --i; hovering a tile "wakes" it (panel edge + icon → fg,
 // label → nudge, blurb brightens). Compositor-only, one shared ease, disabled
 // under prefers-reduced-motion. See /add-motion.
+//
+// The card skin (shell / panel / body / type metrics) lives in _card.scss —
+// extracted in round 2.6 of T-002 so the /work tiles share the same object.
+// This module remains the reference implementation of the language.
 
-$ease: cubic-bezier(0.22, 1, 0.36, 1);
+@use './card' as *;
 
 @keyframes rise-in {
   from {
@@ -58,13 +62,9 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
 
 // A tool card: filled surface, soft radius, holding [panel][body].
 .tile {
+  @include card-shell;
   display: flex;
   flex-direction: column;
-  padding: 0.25rem;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-bottom-width: 2px; // keycap-style grounded edge (matches command bar)
-  border-radius: 0.75rem; // softer, keycap-like rounding (var(--radius) reads sharp at tile scale)
 }
 
 // Entrance gated on the intro veil (see experience.module.scss). Tiles stay hidden
@@ -89,17 +89,13 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
 // to fill the tile height so panels share a baseline across a row; the file tree
 // can push it taller. Default centres its content (the pictogram placeholders).
 .panel {
+  @include card-panel;
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: clamp(8rem, 15vw, 11rem);
   padding: 0.875rem;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 0.5rem; // nests inside the tile radius minus the 0.25rem frame
-  overflow: hidden;
-  transition: border-color 0.18s $ease;
 }
 
 // Media variant (the code window): no inset, content pinned top-left and allowed
@@ -128,34 +124,22 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
 // Text block below the panel — sits on the tile surface with a little more side
 // inset than the panel, and a gap down from it.
 .body {
-  padding: 0.875rem 0.625rem 1.375rem; // +1rem bottom breathing room
+  @include card-body;
 }
 
 .label {
-  margin: 0;
-  font-size: clamp(1.125rem, 1.5vw, 1.25rem);
-  font-weight: 600;
-  line-height: 1.1;
-  letter-spacing: -0.015em;
-  color: var(--fg);
-  transition: transform 0.18s $ease;
+  @include card-title;
 }
 
 .blurb {
-  margin: 0.5rem 0 0;
-  max-width: 52ch; // reading measure — wide enough to use the span-7 tiles, short enough to read
-  font-size: 0.875rem;
-  line-height: 1.5;
-  color: var(--muted);
-  text-wrap: pretty;
-  transition: color 0.18s $ease;
+  @include card-blurb;
 }
 
 // Hover — the card wakes: panel edge + icon brighten, label nudges, blurb lifts.
 .tile:hover {
   .panel {
     // shared hover-border wake (matches button / command-bar)
-    border-color: color-mix(in srgb, var(--fg) 24%, var(--border));
+    border-color: $wake-border;
   }
   .icon {
     transform: translateY(-3px);

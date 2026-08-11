@@ -1,0 +1,78 @@
+// Work detail content section (see work-detail.tsx) — the white block under
+// the carousel header, shared by the modal and the full page. The section
+// starts flush under the image (padding only inside itself), so there is no
+// empty band between header and content at any width — the round-1 advisory
+// resolved by construction.
+
+// Modal interior: card padding all around.
+.inModal {
+  padding: 1.5rem;
+
+  @media (min-width: 48rem) {
+    padding: 2rem 2.5rem 2.5rem;
+  }
+}
+
+// Full page: the grid margin already frames the sides; pad only vertically.
+.inPage {
+  padding: 1.5rem 0 0;
+}
+
+// Title/date left, CTA right; wraps to a stack on narrow viewports.
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.date {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+// The writeup flows the full section width (minus the variant's padding) —
+// no reading-measure cap inside the sheet, per Randy's round-2.1 direction.
+// The 52rem sheet, not a max-width here, is what bounds the line length in
+// both presentations.
+.article {
+  margin-top: 0.5rem;
+}
+
+// "label: value" rows in the metadata register (mono, muted labels),
+// separated by hairlines — same treatment as the notes rail.
+.metaList {
+  margin: 2rem 0 0;
+  font-size: 0.875rem;
+}
+
+.metaRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block: 0.625rem;
+  border-top: 1px solid var(--border);
+
+  dt {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  dd {
+    margin: 0;
+    color: var(--fg);
+    text-align: right;
+  }
+}
+
+.metaRow:last-child {
+  border-bottom: 1px solid var(--border);
+}

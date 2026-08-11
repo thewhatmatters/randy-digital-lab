@@ -6,6 +6,7 @@ import smartypants from 'remark-smartypants'
 import React from 'react'
 import { Margin, PullQuote, Figure, Caption } from 'app/components/margin'
 import { SaganLoop } from 'app/components/sagan-loop'
+import { WorkFigure } from 'app/components/work-figure'
 import { LineChart } from 'app/components/charts/line-chart'
 import { StackMatrix } from 'app/components/charts/stack-matrix'
 
@@ -109,6 +110,7 @@ let components = {
   LineChart,
   StackMatrix,
   SaganLoop,
+  WorkFigure,
 }
 
 export function CustomMDX(props) {

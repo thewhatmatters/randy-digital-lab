@@ -1,0 +1,83 @@
+// Keycap command chip — the site's shortcut-control language: a raised mono
+// keycap ("G", "T", "ESC") beside a muted lowercase label, on a translucent
+// blurred surface so it stays legible over whatever it floats above.
+// Extracted verbatim from command-bar.module.scss so the work modal's
+// ESC/close control is the same object, not a lookalike. Declarations here
+// are the single source of the chip's metrics; consumers add only their own
+// placement + states (e.g. the command bar's data-active accent).
+
+@mixin chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3125rem 0.625rem 0.3125rem 0.3125rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--surface) 86%, transparent);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--fg);
+    border-color: color-mix(in srgb, var(--fg) 24%, var(--border));
+  }
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    transition:
+      color 0.15s ease,
+      border-color 0.15s ease,
+      background-color 0.15s ease;
+  }
+
+  // Touch / no-hover devices: grow to a comfortable ≥44px target
+  // (WCAG 2.5.5) — on phones the chip IS the control, not a shortcut hint.
+  @media (hover: none), (pointer: coarse) {
+    min-height: 44px;
+    padding-inline: 0.75rem 0.875rem;
+    gap: 0.625rem;
+    font-size: 12px;
+  }
+}
+
+// Keycap: raised look via a thicker bottom edge, like a physical key.
+@mixin chip-key {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.375rem;
+  height: 1.375rem;
+  padding: 0 0.25rem;
+  border: 1px solid var(--border);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  background: var(--bg);
+  color: var(--fg);
+  font: inherit;
+  font-size: 11px;
+
+  @media (prefers-reduced-motion: no-preference) {
+    transition:
+      color 0.15s ease,
+      border-color 0.15s ease,
+      background-color 0.15s ease;
+  }
+
+  @media (hover: none), (pointer: coarse) {
+    min-width: 1.75rem;
+    height: 1.75rem;
+    font-size: 12px;
+  }
+}
+
+@mixin chip-label {
+  padding-right: 0.125rem;
+}

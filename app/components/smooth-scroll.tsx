@@ -27,7 +27,19 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
     gsap.ticker.add(onTick)
     gsap.ticker.lagSmoothing(0)
 
+    // Overlay hook: the work project modal (and any future overlay) halts the
+    // inertia loop while it owns the viewport — lenis.stop() also adds the
+    // `lenis-stopped` class (overflow: clip, see global.css §11). Plain window
+    // events keep the coupling one-way; under reduced motion Lenis never
+    // exists and the overlay's own overflow lock is the whole story.
+    const onStop = () => lenis.stop()
+    const onStart = () => lenis.start()
+    window.addEventListener('lenis:stop', onStop)
+    window.addEventListener('lenis:start', onStart)
+
     return () => {
+      window.removeEventListener('lenis:stop', onStop)
+      window.removeEventListener('lenis:start', onStart)
       gsap.ticker.remove(onTick)
       lenis.destroy()
     }
