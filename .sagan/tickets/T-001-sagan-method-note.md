@@ -291,5 +291,15 @@ Invalid Date. A tiny frontmatter-validation unit test over the posts dir
   Done. Carried forward, not blocking: frontmatter-contract test for
   `app/notes/posts/*.mdx` (verify's "missing test"); the chrome-chip
   overlap as a house fix candidate.
+- 2026-08-10 — Post-promote edit by Randy (direct request, no new round):
+  removed the "The four verdicts" `<Margin>`. Note now carries 1 Margin +
+  1 PullQuote — still inside AC 4's band; the verdict quartet remains in
+  body prose. Uncommitted on top of `165d8e2`.
+- 2026-08-10 — Post-promote addition by Randy: the sagan.run loop
+  engraving lifted verbatim as `app/components/sagan-loop.tsx`
+  (+ module scss; registered in mdx.tsx), placed at the top of the
+  "Loops with circuit breakers" section. Own asset; currentColor/vector
+  so it theme-flips; labels mapped to `--font-mono` + `--color-muted`.
+  tsc clean, renders on the dev server. Uncommitted.
 
 <!-- sagan:repo-owned:end -->

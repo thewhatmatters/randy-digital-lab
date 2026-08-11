@@ -1,0 +1,43 @@
+// The Sagan loop engraving (lifted from sagan.run). One job: fill the
+// reading column, inherit the ink color, and keep its labels in the muted
+// mono register the site uses for annotations. Caption follows the house
+// figure-caption style (margin.module.scss) with a mono "Fig. NNN" prefix.
+
+.figure {
+  margin: 2.5rem 0;
+  color: var(--color-fg);
+  /* Sit inside the same 7-column reading measure as the running text
+     (token declared on the notes article; 40rem fallback off-notes). */
+  max-width: var(--reading-measure, 40rem);
+}
+
+.engraving {
+  display: block;
+  width: 100%;
+  height: auto;
+
+  text {
+    fill: currentColor;
+    font-family: var(--font-mono);
+    letter-spacing: 0.04em;
+  }
+
+  :global(.soft) {
+    fill: var(--color-muted);
+  }
+}
+
+.caption {
+  margin-top: 0.75rem;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+
+.fig {
+  font-family: var(--font-mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-right: 0.75em;
+}

@@ -18,13 +18,14 @@ It starts before any agent moves. I brief the work in plain language, a PM compi
 
 Then four stations. A **builder** does the work — and never grades its own. A **critic** — a fresh instance, with no access to the builder's reasoning — reviews the result against the criteria. It flags; it never fixes. A **verifier**, never the builder, executes: runs the checks, captures the screens, records the results at a specific commit. The last station is me.
 
-<Margin label="The four verdicts">
-  `APPROVED` — verified, ship it. `REVISE` — fix the flagged findings. `NEEDS_EVIDENCE` — reads fine; prove it runs. `ESCALATE` — a human needs to look.
-</Margin>
-
 The critic answers in exactly one of four words: APPROVED, REVISE, NEEDS_EVIDENCE, or ESCALATE. The third is the heart of it. A diff can read correctly and still be broken — reading is not judging — so a critic that can't honestly judge on read demands execution evidence instead of nodding along. Which is what APPROVED means here: verified, not plausible.
 
 ## Loops with circuit breakers
+
+<SaganLoop
+  fig="001"
+  caption="The Sagan loop — four stations around one ledger: ticket + AC in, build, critique (with its verify satellite trading evidence), and the promote gate; REVISE arcs back, ESCALATE rays out to a human."
+/>
 
 A builder and a critic ping-pong: findings out, fixes back, until the verdict lands. Correctness loops converge fast — three to five rounds, a burst of issues, then a trickle, then approval. Quality loops are a different animal: "better" has no finish line, and the refinement research shows them legitimately running ten to forty rounds. The Sagan method allows that — but only as a choice I make on purpose, with a budget, never as a default the loop drifts into.
 

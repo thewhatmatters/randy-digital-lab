@@ -5,6 +5,7 @@ import { highlight } from 'sugar-high'
 import smartypants from 'remark-smartypants'
 import React from 'react'
 import { Margin, PullQuote, Figure, Caption } from 'app/components/margin'
+import { SaganLoop } from 'app/components/sagan-loop'
 import { LineChart } from 'app/components/charts/line-chart'
 import { StackMatrix } from 'app/components/charts/stack-matrix'
 
@@ -107,6 +108,7 @@ let components = {
   Caption,
   LineChart,
   StackMatrix,
+  SaganLoop,
 }
 
 export function CustomMDX(props) {
