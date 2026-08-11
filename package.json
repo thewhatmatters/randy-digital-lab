@@ -3,7 +3,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "test": "node --experimental-strip-types --import ./tests/register.mjs --test \"tests/**/*.test.ts\""
   },
   "dependencies": {
     "@tailwindcss/postcss": "4.3.1",

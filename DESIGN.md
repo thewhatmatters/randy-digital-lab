@@ -33,6 +33,11 @@ hex, in components.
 | `muted` | `#737373` | `#a3a3a3` | metadata, secondary text, mono labels |
 | `border` | `#e5e5e5` | `#262626` | hairlines, dividers, grid rules |
 | `accent` | `#e5484d` | `#ff6369` | standard text links, focus ring, numbered markers, `::selection` |
+| `scrim`¹ | `rgb(17 17 17 / 0.45)` | `rgb(0 0 0 / 0.6)` | modal backdrop dim (work project modal) |
+
+¹ `scrim` is a plain CSS variable (`--scrim`) with **no `--color-scrim`
+`@theme` alias** — use `var(--scrim)` directly; there is no Tailwind utility
+for it.
 
 **Accent discipline:** red is a *signal*, not decoration. Allowed on: standard
 text links, active nav item, focus rings, the index numbers, small status ticks.
@@ -123,6 +128,6 @@ Used by `/polish-copy`.
 
 ---
 
-_Sync check: the `bg/surface/fg/muted/border/accent` colors, container widths,
+_Sync check: the `bg/surface/fg/muted/border/accent/scrim` colors, container widths,
 radius, and font tokens above must match `app/global.css` `@theme` + `:root`
 exactly._

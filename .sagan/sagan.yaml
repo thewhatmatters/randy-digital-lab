@@ -58,7 +58,7 @@ gates:
                                     # empty -> PM picks a sensible static server and says so
   # Project gate commands — verify runs THIS project's floor:
   verify_commands:
-    test: "(none configured)"
+    test: "pnpm test"
     typecheck: "pnpm exec tsc --noEmit"
     build: "pnpm build"
 

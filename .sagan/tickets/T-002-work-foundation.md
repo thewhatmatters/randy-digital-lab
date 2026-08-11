@@ -868,5 +868,9 @@ diff run here is exactly the check a tiny CI script could keep.
   T-003 hygiene ticket deferred — carry-forwards live in
   `.sagan/MEMORY.md` (lib/mdx contract test, _card equivalence check,
   --scrim → DESIGN.md, perchhq WorkFigure capture). Status → Done.
+- 2026-08-11 — AC 5 render gap **closed by T-003**:
+  `.sagan/ledger/T-002/gate-r3-perchhq-workfigure-1440-light.png`
+  (verify-bare-r1) shows the WorkFigure with its Fig. 001 caption
+  rendered on /work/perchhq.
 
 <!-- sagan:repo-owned:end -->

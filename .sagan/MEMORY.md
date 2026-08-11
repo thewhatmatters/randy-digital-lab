@@ -42,13 +42,43 @@ insights are proposed to the vault through its gate.)
   next heading); critics must be handed block-scoped excerpts if true
   isolation matters — a whole-file Read leaks excluded blocks (r2b critic
   disclosed exactly this).
-- **Carry-forwards (open):** unit test pinning the `lib/mdx.ts`
-  frontmatter contract (five rounds asked); a CI `sass`-diff check for
-  `_card.scss`/`_chip.scss` equivalence; mirror `--scrim` into DESIGN.md
-  (drift check will flag); a perchhq detail capture (AC 5 render
-  evidence); `formatDate` still lives in notes/utils, work imports it —
-  bless a `lib/` home; parser block-list rule can't express a plain
-  string list (third schema needing one triggers the real fix).
+## T-003 — Hygiene carry-forwards (run-20260811-095412, promoted round 1)
+
+- **Test the seam, not an extraction:** both content pipelines hard-code
+  `path.join(process.cwd(), …)` — `t.mock.method(process, 'cwd', …)`
+  runs the REAL exported functions against a hermetic fixture tree, zero
+  production edits. Zero-dep TS testing on Node 22.14: `node
+  --experimental-strip-types --import ./tests/register.mjs --test` with
+  a 20-line resolve hook mirroring tsconfig `baseUrl` (tests import
+  `lib/mdx` exactly like the app; root tsc typechecks them free).
+- **Pipeline tests alone can mask parser bugs:** `itemToPath` re-splices
+  `": "` values, so a broken parser rejoin is invisible downstream —
+  keep a direct parser-layer test beside every pipeline test. Mutation
+  proof (run → capture → revert, transcripts in the ledger) is now the
+  house standard for new tests; verify adds one independent mutation of
+  its own.
+- **Snapshot the donors, not the consumers:** compiling only the two
+  reference modules pins the shared partials transitively (`@use`
+  propagates). Baselines are untracked pre-commit — `git checkout --`
+  can't revert perturbation demos until they land.
+- **Byte-identical checks without servers:** prerendered SSG HTML lives
+  at `.next/server/app/<route>.html`; extract `<main>` (not `<article>`
+  — perchhq's article is 1.2 KB of 15 KB) and `cmp` vs a HEAD-worktree
+  build.
+- **Standing test floor:** `pnpm test` (18 tests) is now in
+  `sagan.yaml` `gates.verify_commands.test` — every future verify runs
+  it.
+- **Carry-forwards (open, post-T-003):** frontmatter validation —
+  `parseFrontmatter` on a no-frontmatter file crashes with a bare
+  `TypeError` (`lib/mdx.ts:19`), deliberately unpinned (pinning would
+  enshrine the crash; fix belongs with validation/Velite); `formatDate`
+  lives in notes/utils, work imports it — bless a `lib/` home; parser
+  can't express a plain string list; `"type"` field missing from
+  package.json (MODULE_TYPELESS warnings in test output —
+  behavior-adjacent); Paper-canvas drift half unrun (Conan file was
+  open) — re-run `/design-token-drift` when randy.digital is open.
+  CLOSED by T-003: parser contract test · style-donor snapshots ·
+  `--scrim` mirror · perchhq WorkFigure capture.
 
 - **Dev-only interception-route corruption:** editing files that touch the
   `app/work/@modal/(.)[slug]` tree while `next dev` runs makes the
