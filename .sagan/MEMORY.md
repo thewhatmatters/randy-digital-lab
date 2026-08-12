@@ -42,6 +42,37 @@ insights are proposed to the vault through its gate.)
   next heading); critics must be handed block-scoped excerpts if true
   isolation matters — a whole-file Read leaks excluded blocks (r2b critic
   disclosed exactly this).
+## T-007 — intro gate + watchdog (run-20260811-180652, promoted round 2 — the project's FIRST REVISE cycle)
+
+- **The REVISE was earned by a capture, not a grep:** all mechanics
+  passed; the round-1 critic looked at the stalled-mode screenshot and
+  saw the page's H1 + sole CTA missing in exactly the failure mode the
+  watchdog exists for. Judgment-on-evidence is the station's real value.
+- **Recompute timing claims from source before building against them:**
+  the ticket carried a stale "~2.5–3s" reveal figure (from this file);
+  real timeline arithmetic = ≈5.5s. A duration-gated AC should quote
+  the arithmetic, not a remembered number. (Figure corrected above.)
+- **Watchdog semantics that survived:** "4s with nothing animating"
+  (pre-boot deadline + pulse-silence window) beats "4s since arm" — it
+  keeps one constant honest across both failure modes. The
+  pulse-keepalive is a REQUIREMENT on future intro timelines
+  (documented in lib/intro-gate.ts).
+- **Reveal-repair code has a signature failure shape:** cleanup that
+  runs only on the failure path can't damage the happy path by
+  construction — pin that separation with a test each way (strip
+  happens on fire; never on normal reveal). Mutation for such code:
+  narrow the selector (descendant → child) — plausible-refactor-shaped.
+- **Delta-verify shape (blessed):** re-run the failing scenario with the
+  new assertion, re-run the happy path asserting the fix didn't leak,
+  cheap-confirm untouched legs. Probe gotcha: document-start init
+  scripts must null-guard `documentElement`.
+- **Carry-forwards (open):** partial-hydration edge (hero hydrates,
+  preloader never mounts → pre-boot fire with styles set — needs a
+  sibling-island hydration-failure test, disclosed deferral); retire
+  HANDOFF.md at next /checkpoint; inert reduced-motion "force visible"
+  declarations in the five gated modules (dieter's subtraction — they
+  provably can't rescue an armed page).
+
 ## T-006 — parser contract deepening (run-20260811-164147, promoted round 1)
 
 - **Gate-locked design → single-round build:** four pre-decided choices
@@ -183,8 +214,11 @@ insights are proposed to the vault through its gate.)
 
 - **Render-verification on this site:** the preloader veil plays on EVERY
   full page load, all routes — captures must wait for
-  `window.__introDone === true` (or `html.intro-done`), never just
-  `networkidle`, or the top third ships blank. Dark scheme is
+  `window.__introDone === true`, never just `networkidle`, or the top
+  third ships blank. (Timing, corrected T-007: home intro-revealed lands
+  ≈5.5s post-hydration — preloader 3.92s + hero 1.56s; the old "~2.5–3s"
+  figure predated the drum-preloader rework. `html.intro-done` no longer
+  exists — deleted in T-007.) Dark scheme is
   `localStorage.theme = 'dark'` via next-themes (`data-theme` readback to
   confirm). Localhost console 404s for `/_vercel/insights` +
   `/_vercel/speed-insights` are expected on every page — compare against a

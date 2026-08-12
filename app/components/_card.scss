@@ -7,8 +7,8 @@
 // which stays the reference implementation; consumers add only their own
 // layout (flex/grid participation, panel sizing) and hover/entrance wiring.
 
-// Same curve as Experience/Notes/Services — one house ease.
-$ease: cubic-bezier(0.22, 1, 0.36, 1);
+// The house ease comes from the shared motion partial (one definition site).
+@use './motion' as *;
 
 // The shared hover-border wake (matches button / command-bar / chips) — the
 // step a panel's hairline deepens to when its card wakes.

@@ -1,0 +1,77 @@
+// The intro gate — the CSS half of the reveal state machine owned by
+// lib/intro-gate.ts (T-007). The class vocabulary here is pinned to that
+// module's constants by tests/intro-gate.test.ts, so the two halves cannot
+// drift silently:
+//
+//   html.intro-armed                 set pre-paint (JS on + motion allowed);
+//                                    gated content hides / collapses.
+//   html.intro-armed.intro-revealed  the reveal — added by the hero when its
+//                                    entrance lands (or by the ~4s watchdog
+//                                    if the intro stalls); sections expand
+//                                    and items rise in.
+//
+// No-JS / reduced-motion loads never arm, so none of this applies and
+// content renders in place. No module declares these selector chains by
+// hand — consume the mixins below.
+
+@forward './motion';
+@use './motion' as *;
+
+// Every gated module gets the shared entrance keyframes (hashed per module
+// by CSS Modules, so each consumer emits its own copy — one definition site,
+// in _motion.scss).
+@include rise-in-keyframes;
+
+// The gate selectors, as wrappers. `&` is the consuming module's selector.
+@mixin when-intro-armed {
+  :global(html.intro-armed) & {
+    @content;
+  }
+}
+
+@mixin when-intro-revealed {
+  :global(html.intro-armed.intro-revealed) & {
+    @content;
+  }
+}
+
+// A whole section that collapses to 0 height while armed — nothing shows
+// below the hero, no reserved whitespace — then expands to its real height
+// on reveal, cascaded by --section-order (set per section in page.tsx),
+// pushing the page into place. Apply to the section root; its single child
+// gets intro-collapse-inner (the clipped track that keeps content laid out
+// while the row collapses).
+@mixin intro-collapse-section {
+  display: grid;
+  grid-template-rows: 1fr;
+
+  @include when-intro-armed {
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.6s $ease calc(var(--section-order, 0) * 0.55s);
+  }
+
+  @include when-intro-revealed {
+    grid-template-rows: 1fr;
+  }
+}
+
+@mixin intro-collapse-inner {
+  min-height: 0; // let the grid row collapse below the content height
+  overflow: hidden; // clip content while the section collapses / expands
+}
+
+// A gated item: hidden while armed, rises in on reveal. Consumers pass their
+// duration/delay so the shipped staggers stay byte-identical.
+@mixin intro-rise(
+  $duration: 0.45s,
+  $delay: min(calc(var(--i, 0) * 45ms), 400ms)
+) {
+  @include when-intro-armed {
+    opacity: 0;
+  }
+
+  @include when-intro-revealed {
+    animation: rise-in $duration $ease both;
+    animation-delay: $delay;
+  }
+}

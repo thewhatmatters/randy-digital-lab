@@ -1,0 +1,25 @@
+// House motion constants — the one ease and the one entrance keyframe,
+// hoisted from the five intro-gated modules (T-007; the rest of the
+// site-wide hoist stays queued). The TS side of the motion system quotes
+// the same curve in CLAUDE.md/DESIGN.md ("rise-in ease").
+
+// One curve everywhere — decisive start, soft landing.
+$ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+// The shared entrance: rise + fade. Defined as a mixin (not root CSS) so a
+// module only pays for the keyframes when it emits them — CSS Modules hash
+// @keyframes names per module, so each consumer needs its own emitted copy;
+// this is the ONE definition site. _intro.scss emits it for the gated
+// modules; nothing else should re-declare it.
+@mixin rise-in-keyframes {
+  @keyframes rise-in {
+    from {
+      opacity: 0;
+      transform: translateY(0.5rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}

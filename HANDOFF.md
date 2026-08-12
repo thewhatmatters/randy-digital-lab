@@ -12,8 +12,9 @@ Committing + pushing now.
 ## The full intro choreography (current, end to end)
 
 1. **Preloader** (already shipped): 3×3 slot-machine drum → blur-to-focus reveal →
-   fires `preloader:done` + `window.__introDone`, and now also adds the `intro-done`
-   class + the `intro-revealed` fallback (see below).
+   fires `preloader:done` + `window.__introDone`; on hero-less pages it adds the
+   `intro-revealed` fallback (see below). The reveal contract — class names,
+   transitions, watchdog — is owned by `lib/intro-gate.ts` as of T-007.
 2. **Hero animates** (`hero.tsx`, GSAP island): masked line-reveal of the headline +
    bio/CTA/meta fades, plays on `preloader:done`. **On complete it adds
    `html.intro-revealed`** — this is the signal the sections wait for, so the hero

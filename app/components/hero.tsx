@@ -3,6 +3,7 @@
 import { useLayoutEffect, useRef } from 'react'
 import { gsap } from 'gsap'
 import { Button } from './button'
+import { REDUCED_MOTION_QUERY, introPulse, revealIntro } from 'lib/intro-gate'
 import styles from './hero.module.scss'
 
 // Kinetic intro. The signature move is a masked, staggered line-reveal of the
@@ -16,7 +17,7 @@ export function Hero() {
   const root = useRef<HTMLElement>(null)
 
   useLayoutEffect(() => {
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const reduce = window.matchMedia(REDUCED_MOTION_QUERY).matches
     if (reduce) return
 
     const ctx = gsap.context((self) => {
@@ -25,17 +26,24 @@ export function Hero() {
       const fades = q('[data-fade]')
 
       // Set the hidden start state immediately (no flash), then play the
-      // entrance once the preloader has wiped away.
+      // entrance once the preloader has wiped away. This start state is
+      // INLINE style, outside the CSS gate's reach — if the intro stalls,
+      // the watchdog's reveal strips inline styles from [data-hero]
+      // descendants (lib/intro-gate fire()) so these elements are never
+      // left invisible.
       gsap.set(lines, { yPercent: 115 })
       gsap.set(fades, { y: 18, opacity: 0 })
 
       const play = () => {
         const tl = gsap.timeline({
           defaults: { ease: 'power3.out' },
+          // Keepalive for the intro watchdog while the hero animates.
+          onUpdate: introPulse,
           // The hero goes first; when it lands, signal the gated sections
-          // (Experience, Services, …) to expand + rise in after it.
-          onComplete: () =>
-            document.documentElement.classList.add('intro-revealed'),
+          // (Experience, Services, …) to expand + rise in after it — the
+          // reveal transition lives in lib/intro-gate (and cancels the
+          // watchdog).
+          onComplete: revealIntro,
         })
         tl.to(lines, { yPercent: 0, duration: 0.95, stagger: 0.12 })
           .to(fades, { y: 0, opacity: 1, duration: 0.7, stagger: 0.12 }, '-=0.45')

@@ -12,6 +12,7 @@ import { UIChrome } from './components/command-bar'
 import { SmoothScroll } from './components/smooth-scroll'
 import { Preloader } from './components/preloader'
 import { ThemeProvider } from 'next-themes'
+import { INTRO_ARM_SCRIPT } from 'lib/intro-gate'
 import { baseUrl } from './sitemap'
 
 // viewport-fit=cover lets the fixed command bar read safe-area insets on
@@ -72,11 +73,14 @@ export default function RootLayout({
       <body className="antialiased">
         {/* Arm the intro before paint: components whose entrance should wait for the
             preloader (e.g. Experience) hide themselves while `intro-armed` is set and
-            play once the preloader adds `intro-done`. Only arms when JS is on AND
+            play once the hero's entrance lands and adds `intro-revealed` (or the ~4s
+            watchdog does, if the intro ever stalls — see lib/intro-gate.ts, which owns
+            the class vocabulary and generates this script from its constants; it is
+            inlined because it must run before hydration). Only arms when JS is on AND
             motion is allowed, so no-JS / reduced-motion render in place. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('intro-armed')}}catch(e){}`,
+            __html: INTRO_ARM_SCRIPT,
           }}
         />
         {/* Full-width shell: each section composes `grid-page`, which centers

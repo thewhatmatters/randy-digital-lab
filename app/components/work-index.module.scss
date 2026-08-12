@@ -18,17 +18,9 @@
 // on them is a fade, not motion).
 
 @use './card' as *;
-
-@keyframes rise-in {
-  from {
-    opacity: 0;
-    transform: translateY(0.5rem);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+// Gate + ease + rise-in come from the shared intro partial (T-007) — one
+// definition of the machine's CSS, pinned to lib/intro-gate.ts by test.
+@use './intro' as *;
 
 .grid {
   list-style: none;
@@ -51,8 +43,15 @@
 // owns the entrance (so the arrows rise with the card, not before it), and
 // hosts the hover/focus wake (so pausing on an arrow — outside the link —
 // holds the wake instead of dropping it).
+// Entrance gated on the intro veil (shared intro-rise mixin, same contract as
+// posts/experience): tiles stay hidden while `intro-armed`, rise in staggered
+// once the hero (or the ~4s watchdog) adds `intro-revealed` via
+// lib/intro-gate. No-JS / reduced-motion never arm <html>, so tiles just
+// render in place.
 .tile {
   position: relative;
+
+  @include intro-rise;
 }
 
 // The card — Services tile anatomy: shell holding [media panel][body].
@@ -61,22 +60,6 @@
   display: flex;
   flex-direction: column;
   text-decoration: none;
-}
-
-// Entrance gated on the intro veil (same contract as posts/experience): tiles
-// stay hidden while `intro-armed`, rise in staggered once `intro-revealed`.
-// No-JS / reduced-motion never arm <html>, so tiles just render in place.
-:global(html.intro-armed) {
-  .tile {
-    opacity: 0;
-  }
-}
-
-:global(html.intro-armed.intro-revealed) {
-  .tile {
-    animation: rise-in 0.45s $ease both;
-    animation-delay: min(calc(var(--i, 0) * 45ms), 400ms);
-  }
 }
 
 // The inset media panel (Services' framed visual, media variant: no padding,

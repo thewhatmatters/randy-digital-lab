@@ -4,6 +4,13 @@ import { useLayoutEffect, useRef } from 'react'
 import { usePathname } from 'next/navigation'
 import { gsap } from 'gsap'
 import { POOL, triadForPath } from './reel-glyphs'
+import {
+  INTRO_HERO_ATTR,
+  REDUCED_MOTION_QUERY,
+  introPulse,
+  revealIntro,
+  startIntroWatchdog,
+} from 'lib/intro-gate'
 import styles from './preloader.module.scss'
 
 // Page-load intro veil: a 3×3 slot machine. Three reels are closed DRUMS — a true
@@ -33,13 +40,16 @@ const BLUR = 20 // px the page is blurred by before snapping into focus
 
 function signalDone() {
   ;(window as typeof window & { __introDone?: boolean }).__introDone = true
-  document.documentElement.classList.add('intro-done')
+  // Milestone pulse: the veil finished on time, so the watchdog's silence
+  // window restarts and the hero leg gets its full budget.
+  introPulse()
   window.dispatchEvent(new Event('preloader:done'))
-  // The gated sections (Experience, Services, …) reveal on `intro-revealed`, which
-  // the Hero adds when it finishes — so the hero plays first. On pages with no Hero,
-  // nothing would fire it, so reveal immediately here as the fallback.
-  if (!document.querySelector('[data-hero]')) {
-    document.documentElement.classList.add('intro-revealed')
+  // The gated sections (Experience, Services, …) reveal on `intro-revealed` (see
+  // lib/intro-gate), which the Hero adds when it finishes — so the hero plays first.
+  // On pages with no Hero, nothing would fire it, so reveal immediately here as the
+  // fallback.
+  if (!document.querySelector(`[${INTRO_HERO_ATTR}]`)) {
+    revealIntro()
   }
 }
 
@@ -52,7 +62,7 @@ export function Preloader() {
   useLayoutEffect(() => {
     const el = root.current!
     const coverEl = cover.current!
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const reduce = window.matchMedia(REDUCED_MOTION_QUERY).matches
 
     if (reduce) {
       // Dismiss instantly; reel stays opacity:0 (CSS default) so no glyphs flash.
@@ -61,8 +71,16 @@ export function Preloader() {
       return
     }
 
+    // The client is alive from here: hand the watchdog over from the pre-paint
+    // deadline (layout.tsx's inline script) to the module's silence window. If
+    // either GSAP timeline below (or the hero's) ever throws or stalls, the
+    // watchdog reveals with the normal cascade ~4s after the last pulse.
+    startIntroWatchdog()
+
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
+        // Keepalive for the watchdog — "animating" is what "alive" means here.
+        onUpdate: introPulse,
         onComplete: () => {
           el.style.display = 'none'
           signalDone()
@@ -134,7 +152,14 @@ export function Preloader() {
   }, [])
 
   return (
-    <div ref={root} className={styles.preloader} aria-hidden="true">
+    // data-intro-veil (INTRO_VEIL_ATTR, pinned by test) is how a firing
+    // watchdog finds and clears the veil if this component never gets to.
+    <div
+      ref={root}
+      className={styles.preloader}
+      aria-hidden="true"
+      data-intro-veil
+    >
       <div ref={cover} className={styles.cover} />
       <div className={styles.reel}>
         {triad.map((_, slot) => (

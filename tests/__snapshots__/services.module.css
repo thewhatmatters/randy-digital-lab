@@ -12,6 +12,13 @@
   display: grid;
   grid-template-rows: 1fr;
 }
+:global(html.intro-armed) .services {
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.6s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--section-order, 0) * 0.55s);
+}
+:global(html.intro-armed.intro-revealed) .services {
+  grid-template-rows: 1fr;
+}
 
 .inner {
   min-height: 0;
@@ -27,15 +34,6 @@
   gap: 1rem;
 }
 
-:global(html.intro-armed) .services {
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 0.6s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--section-order, 0) * 0.55s);
-}
-
-:global(html.intro-armed.intro-revealed) .services {
-  grid-template-rows: 1fr;
-}
-
 .tile {
   padding: 0.25rem;
   background: var(--bg);
@@ -45,11 +43,9 @@
   display: flex;
   flex-direction: column;
 }
-
 :global(html.intro-armed) .tile {
   opacity: 0;
 }
-
 :global(html.intro-armed.intro-revealed) .tile {
   animation: rise-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
   animation-delay: calc(var(--section-order, 0) * 550ms + min(var(--i, 0) * 70ms, 400ms));

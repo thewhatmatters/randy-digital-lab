@@ -9,32 +9,21 @@
 // right, metadata brightens). Compositor-only (transform/opacity), one shared
 // ease, fully disabled under prefers-reduced-motion. See /add-motion.
 
-// One curve everywhere — decisive start, soft landing.
-$ease: cubic-bezier(0.22, 1, 0.36, 1);
-
-@keyframes rise-in {
-  from {
-    opacity: 0;
-    transform: translateY(0.5rem);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+// Gate + ease + rise-in come from the shared intro partial (T-007) — one
+// definition of the machine's CSS, pinned to lib/intro-gate.ts by test.
+@use './intro' as *;
 
 // While the intro is armed the whole section (label + table) collapses to 0 height —
 // nothing shows below the hero, no reserved whitespace. On `intro-revealed` (after the
-// hero) it expands to its real height, cascaded by --section-order, pushing the page
-// into place. The .inner wrapper is the clipped track so the content keeps its layout.
+// hero, or from the ~4s watchdog) it expands to its real height, cascaded by
+// --section-order, pushing the page into place. The .inner wrapper is the clipped
+// track so the content keeps its layout.
 .experience {
-  display: grid;
-  grid-template-rows: 1fr;
+  @include intro-collapse-section;
 }
 
 .inner {
-  min-height: 0; // let the grid row collapse below the content height
-  overflow: hidden; // clip label + rows while the section collapses / expands
+  @include intro-collapse-inner;
 }
 
 .table {
@@ -43,18 +32,14 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
   padding: 0;
 }
 
-:global(html.intro-armed) .experience {
-  grid-template-rows: 0fr;
-  // --section-order cascades the expand down the page (set per section in page.tsx).
-  transition: grid-template-rows 0.6s cubic-bezier(0.22, 1, 0.36, 1)
-    calc(var(--section-order, 0) * 0.55s);
-}
-
-:global(html.intro-armed.intro-revealed) .experience {
-  grid-template-rows: 1fr;
-}
-
 // Shared row geometry — mobile-first stacked layout (3 columns).
+// Entrance is gated on the intro veil (shared intro-rise mixin): `intro-armed` is
+// set before paint when JS is on and motion is allowed, so the rows stay hidden
+// behind the preloader; when the hero's entrance lands it adds `intro-revealed`
+// (via lib/intro-gate — a ~4s watchdog covers a stalled intro) and they rise in,
+// staggered by --i and capped so long lists never crawl, offset by the section's
+// position so each section's rows come in after the one above. No-JS /
+// reduced-motion never arm, so the rows simply render in place.
 .row,
 .head {
   display: grid;
@@ -64,29 +49,11 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
   align-items: baseline;
   padding: 0.875rem 0;
   border-top: 1px solid var(--border);
-}
 
-// Entrance is gated on the intro veil. `intro-armed` is set before paint when JS is
-// on and motion is allowed, so the rows stay hidden behind the preloader; once the
-// veil clears the preloader adds `intro-done` and they rise in, staggered by --i.
-// No-JS / reduced-motion never arm, so the rows simply render in place (below).
-:global(html.intro-armed) {
-  .row,
-  .head {
-    opacity: 0;
-  }
-}
-
-:global(html.intro-armed.intro-revealed) {
-  .row,
-  .head {
-    // staggered entrance — capped so long lists never crawl, offset by the section's
-    // position so each section's rows come in after the one above.
-    animation: rise-in 0.45s $ease both;
-    animation-delay: calc(
-      var(--section-order, 0) * 550ms + min(calc(var(--i, 0) * 45ms), 400ms)
-    );
-  }
+  @include intro-rise(
+    0.45s,
+    calc(var(--section-order, 0) * 550ms + min(calc(var(--i, 0) * 45ms), 400ms))
+  );
 }
 
 // The header row only makes sense once columns align — hide it on mobile.

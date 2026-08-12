@@ -4,19 +4,10 @@
 // (repeat(var(--grid-cols)) + --grid-gutter) so it aligns with everything else.
 //
 // Motion mirrors Experience/Notes (same ease + rise-in stagger + reduced-motion
-// path) so it joins the same family. See /add-motion.
-$ease: cubic-bezier(0.22, 1, 0.36, 1);
-
-@keyframes rise-in {
-  from {
-    opacity: 0;
-    transform: translateY(0.5rem);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+// path) so it joins the same family. See /add-motion. Gate + ease + rise-in
+// come from the shared intro partial (T-007) — one definition of the
+// machine's CSS, pinned to lib/intro-gate.ts by test.
+@use '../intro' as *;
 
 .matrix {
   // local override so a dropped-in matrix can theme its dots if ever needed
@@ -33,6 +24,11 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
   display: none; // column headers only make sense once the grid is on
 }
 
+// Entrance gated on the intro veil (shared intro-rise mixin): rows stay hidden
+// behind the preloader, then rise in (staggered by --i) once the hero's
+// entrance adds `intro-revealed` (via lib/intro-gate — a ~4s watchdog covers a
+// stalled intro). No-JS / reduced-motion never arm `<html>`, so the rows just
+// render in place.
 .row {
   display: flex;
   flex-wrap: wrap;
@@ -40,22 +36,8 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
   gap: 0.25rem 0.625rem;
   padding-block: 0.625rem;
   border-top: 1px solid var(--border);
-}
 
-// Entrance gated on the intro veil (see experience.module.scss). Rows stay hidden
-// behind the preloader, then rise in (staggered by --i) once it signals `intro-done`.
-// No-JS / reduced-motion never arm `<html>`, so the rows just render in place.
-:global(html.intro-armed) {
-  .row {
-    opacity: 0;
-  }
-}
-
-:global(html.intro-armed.intro-revealed) {
-  .row {
-    animation: rise-in 0.45s $ease both;
-    animation-delay: min(calc(var(--i, 0) * 45ms), 400ms);
-  }
+  @include intro-rise;
 }
 
 .rows .row:last-child {
