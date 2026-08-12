@@ -1,10 +1,8 @@
 // Work detail carousel (see work-carousel.tsx). A 16:10 viewport over a
 // translated flex track; the slide move is the only transition and it is cut
 // to an instant switch under prefers-reduced-motion. Controls sit ON the
-// image, so they carry their own --bg chip — the placeholder artwork is
-// light in both themes, and a bare --fg glyph would vanish on it in dark
-// mode; the chip keeps contrast self-contained either way (same chip
-// language as the command bar).
+// image as bare white chevrons with a scrim drop-shadow — contrast stays
+// self-contained on any artwork without a chip. The dots keep their pill.
 
 // The 16:10 work-media ratio — one definition (T-009), shared with the tile's
 // media panel + arrow layer so the tile→modal morph is one uniform scale.
@@ -14,9 +12,25 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
 
 .carousel {
   position: relative;
+  isolation: isolate; // own stacking context, so the glow's z-index: -1 stays inside
   aspect-ratio: $work-aspect-ratio;
   overflow: hidden;
   background: var(--surface);
+}
+
+// The glow ground (work-glow.tsx) — same mesh flow as the /work tiles,
+// always on in this seat (no hover gate: this carousel is the page's hero).
+// Sits under the slides; shows through the images' transparent margins.
+// `color` feeds the shader its token palette read at mount.
+.glow {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  color: var(--fg);
+  pointer-events: none;
 }
 
 // Full-page variant: hairline + house radius, matching the figure treatment.
@@ -59,6 +73,10 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
   }
 }
 
+// Bare chevron over the image — no chip (a circled control read too heavy
+// on the tiles, and the seats stay ONE object). White with a scrim
+// drop-shadow keeps contrast self-contained on any artwork; the 2.25rem box
+// is the hit target.
 .arrow {
   position: absolute;
   top: 50%;
@@ -68,19 +86,13 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
   display: grid;
   place-items: center;
   padding: 0;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  background: var(--bg);
-  color: var(--fg);
-  font-family: var(--font-mono);
-  font-size: 0.875rem;
+  border: 0;
+  background: none;
+  color: #fff;
+  filter: drop-shadow(0 1px 2px var(--scrim));
   line-height: 1;
   cursor: pointer;
-  transition: opacity 0.18s $ease, border-color 0.18s $ease;
-
-  &:hover:not(:disabled) {
-    border-color: color-mix(in srgb, var(--fg) 24%, var(--border));
-  }
+  transition: opacity 0.18s $ease, transform 0.35s $ease;
 
   &:disabled {
     opacity: 0.35;
@@ -154,5 +166,11 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
 @media (prefers-reduced-motion: reduce) {
   .track {
     transition: none;
+  }
+
+  // Animation-only layer, no static variant (work-glow.tsx also refuses to
+  // mount — this is belt and braces).
+  .glow {
+    display: none;
   }
 }

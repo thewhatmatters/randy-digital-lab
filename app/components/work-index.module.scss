@@ -65,6 +65,34 @@
   text-decoration: none;
 }
 
+// The glow ground (work-glow.tsx) — the PulsingBorder shader as the media
+// panel's BACKGROUND: it sits under the slides (negative z-index inside the
+// panel's isolated stacking context) and shows through the work images'
+// transparent margins, so the artwork reads as backlit. `color` feeds the
+// shader its monochrome palette (read as a computed value at first wake);
+// THIS opacity is the subtlety dial. The panel's overflow: hidden clips
+// its corners.
+.glow {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  color: var(--fg);
+  opacity: 0;
+  pointer-events: none;
+  // Slow breathe in/out — work-glow.tsx keeps the shader flowing for this
+  // long after mouse-out (its FADE_MS mirrors this), so the fade-out drifts
+  // instead of freezing mid-fade.
+  transition: opacity 1s $ease;
+}
+
+.tile:hover .glow,
+.tile:focus-within .glow {
+  opacity: 1;
+}
+
 // The inset media panel (Services' framed visual, media variant: no padding,
 // image fills it edge to edge). The 16:10 aspect is enforced on this border
 // box regardless of source image. This is still the element the project modal
@@ -73,6 +101,8 @@
 // the panel mixin).
 .thumb {
   @include card-panel;
+  position: relative; // anchors the glow ground
+  isolation: isolate; // own stacking context, so the ground's z-index: -1 stays inside the panel
   display: block;
   aspect-ratio: $work-aspect-ratio;
 
@@ -143,9 +173,23 @@
 // T-002 shipped it); revealed by the tile's own wake — hover anywhere on the
 // tile, or focus inside it. Selectors stay ≥(0,3,0) so they outrank the
 // donor module's .arrow rules regardless of chunk order.
+//
+// Entrance: each chevron slides in from its own side of the frame (prev
+// from the left, next from the right) while fading — the transform composes
+// with the donor's translateY(-50%) centering, so every state declares the
+// full pair. The buttons are the layer's only two children, so
+// first/last-of-type IS prev/next.
 .tile .tileArrow {
   pointer-events: auto;
   opacity: 0;
+
+  &:first-of-type {
+    transform: translate(-0.75rem, -50%);
+  }
+
+  &:last-of-type {
+    transform: translate(0.75rem, -50%);
+  }
 
   &:disabled {
     opacity: 0;
@@ -157,6 +201,11 @@
   .tileArrow {
     opacity: 1;
 
+    &:first-of-type,
+    &:last-of-type {
+      transform: translate(0, -50%);
+    }
+
     &:disabled {
       opacity: 0.35;
     }
@@ -164,12 +213,18 @@
 }
 
 // Coarse pointers: no hover to reveal with — arrows are simply there (gate
-// decision), grown to a ≥44px target (WCAG 2.5.5, same rule as the chips).
+// decision), grown to a ≥44px target (WCAG 2.5.5, same rule as the chips),
+// and never offset (the slide-in is a fine-pointer hover flourish).
 @media (hover: none), (pointer: coarse) {
   .tile .tileArrow {
     width: 2.75rem;
     height: 2.75rem;
     opacity: 1;
+
+    &:first-of-type,
+    &:last-of-type {
+      transform: translate(0, -50%);
+    }
 
     &:disabled {
       opacity: 0.35;
@@ -188,5 +243,20 @@
   .tile:hover .title,
   .tile:focus-within .title {
     transform: none;
+  }
+
+  // Chevrons appear by fade alone — the slide is motion, the reveal isn't.
+  // The centering half of the transform pair stays.
+  .tile .tileArrow {
+    &:first-of-type,
+    &:last-of-type {
+      transform: translate(0, -50%);
+    }
+  }
+
+  // The glow ground is animation-only — no static variant to keep
+  // (work-glow.tsx also refuses to mount, so this is belt and braces).
+  .glow {
+    display: none;
   }
 }

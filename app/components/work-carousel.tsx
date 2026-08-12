@@ -9,6 +9,7 @@ import {
   type WorkTileSyncDetail,
 } from './work-carousel-position'
 import { WORK_CAROUSEL_ATTR } from './work-morph'
+import { WorkGlow } from './work-glow'
 import styles from './work-carousel.module.scss'
 
 // Work carousel — ONE implementation, three seats (T-004: no second
@@ -136,6 +137,24 @@ export function CarouselTrack({
   )
 }
 
+// Bare chevron glyph — an SVG stroke, not a font glyph, so the weight stays
+// crisp at any size and inherits currentColor. Both seats render it: the
+// tile hover-reveals it, the modal/full page keeps it always on.
+function Chevron({ direction }: { direction: 'prev' | 'next' }) {
+  return (
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false">
+      <path
+        d={direction === 'prev' ? 'M10 3 5 8l5 5' : 'M6 3l5 5-5 5'}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
 export function CarouselArrows({
   index,
   count,
@@ -150,7 +169,7 @@ export function CarouselArrows({
    *  omits it: one carousel on screen needs no disambiguation. */
   project?: string
   /** Consumer skin on top of the shared arrow object (the tile's
-   *  hover-reveal + touch sizing live in its own module). */
+   *  hover-reveal + slide-in + touch sizing live in its own module). */
   className?: string
 }) {
   return (
@@ -162,7 +181,7 @@ export function CarouselArrows({
         disabled={index === 0}
         aria-label={project ? `Previous image, ${project}` : 'Previous image'}
       >
-        ←
+        <Chevron direction="prev" />
       </button>
       <button
         type="button"
@@ -171,7 +190,7 @@ export function CarouselArrows({
         disabled={index === count - 1}
         aria-label={project ? `Next image, ${project}` : 'Next image'}
       >
-        →
+        <Chevron direction="next" />
       </button>
     </>
   )
@@ -344,6 +363,11 @@ export function WorkCarousel({
       aria-label={`${title} — images`}
       {...{ [WORK_CAROUSEL_ATTR]: '' }}
     >
+      {/* Glow ground — the same mesh flow the tile wakes with, permanent
+          here (the carousel IS this seat's hero, there is no hover state to
+          gate on). Sits under the slides; the images' transparent margins
+          keep the treatment continuous through the tile→modal morph. */}
+      <WorkGlow active className={styles.glow} />
       <CarouselTrack
         images={images}
         title={title}

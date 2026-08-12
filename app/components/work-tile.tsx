@@ -13,6 +13,7 @@ import {
   type WorkTileSyncDetail,
 } from './work-carousel-position'
 import { WORK_TILE_ATTR, WORK_TILE_IMAGE_ATTR } from './work-morph'
+import { WorkGlow } from './work-glow'
 import styles from './work-index.module.scss'
 
 // One /work tile (T-004) — the Airbnb-card pattern: page through a project's
@@ -58,8 +59,17 @@ export function WorkTile({ slug, title, summary, images, order }: WorkTileProps)
   const [engaged, setEngaged] = useState(false)
   // One-commit transition suppression for modal write-back jumps.
   const [snapped, setSnapped] = useState(false)
+  // The dither backdrop runs only while the tile is awake (hover/focus) —
+  // mirrors the CSS wake so the canvas draws zero frames at rest.
+  const [awake, setAwake] = useState(false)
 
   const engage = () => setEngaged(true)
+
+  const wake = () => {
+    if (count > 1) engage()
+    setAwake(true)
+  }
+  const sleep = () => setAwake(false)
 
   const step = (delta: number) => {
     setEngaged(true)
@@ -105,8 +115,10 @@ export function WorkTile({ slug, title, summary, images, order }: WorkTileProps)
       className={styles.tile}
       style={{ '--i': order } as CSSProperties}
       onKeyDown={onKeyDown}
-      onPointerEnter={count > 1 ? engage : undefined}
-      onFocus={count > 1 ? engage : undefined}
+      onPointerEnter={wake}
+      onPointerLeave={sleep}
+      onFocus={wake}
+      onBlur={sleep}
     >
       <Link
         className={styles.card}
@@ -118,6 +130,11 @@ export function WorkTile({ slug, title, summary, images, order }: WorkTileProps)
             accessible name; the inset media panel enforces the 16:10 aspect
             and stays the morph's measured source ([data-work-tile-image]). */}
         <span className={styles.thumb} {...{ [WORK_TILE_IMAGE_ATTR]: '' }}>
+          {/* Glow ground — the panel's background layer (negative z-index
+              under the slides): the work images carry transparent margins,
+              so the pulsing light shows through around the artwork, never
+              over it. Fades in with the tile wake. */}
+          <WorkGlow active={awake} className={styles.glow} />
           <CarouselTrack
             images={images}
             title={title}
