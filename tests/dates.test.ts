@@ -8,7 +8,9 @@
 // 2. slug tiebreak on equal dates — mutation: flip the tiebreak to desc
 // 3. input non-mutation           — mutation: sort in place (drop the copy)
 // 4. single-item and empty lists  — mutation: early-return the same reference
-// 5. formatDate moved behavior    — mutation: month 'long' → 'short'
+// 5. formatDate behavior          — mutation: month 'long' → 'short'
+//    (T-008 collapsed formatDate to the absolute formatter — the
+//    includeRelative pins were deleted with the branch; see below)
 // 6. date agreement (T-006)       — mutation: comparator back to raw
 //    new Date(publishedAt), i.e. UTC for date-only strings
 //    (transcript in .sagan/ledger/T-006/qabuild/)
@@ -174,35 +176,16 @@ describe('date agreement — date-only publishedAt is LOCAL midnight everywhere 
   })
 })
 
-describe('formatDate — moved behavior (verbatim from app/notes/utils.ts)', () => {
-  it('formats a date-only string as "Month D, YYYY" by default (no relative part)', () => {
+// REPLACED (T-008, 2026-08-11): the two `includeRelative` pins died with the
+// branch itself — zero callers ever passed true (grep-proven at T-006,
+// re-proven at T-008), so formatDate collapsed to the absolute formatter.
+// The surviving pins below are the function's whole remaining contract.
+describe('formatDate — absolute "Month D, YYYY" formatter (relative branch deleted, T-008)', () => {
+  it('formats a date-only string as "Month D, YYYY"', () => {
     assert.equal(formatDate('2026-08-10'), 'August 10, 2026')
   })
 
   it('accepts a full ISO datetime unchanged (no T00:00:00 injection)', () => {
     assert.equal(formatDate('2026-08-10T15:30:00'), 'August 10, 2026')
-  })
-
-  it('appends "(Ny ago)" for a date some years back when includeRelative is set', () => {
-    // Computed against the real clock — the function is relative to now.
-    const yearsAgo = new Date().getFullYear() - 2020
-    assert.equal(
-      formatDate('2020-01-05', true),
-      `January 5, 2020 (${yearsAgo}y ago)`
-    )
-  })
-
-  it('labels today\'s date "(Today)" when includeRelative is set', () => {
-    const now = new Date()
-    const iso = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(
-      2,
-      '0'
-    )}-${String(now.getDate()).padStart(2, '0')}`
-    const expected = now.toLocaleString('en-us', {
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric',
-    })
-    assert.equal(formatDate(iso, true), `${expected} (Today)`)
   })
 })

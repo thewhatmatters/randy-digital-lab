@@ -62,11 +62,17 @@ export class ContentFileError extends Error {
  * Pure parse of one file's text. Returns null when there is no frontmatter
  * fence pair — the caller (which knows the file path) turns that into a
  * ContentFileError; this function never throws.
+ *
+ * The fence regex is anchored to the START of the file (T-008): frontmatter
+ * is a header, not a floating block. Unanchored, a fence-less file whose
+ * body contained two thematic-break `---` lines would have the prose
+ * between them "parsed" as frontmatter and misdiagnosed as missing fields;
+ * anchored, it diagnoses correctly as "no frontmatter".
  */
 export function parseFrontmatter<T>(
   fileContent: string
 ): { metadata: T; content: string; issues: ParseIssue[] } | null {
-  let frontmatterRegex = /---\s*([\s\S]*?)\s*---/
+  let frontmatterRegex = /^---\s*([\s\S]*?)\s*---/
   let match = frontmatterRegex.exec(fileContent)
   if (!match) return null
   let frontMatterBlock = match[1]
@@ -165,11 +171,36 @@ function validate(
         `field "${field}" must be a nonempty scalar string`
       )
     }
-    if (rule === 'date' && Number.isNaN(asLocalInstant(value).getTime())) {
-      throw new ContentFileError(
-        filePath,
-        `unparseable ${field} "${value}" — expected an ISO date like 2026-08-10`
-      )
+    if (rule === 'date') {
+      let instant = asLocalInstant(value)
+      if (Number.isNaN(instant.getTime())) {
+        throw new ContentFileError(
+          filePath,
+          `unparseable ${field} "${value}" — expected an ISO date like 2026-08-10`
+        )
+      }
+      // Roll detection (T-008): JS Date arithmetic silently rolls a
+      // calendar-impossible day forward (2026-02-30 parses as March 2, this
+      // engine included), so NaN alone can't catch it. Parse, then verify
+      // the round trip: the instant must land on the exact Y/M/D the string
+      // named. Scoped to values WITHOUT an explicit zone designator —
+      // those are read under the local-midnight rule (asLocalInstant), so
+      // local components are comparable; a Z/offset value is outside the
+      // site's date contract and its local Y/M/D legitimately differs.
+      let ymd = /^(\d{4})-(\d{2})-(\d{2})(?:T|$)/.exec(value)
+      if (
+        ymd &&
+        !/(?:[Zz]|[+-]\d{2}:?\d{2})$/.test(value) &&
+        (instant.getFullYear() !== Number(ymd[1]) ||
+          instant.getMonth() + 1 !== Number(ymd[2]) ||
+          instant.getDate() !== Number(ymd[3]))
+      ) {
+        throw new ContentFileError(
+          filePath,
+          `calendar-impossible ${field} "${value}" — no such day exists ` +
+            `(JS Date would roll it into the next month)`
+        )
+      }
     }
   }
 }

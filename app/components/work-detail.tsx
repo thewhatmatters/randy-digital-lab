@@ -28,7 +28,14 @@ export function WorkDetailContent({
   /** `modal` pads like a card interior; `page` sits on the page grid. */
   variant: 'modal' | 'page'
 }) {
-  const { title, summary, liveUrl, meta } = project.metadata
+  const { title, summary, liveUrl } = project.metadata
+  // `meta` is optional and outside the validation floor, so its honest type
+  // is the parser union BlockItem[] (T-008) — a bare item (no ": ") arrives
+  // as a plain string. This dl draws label/value rows, so narrow to pairs;
+  // all shipped content is pairs, so the filter changes nothing rendered.
+  const meta = project.metadata.meta?.filter(
+    (row): row is Exclude<typeof row, string> => typeof row !== 'string'
+  )
 
   return (
     <div

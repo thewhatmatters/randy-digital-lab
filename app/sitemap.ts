@@ -1,7 +1,6 @@
 import { getBlogPosts } from 'app/notes/utils'
 import { getWorkProjects } from 'app/work/utils'
-
-export const baseUrl = 'https://randy.digital'
+import { baseUrl } from 'lib/site'
 
 export default async function sitemap() {
   let blogs = getBlogPosts().map((post) => ({

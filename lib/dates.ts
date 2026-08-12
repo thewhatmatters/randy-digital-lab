@@ -47,35 +47,15 @@ export function newestFirst<T extends Dated>(items: T[]): T[] {
   return [...items].sort(byNewestFirst)
 }
 
-export function formatDate(date: string, includeRelative = false) {
-  let currentDate = new Date()
-  let targetDate = asLocalInstant(date)
-
-  let yearsAgo = currentDate.getFullYear() - targetDate.getFullYear()
-  let monthsAgo = currentDate.getMonth() - targetDate.getMonth()
-  let daysAgo = currentDate.getDate() - targetDate.getDate()
-
-  let formattedDate = ''
-
-  if (yearsAgo > 0) {
-    formattedDate = `${yearsAgo}y ago`
-  } else if (monthsAgo > 0) {
-    formattedDate = `${monthsAgo}mo ago`
-  } else if (daysAgo > 0) {
-    formattedDate = `${daysAgo}d ago`
-  } else {
-    formattedDate = 'Today'
-  }
-
-  let fullDate = targetDate.toLocaleString('en-us', {
+// The `includeRelative` branch was DELETED (T-008): zero callers ever passed
+// true (grep-proven at T-006 and re-proven at T-008), and its "N months ago"
+// arithmetic was field-by-field subtraction (boundary-buggy across month/
+// year edges) against an unmockable `new Date()`. If a relative label is
+// ever wanted, build it on Intl.RelativeTimeFormat with an injectable clock.
+export function formatDate(date: string) {
+  return asLocalInstant(date).toLocaleString('en-us', {
     month: 'long',
     day: 'numeric',
     year: 'numeric',
   })
-
-  if (!includeRelative) {
-    return fullDate
-  }
-
-  return `${fullDate} (${formattedDate})`
 }

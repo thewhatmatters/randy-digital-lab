@@ -84,6 +84,18 @@
   }
 }
 
+/* Pull-quote attribution (`from`) — the same small/muted register as
+   .figureCaption, resetting the pullquote's large type it would otherwise
+   inherit. A footer, not a p, so `.prose p` never competes for its color. */
+.pullquoteFrom {
+  margin-top: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+
 /* Supporting image — figure + caption. */
 .figureImg {
   width: 100%;

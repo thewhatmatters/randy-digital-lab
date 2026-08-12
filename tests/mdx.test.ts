@@ -23,6 +23,22 @@
 //   3. string lists + issues — bare items as strings; skips are reported
 //                              (mutation: bare item back to {label, value:''})
 //   (4. date agreement lives in tests/dates.test.ts with lib/dates.ts.)
+// - REPLACED (T-008, 2026-08-11): the notes right-rail parse-shape pins —
+//   stack/authors rows (incl. the unicode-label pin) and the aiDegree scalar
+//   in the fixture pipeline. Those fields documented renderers that were
+//   never built; T-008 DELETED them from the notes schema
+//   (app/notes/utils.ts), so the pins pinned nothing. Parser-level coverage
+//   they carried (unicode labels in pairs, first-": " split) survives below
+//   rekeyed to the work `meta` shape — the parser contract is unchanged.
+// - NEW families (T-008, one deliberate mutation demonstrated per family,
+//   transcripts in .sagan/ledger/T-008/qabuild/):
+//   5. fence anchor        — frontmatter must open the FILE; a fence-less
+//                            body with a mid-file "---" (a thematic break)
+//                            diagnoses as "no frontmatter" (mutation: drop
+//                            the ^ anchor)
+//   6. calendar validity   — 'date' fields must name a real calendar day;
+//                            2026-02-30 is a named error, not a silent roll
+//                            to March 2 (mutation: drop the round-trip check)
 //
 // Seam notes (unchanged from T-003):
 // - parseFrontmatter is pure — tested directly with inline strings. Since
@@ -137,6 +153,31 @@ describe('parseFrontmatter — scalar values', () => {
   })
 })
 
+describe('parseFrontmatter — fence anchored to file start (T-008)', () => {
+  it('diagnoses a fence-less file with mid-file "---" thematic breaks as "no frontmatter"', () => {
+    // Unanchored, the prose between the two breaks "parsed" as frontmatter
+    // and the file misdiagnosed as missing fields. It has NO frontmatter.
+    const fenceless =
+      'Intro paragraph, no fences up here.\n\n---\n\nProse between two thematic breaks.\n\n---\n\nClosing prose.'
+    assert.equal(parseFrontmatter(fenceless), null)
+  })
+
+  it('a real frontmatter block still parses when the BODY also contains "---" breaks', () => {
+    const { metadata, content } = parse<{ title: string }>(
+      md(`title: 'T'`, 'Before.\n\n---\n\nAfter the break.')
+    )
+    assert.equal(metadata.title, 'T')
+    assert.equal(content, 'Before.\n\n---\n\nAfter the break.')
+  })
+
+  it('returns null when the fence pair does not open the file', () => {
+    assert.equal(
+      parseFrontmatter(`A stray preamble line.\n${md(`title: 'T'`)}`),
+      null
+    )
+  })
+})
+
 describe('parseFrontmatter — label: value block lists', () => {
   it('parses meta rows into ordered {label, value} pairs (work shape)', () => {
     const { metadata } = parse<{ meta: MetaItem[] }>(
@@ -149,30 +190,26 @@ describe('parseFrontmatter — label: value block lists', () => {
     ])
   })
 
-  it('parses stack and authors rows including unicode labels (notes shape)', () => {
-    const { metadata } = parse<{
-      stack: MetaItem[]
-      authors: MetaItem[]
-    }>(
+  // Rekeyed from the deleted notes `stack`/`authors` shape (T-008) — the
+  // unicode-label coverage is a PARSER pin, not a schema pin, so it lives on
+  // under the work `meta` key.
+  it('parses pair rows including unicode labels and comma-heavy values', () => {
+    const { metadata } = parse<{ meta: MetaItem[] }>(
       md(
-        `title: 'T'\nstack:\n  - Desktop shell: Tauri\n  - Terminal: xterm.js\nauthors:\n  - Randy: direction, editing, final call\n  - Claude · Opus 4.8: drafting, research, code`
+        `title: 'T'\nmeta:\n  - Claude · Opus 4.8: drafting, research, code\n  - Terminal: xterm.js`
       )
     )
-    assert.deepEqual(metadata.stack, [
-      { label: 'Desktop shell', value: 'Tauri' },
-      { label: 'Terminal', value: 'xterm.js' },
-    ])
-    assert.deepEqual(metadata.authors, [
-      { label: 'Randy', value: 'direction, editing, final call' },
+    assert.deepEqual(metadata.meta, [
       { label: 'Claude · Opus 4.8', value: 'drafting, research, code' },
+      { label: 'Terminal', value: 'xterm.js' },
     ])
   })
 
   it('splits an item on the FIRST ": " and rejoins the rest into the value', () => {
-    const { metadata } = parse<{ stack: MetaItem[] }>(
-      md(`title: 'T'\nstack:\n  - Terminal: xterm.js: v5`)
+    const { metadata } = parse<{ meta: MetaItem[] }>(
+      md(`title: 'T'\nmeta:\n  - Terminal: xterm.js: v5`)
     )
-    assert.deepEqual(metadata.stack, [
+    assert.deepEqual(metadata.meta, [
       { label: 'Terminal', value: 'xterm.js: v5' },
     ])
   })
@@ -254,6 +291,34 @@ describe('error contract — ContentFileError names the file and the problem (T-
       /unparseable publishedAt "not-a-date"/
     )
   })
+
+  it('throws ContentFileError for a calendar-impossible publishedAt instead of rolling it (T-008)', () => {
+    assertContentFileError(
+      () => getMDXData(errorFixtures('rolled-date'), basicSchema),
+      'feb-30.mdx',
+      /calendar-impossible publishedAt "2026-02-30"/
+    )
+  })
+})
+
+describe('calendar validity — the date rule names real days only (T-008)', () => {
+  it('accepts a REAL leap day through the validation floor (2028-02-29 — the roll detector must not overreach)', () => {
+    // Through getMDXData so the 'date' rule actually runs — the control for
+    // the two rejection fixtures below/above. 2028 is a leap year.
+    const [post] = getMDXData<{ publishedAt: string }>(
+      errorFixtures('leap-day-valid'),
+      basicSchema
+    )
+    assert.equal(post.metadata.publishedAt, '2028-02-29')
+  })
+
+  it('rejects Feb 29 on a non-leap year (2026-02-29 → named error, not March 1)', () => {
+    assertContentFileError(
+      () => getMDXData(errorFixtures('rolled-date-leap'), basicSchema),
+      'feb-29.mdx',
+      /calendar-impossible publishedAt "2026-02-29"/
+    )
+  })
 })
 
 describe('validation floor — per-pipeline required fields (T-006)', () => {
@@ -311,7 +376,9 @@ describe('getWorkProjects — parser output read directly (fixture pipeline)', (
 })
 
 describe('getBlogPosts — notes fixture pipeline', () => {
-  it('parses a notes-shaped frontmatter end to end (scalars, stack, authors, slug from filename)', (t) => {
+  // The stack/authors/aiDegree assertions that lived here were deleted with
+  // the fields themselves (T-008) — the notes schema is scalars only now.
+  it('parses a notes-shaped frontmatter end to end (scalars, slug from filename)', (t) => {
     t.mock.method(process, 'cwd', () => fixtureSiteRoot)
     const posts = getBlogPosts()
     assert.equal(posts.length, 1)
@@ -326,15 +393,6 @@ describe('getBlogPosts — notes fixture pipeline', () => {
       post.metadata.summary,
       'Summary with a colon: kept intact, plus “smart quotes”.'
     )
-    assert.deepEqual(post.metadata.stack, [
-      { label: 'Desktop shell', value: 'Tauri' },
-      { label: 'Terminal', value: 'xterm.js' },
-    ])
-    assert.deepEqual(post.metadata.authors, [
-      { label: 'Randy', value: 'direction, editing, final call' },
-      { label: 'Claude · Opus 4.8', value: 'drafting, research, code' },
-    ])
-    assert.equal(post.metadata.aiDegree, 'Co-written with Claude')
     assert.ok(post.content.startsWith('Body paragraph one.'))
     assert.ok(post.content.endsWith('Body paragraph two.'))
   })

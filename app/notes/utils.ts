@@ -1,39 +1,23 @@
 import path from 'path'
-import { getMDXData, type ContentSchema, type MetaItem } from 'lib/mdx'
+import { getMDXData, type ContentSchema } from 'lib/mdx'
 
 // The generic frontmatter parser + directory reader live in lib/mdx.ts
 // (shared with app/work/utils.ts); shared date helpers (formatDate,
 // newestFirst) live in lib/dates.ts. This file keeps ONLY the notes
 // schema: the TypeScript shape below and the validation floor the shared
 // reader enforces at read time (T-006).
-
-type StackItem = MetaItem
+//
+// The schema equals what renders (T-008): the old right-rail fields
+// (stack, ctaLabel/ctaHref, authors, aiDegree) documented renderers that
+// were never built — attribution now lives inline in the margin (see the
+// note-attribution decision), so the fields, their authoring docs, and
+// their parse-shape pins were DELETED, not implemented.
 
 type Metadata = {
   title: string
   publishedAt: string
   summary: string
   image?: string
-  // Optional supplemental "at a glance" rows, rendered in the post's right
-  // rail. Authored in frontmatter as an indented YAML-style list:
-  //   stack:
-  //     - Desktop shell: Tauri
-  //     - Terminal: xterm.js
-  stack?: StackItem[]
-  // Optional call-to-action button at the foot of the right rail.
-  ctaLabel?: string
-  ctaHref?: string
-  // Co-author credits, rendered as a byline + a roles block in the right rail.
-  // Authored like `stack` — an indented list of "Name: role" rows. List the
-  // human(s) and any AI collaborator as distinct authors, e.g.:
-  //   authors:
-  //     - Randy: direction, editing, final call
-  //     - Claude · Opus 4.8: drafting, research, code
-  authors?: StackItem[]
-  // Honest "how much AI" calibration label shown beside the byline, e.g.
-  // "Co-written with Claude" / "Human-written · AI-edited". Set per note;
-  // never fabricate it — it only means anything if it's true.
-  aiDegree?: string
 }
 
 // Validation floor for notes (T-006): a note missing any of these fails the

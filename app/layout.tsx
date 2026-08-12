@@ -13,7 +13,7 @@ import { SmoothScroll } from './components/smooth-scroll'
 import { Preloader } from './components/preloader'
 import { ThemeProvider } from 'next-themes'
 import { INTRO_ARM_SCRIPT } from 'lib/intro-gate'
-import { baseUrl } from './sitemap'
+import { baseUrl } from 'lib/site'
 
 // viewport-fit=cover lets the fixed command bar read safe-area insets on
 // notched devices (see .cmdbar in global.css).

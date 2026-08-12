@@ -1,5 +1,5 @@
 import path from 'path'
-import { getMDXData, type ContentSchema, type MetaItem } from 'lib/mdx'
+import { getMDXData, type ContentSchema, type BlockItem } from 'lib/mdx'
 
 // Work schema — same filesystem MDX pipeline as notes (lib/mdx.ts), with
 // extended frontmatter for case pages: a 16:10 thumbnail for the index card,
@@ -25,8 +25,11 @@ export type WorkMetadata = {
   thumbnail: string
   /** Live-site URL — renders the "Visit site ↗" CTA when present. */
   liveUrl?: string
-  /** At-a-glance rows for the detail content section. */
-  meta?: MetaItem[]
+  /** At-a-glance rows for the detail content section. Typed as the honest
+   *  parser union (T-008): `meta` is optional, so it sits OUTSIDE the
+   *  validation floor — a bare item (no ": ") really can arrive as a plain
+   *  string, and the renderer narrows to the pair shape it draws. */
+  meta?: BlockItem[]
   /** Ordered carousel images (16:10 each). Required, ≥1 entry — enforced by
    *  the validation floor, so every project declares its carousel
    *  explicitly (the pre-T-006 [thumbnail] fallback is gone). */

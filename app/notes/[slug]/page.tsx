@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import { CustomMDX } from 'app/components/mdx'
 import { getBlogPosts } from 'app/notes/utils'
-import { baseUrl } from 'app/sitemap'
+import { baseUrl, ogImageUrl, pageMetadata } from 'lib/site'
 import { formatDate } from 'lib/dates'
 import styles from 'app/components/margin.module.scss'
 
@@ -20,38 +20,13 @@ export async function generateMetadata({ params }) {
     return
   }
 
-  let {
-    title,
-    publishedAt: publishedTime,
-    summary: description,
-    image,
-  } = post.metadata
-  let ogImage = image
-    ? image
-    : `${baseUrl}/og?title=${encodeURIComponent(title)}`
-
-  return {
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-      type: 'article',
-      publishedTime,
-      url: `${baseUrl}/notes/${post.slug}`,
-      images: [
-        {
-          url: ogImage,
-        },
-      ],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title,
-      description,
-      images: [ogImage],
-    },
-  }
+  return pageMetadata({
+    title: post.metadata.title,
+    description: post.metadata.summary,
+    publishedTime: post.metadata.publishedAt,
+    path: `/notes/${post.slug}`,
+    image: post.metadata.image,
+  })
 }
 
 export default async function Blog({ params }) {
@@ -80,9 +55,10 @@ export default async function Blog({ params }) {
             datePublished: post.metadata.publishedAt,
             dateModified: post.metadata.publishedAt,
             description: post.metadata.summary,
-            image: post.metadata.image
-              ? `${baseUrl}${post.metadata.image}`
-              : `/og?title=${encodeURIComponent(post.metadata.title)}`,
+            // ogImageUrl is absolute either way — the old inline fallback
+            // emitted a RELATIVE /og path here, which JSON-LD consumers
+            // (unlike Next's metadataBase) never resolve (T-008).
+            image: ogImageUrl(post.metadata.title, post.metadata.image),
             url: `${baseUrl}/notes/${post.slug}`,
             author: { '@type': 'Person', name: 'Randy Daniel' },
           }),

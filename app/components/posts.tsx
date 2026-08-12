@@ -17,7 +17,7 @@ export function BlogPosts() {
             style={{ '--i': i } as CSSProperties}
           >
             <span className={styles.date}>
-              {formatDate(post.metadata.publishedAt, false)}
+              {formatDate(post.metadata.publishedAt)}
             </span>
             <span className={styles.title}>{post.metadata.title}</span>
           </Link>

@@ -25,7 +25,8 @@ export function Margin({
 
 // Pull quote — a line lifted from the prose, set large in the margin. Optional
 // `from` attributes it (a source, a person) without the visual weight of the
-// old colophon.
+// old colophon: a small muted line under the quote, in the house caption
+// register. Authors supply their own dash/punctuation in the string.
 export function PullQuote({
   from,
   children,
@@ -36,6 +37,7 @@ export function PullQuote({
   return (
     <aside className={`${styles.margin} ${styles.pullquote}`}>
       {children}
+      {from && <footer className={styles.pullquoteFrom}>{from}</footer>}
     </aside>
   )
 }

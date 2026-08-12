@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 import { getWorkProjects } from 'app/work/utils'
 import { WorkCarousel } from 'app/components/work-carousel'
 import { WorkDetailContent } from 'app/components/work-detail'
-import { baseUrl } from 'app/sitemap'
+import { baseUrl, pageMetadata } from 'lib/site'
 import styles from './page.module.scss'
 
 // Full-page /work/[slug] — what a direct visit, refresh, or share renders
@@ -27,34 +27,14 @@ export async function generateMetadata({ params }) {
     return
   }
 
-  let { title, publishedAt: publishedTime, summary: description } =
-    project.metadata
-  // OG goes through the /og route (raster) — the project images are SVG,
-  // which link unfurlers largely ignore.
-  let ogImage = `${baseUrl}/og?title=${encodeURIComponent(title)}`
-
-  return {
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-      type: 'article',
-      publishedTime,
-      url: `${baseUrl}/work/${project.slug}`,
-      images: [
-        {
-          url: ogImage,
-        },
-      ],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title,
-      description,
-      images: [ogImage],
-    },
-  }
+  // No `image` passed: OG goes through the /og route (raster) — the project
+  // images are SVG, which link unfurlers largely ignore.
+  return pageMetadata({
+    title: project.metadata.title,
+    description: project.metadata.summary,
+    publishedTime: project.metadata.publishedAt,
+    path: `/work/${project.slug}`,
+  })
 }
 
 export default async function WorkProject({ params }) {
