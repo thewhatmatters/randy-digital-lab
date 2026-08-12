@@ -1,0 +1,16 @@
+// The work-media aspect contract (T-009) — ONE definition of the 16:10 ratio
+// every surface that renders a project's imagery locks to: the tile's inset
+// media panel and its sibling arrow layer (work-index.module.scss) and the
+// detail carousel viewport (work-carousel.module.scss). The tile→modal morph
+// rides on this agreement: work-modal.tsx measures both ends live and maps
+// one onto the other with a single uniform scale (from.width / to.width) —
+// two different ratios would shear the image mid-flight. Consumers @use this
+// partial; tests/work-morph.test.ts pins that every compiled aspect-ratio
+// in the work modules matches this value.
+//
+// An unquoted string, not Sass numbers: `16 / 10` in a variable is slash
+// DIVISION (deprecated, and it would compile to 1.6); this form emits the
+// exact bytes the modules shipped with.
+@use 'sass:string';
+
+$work-aspect-ratio: string.unquote('16/10');

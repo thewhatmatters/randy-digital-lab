@@ -139,11 +139,11 @@
   }
 }
 
+// Reduced-motion: hover transforms off. No "force visible" rules here: the
+// entrance hide lives only on the html.intro-armed chains (_intro.scss),
+// which reduced-motion loads never arm — and a bare `.tile` rule couldn't
+// outrank those chains anyway (T-007, by specificity). Deleted in T-009.
 @media (prefers-reduced-motion: reduce) {
-  .tile {
-    opacity: 1;
-    animation: none;
-  }
   .tile:hover .icon,
   .tile:hover .label {
     transform: none;

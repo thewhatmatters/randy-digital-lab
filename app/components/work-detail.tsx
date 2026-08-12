@@ -1,5 +1,6 @@
 import { CustomMDX } from 'app/components/mdx'
 import { Button } from 'app/components/button'
+import { WORK_DETAIL_CONTENT_ATTR } from 'app/components/work-morph'
 import type { WorkMetadata } from 'app/work/utils'
 import styles from './work-detail.module.scss'
 
@@ -43,7 +44,7 @@ export function WorkDetailContent({
         variant === 'modal' ? styles.inModal : styles.inPage
       }`}
       // The modal's open morph fades this block in after the image leads.
-      data-work-detail-content=""
+      {...{ [WORK_DETAIL_CONTENT_ATTR]: '' }}
     >
       <header className={styles.head}>
         <div>

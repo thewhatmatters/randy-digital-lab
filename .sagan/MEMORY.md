@@ -42,6 +42,48 @@ insights are proposed to the vault through its gate.)
   next heading); critics must be handed block-scoped excerpts if true
   isolation matters — a whole-file Read leaks excluded blocks (r2b critic
   disclosed exactly this).
+## T-008 + T-009 — hygiene sprint (run-20260811-225832, both promoted round 1; architecture review closes 8/8)
+
+- **Sprint discipline held under pressure:** the human twice asked to
+  dispatch ticket 2 while ticket 1's builder was writing shared files —
+  the PM held the queue (offering isolated-worktree parallelism as the
+  honest alternative) and the collision never happened. With
+  `enforced: []`, sequencing IS the PM's job.
+- **Put the seam where the tests want to go:** extracting a pure
+  `lib/rss.ts` from the route is what made feed hygiene unit-testable
+  (hostile-title injection at function level). When an AC
+  under-specifies, the site's existing contracts usually decide it
+  (the calendar-check zone question resolved from T-006's
+  local-midnight rule).
+- **Sass slash-values are a byte-identity trap:** `16 / 10` inline
+  emits `16/10`; the same in a variable slash-DIVIDES to `1.6`;
+  `list.slash` adds spaces. Only `string.unquote('16/10')` matches
+  shipped bytes — probe-compile candidate forms BEFORE refactoring a
+  literal into a variable.
+- **Delta contracts should enumerate deltas, not adjectives:** T-008's
+  "exactly three attested changes" AC made every diff hunk either
+  licensed or a FAIL — the strongest byte-compare formulation yet. But
+  write AC pairs carefully: T-009's AC 4 literally contradicted its own
+  AC 3 (order-only diff vs mandated deletions) — verify adjudicated
+  correctly, and the critic's channel finding stands as process law:
+  **amendments go in Decisions, never adjudicated-in-QA.**
+- **Test layering, proven live:** agreement pins are blind to
+  co-derived absolute drift by design; the donor snapshot catches it
+  (verify's V2 mutation: 100/101 via the T-003 layer). Regeneration
+  discipline (`UPDATE_SNAPSHOTS=1`) is now the only guard on absolute
+  values — regenerate deliberately, never habitually.
+- **Kill by port, never by pattern:** `pkill -f next-server` killed the
+  protected dev server (every `next dev` matches). `kill $(lsof -ti
+  :PORT)` only.
+- **Carry-forwards (open):** work-detail ships `class="undefined"`
+  (styles.content — no such class; pre-existing, structurally proven);
+  arrowLayer ~1px outside the panel border box — land the live-rect
+  pin WITH the fix; zoned-date calendar subvariant (UTC round-trip);
+  feed pubDate outside the date agreement; ogImageUrl image param —
+  subtract or pin (tests/site.test.ts); OG title clamping (latent);
+  work-carousel's forked local `$ease` (byte-identical swap to
+  _motion).
+
 ## T-007 — intro gate + watchdog (run-20260811-180652, promoted round 2 — the project's FIRST REVISE cycle)
 
 - **The REVISE was earned by a capture, not a grep:** all mechanics

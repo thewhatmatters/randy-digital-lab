@@ -134,10 +134,6 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .tile {
-    opacity: 1;
-    animation: none;
-  }
   .tile:hover .icon,
   .tile:hover .label {
     transform: none;

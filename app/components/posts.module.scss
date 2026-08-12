@@ -78,12 +78,10 @@
 }
 
 // Reduced-motion: drop spatial movement; the accent colour cue stays.
+// entrance hide lives only on the html.intro-armed chains (_intro.scss),
+// which reduced-motion loads never arm — and a bare `.row` rule couldn't
+// outrank those chains anyway (T-007, by specificity). Deleted in T-009.
 @media (prefers-reduced-motion: reduce) {
-  .row {
-    opacity: 1;
-    animation: none;
-  }
-
   .row:hover .title {
     transform: none;
   }

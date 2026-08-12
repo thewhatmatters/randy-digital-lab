@@ -14,9 +14,18 @@
 // step a panel's hairline deepens to when its card wakes.
 $wake-border: color-mix(in srgb, var(--fg) 24%, var(--border));
 
+// Card geometry — single source (T-009). The frame is the card-shell padding
+// AND the inset the /work arrow layer mirrors to sit exactly over the media
+// panel (it used to hand-copy 0.25rem — drift-prone). The panel radius is
+// also the morph's start-clip rounding: work-modal.tsx reads the computed
+// value live and keeps a px fallback mirrored to this figure, pinned by
+// tests/work-morph.test.ts.
+$card-frame: 0.25rem;
+$card-panel-radius: 0.5rem; // nests inside the 0.75rem card radius minus the frame
+
 // Card shell: filled surface, soft radius, keycap-style grounded edge.
 @mixin card-shell {
-  padding: 0.25rem;
+  padding: $card-frame;
   background: var(--bg);
   border: 1px solid var(--border);
   border-bottom-width: 2px; // keycap-style grounded edge (matches command bar)
@@ -29,7 +38,7 @@ $wake-border: color-mix(in srgb, var(--fg) 24%, var(--border));
 @mixin card-panel {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 0.5rem; // nests inside the card radius minus the 0.25rem frame
+  border-radius: $card-panel-radius;
   overflow: hidden;
   transition: border-color 0.18s $ease;
 }

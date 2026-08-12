@@ -6,11 +6,15 @@
 // mode; the chip keeps contrast self-contained either way (same chip
 // language as the command bar).
 
+// The 16:10 work-media ratio — one definition (T-009), shared with the tile's
+// media panel + arrow layer so the tile→modal morph is one uniform scale.
+@use './work-geometry' as *;
+
 $ease: cubic-bezier(0.22, 1, 0.36, 1);
 
 .carousel {
   position: relative;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: $work-aspect-ratio;
   overflow: hidden;
   background: var(--surface);
 }

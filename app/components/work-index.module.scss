@@ -21,6 +21,9 @@
 // Gate + ease + rise-in come from the shared intro partial (T-007) — one
 // definition of the machine's CSS, pinned to lib/intro-gate.ts by test.
 @use './intro' as *;
+// The 16:10 work-media ratio — one definition (T-009), shared with the
+// detail carousel so the morph stays a single uniform scale.
+@use './work-geometry' as *;
 
 .grid {
   list-style: none;
@@ -71,7 +74,7 @@
 .thumb {
   @include card-panel;
   display: block;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: $work-aspect-ratio;
 
   img {
     display: block;
@@ -122,15 +125,17 @@
 // only adds placement + the gate decisions: hover-revealed on fine pointers,
 // always visible (and ≥44px) on coarse ones.
 //
-// The layer mirrors the media panel's border box: same 0.25rem card-frame
-// inset, same border-box 16:10 — so the arrows center on the image, tracked
-// by construction. Click-transparent; only the buttons take the pointer.
+// The layer mirrors the media panel's border box: the same $card-frame inset
+// and $work-aspect-ratio the panel gets (shared definitions, not copies — the
+// T-004 critic caught this drifting when it was hand-typed), so the arrows
+// center on the image, tracked by construction. Click-transparent; only the
+// buttons take the pointer.
 .arrowLayer {
   position: absolute;
-  top: 0.25rem;
-  left: 0.25rem;
-  right: 0.25rem;
-  aspect-ratio: 16 / 10;
+  top: $card-frame;
+  left: $card-frame;
+  right: $card-frame;
+  aspect-ratio: $work-aspect-ratio;
   pointer-events: none;
 }
 
@@ -172,14 +177,14 @@
   }
 }
 
-// Reduced-motion: no entrance, no hover transforms. The color wake still
-// lands (its transition is a fade between two static states), and the arrow
-// reveal is likewise an opacity fade, not motion.
+// Reduced-motion: no hover transforms. The color wake still lands (its
+// transition is a fade between two static states), and the arrow reveal is
+// likewise an opacity fade, not motion. No "force visible" rules here: the
+// entrance hide/rise lives only on the html.intro-armed selector chains
+// (_intro.scss), which reduced-motion loads never arm — and a bare `.tile`
+// rule couldn't outrank those chains anyway (T-007 proved it by specificity),
+// so such a rescue would be a lying safety net (deleted, T-009).
 @media (prefers-reduced-motion: reduce) {
-  .tile {
-    opacity: 1;
-    animation: none;
-  }
   .tile:hover .title,
   .tile:focus-within .title {
     transform: none;

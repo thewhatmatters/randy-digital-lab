@@ -210,13 +210,12 @@
 // Reduced-motion: drop all spatial movement — no entrance, no hover shift. Force the
 // rows visible in case the page was somehow armed (motion toggled after load), so the
 // gated entrance can never leave them stuck hidden. Colour cues stay (vestibular-safe).
+// Reduced-motion: hover transform off. No "force visible" rules here: the
+// entrance hide lives only on the html.intro-armed chains (_intro.scss),
+// which reduced-motion loads never arm — and bare `.row`/`.head` rules
+// couldn't outrank those chains anyway (T-007, by specificity). Deleted in
+// T-009.
 @media (prefers-reduced-motion: reduce) {
-  .row,
-  .head {
-    opacity: 1;
-    animation: none;
-  }
-
   .row:hover .role {
     transform: none;
   }

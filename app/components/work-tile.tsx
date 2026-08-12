@@ -12,6 +12,7 @@ import {
   clampIndex,
   type WorkTileSyncDetail,
 } from './work-carousel-position'
+import { WORK_TILE_ATTR, WORK_TILE_IMAGE_ATTR } from './work-morph'
 import styles from './work-index.module.scss'
 
 // One /work tile (T-004) — the Airbnb-card pattern: page through a project's
@@ -111,12 +112,12 @@ export function WorkTile({ slug, title, summary, images, order }: WorkTileProps)
         className={styles.card}
         href={index > 0 ? `/work/${slug}?i=${index}` : `/work/${slug}`}
         scroll={false}
-        data-work-tile={slug}
+        {...{ [WORK_TILE_ATTR]: slug }}
       >
         {/* Slides are decorative here — the card's text carries the
             accessible name; the inset media panel enforces the 16:10 aspect
             and stays the morph's measured source ([data-work-tile-image]). */}
-        <span className={styles.thumb} data-work-tile-image="">
+        <span className={styles.thumb} {...{ [WORK_TILE_IMAGE_ATTR]: '' }}>
           <CarouselTrack
             images={images}
             title={title}

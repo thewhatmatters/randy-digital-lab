@@ -8,6 +8,7 @@ import {
   parseIndexParam,
   type WorkTileSyncDetail,
 } from './work-carousel-position'
+import { WORK_CAROUSEL_ATTR } from './work-morph'
 import styles from './work-carousel.module.scss'
 
 // Work carousel — ONE implementation, three seats (T-004: no second
@@ -341,7 +342,7 @@ export function WorkCarousel({
       role="group"
       aria-roledescription="carousel"
       aria-label={`${title} — images`}
-      data-work-carousel=""
+      {...{ [WORK_CAROUSEL_ATTR]: '' }}
     >
       <CarouselTrack
         images={images}

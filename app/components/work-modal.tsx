@@ -9,6 +9,14 @@ import {
 } from 'react'
 import { createPortal } from 'react-dom'
 import { useRouter } from 'next/navigation'
+import {
+  WORK_CAROUSEL_ATTR,
+  WORK_DETAIL_CONTENT_ATTR,
+  WORK_PANEL_RADIUS_PX,
+  WORK_TILE_ATTR,
+  WORK_TILE_IMAGE_ATTR,
+  WORK_TILE_RADIUS_PX,
+} from './work-morph'
 import styles from './work-modal.module.scss'
 
 // Work project modal — the client shell the intercepted /work/[slug] route
@@ -81,7 +89,7 @@ export function WorkModal({
       // Focus returns to the tile that opened us (it stayed mounted — the
       // index lives under the modal the whole time).
       document
-        .querySelector<HTMLElement>(`[data-work-tile="${slug}"]`)
+        .querySelector<HTMLElement>(`[${WORK_TILE_ATTR}="${slug}"]`)
         ?.focus()
     }
   }, [mounted, slug])
@@ -96,9 +104,9 @@ export function WorkModal({
     const backdrop = backdropRef.current
     if (!panel || !backdrop || typeof panel.animate !== 'function') return
     const source = document.querySelector<HTMLElement>(
-      `[data-work-tile="${slug}"] [data-work-tile-image]`
+      `[${WORK_TILE_ATTR}="${slug}"] [${WORK_TILE_IMAGE_ATTR}]`
     )
-    const header = panel.querySelector<HTMLElement>('[data-work-carousel]')
+    const header = panel.querySelector<HTMLElement>(`[${WORK_CAROUSEL_ATTR}]`)
     if (!source || !header) return
 
     const from = source.getBoundingClientRect()
@@ -111,8 +119,12 @@ export function WorkModal({
     // Clip everything below the header at the start, so the scaled-down
     // panel IS the tile image — the content section grows out of it.
     const below = Math.max(0, panel.offsetHeight - header.offsetHeight)
-    const panelRadius = parseFloat(getComputedStyle(panel).borderRadius) || 18
-    const tileRadius = parseFloat(getComputedStyle(source).borderRadius) || 6
+    // The computed values are the truth (the CSS declares each radius once);
+    // the constants are test-pinned mirrors for the unparseable-value case.
+    const panelRadius =
+      parseFloat(getComputedStyle(panel).borderRadius) || WORK_PANEL_RADIUS_PX
+    const tileRadius =
+      parseFloat(getComputedStyle(source).borderRadius) || WORK_TILE_RADIUS_PX
     panel.style.transformOrigin = 'top left'
 
     const anims: Animation[] = [
@@ -138,7 +150,7 @@ export function WorkModal({
       }),
     ]
     const content = panel.querySelector<HTMLElement>(
-      '[data-work-detail-content]'
+      `[${WORK_DETAIL_CONTENT_ATTR}]`
     )
     if (content) {
       // Image leads, words follow — the content fades in over the back half.
