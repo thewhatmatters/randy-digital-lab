@@ -36,6 +36,14 @@ breach is a `ContentFileError` naming the file and problem, failing the
 build loudly.
 _Avoid_: schema check (too generic), frontmatter linting
 
+**Role vocabulary**:
+The controlled tokens for a work project's `Role` meta row — `Strategy`,
+`UX/UI`, `Engineering`, `Motion` — mirroring the Services facets so the
+services sold and the roles shown are one vocabulary. Comma-joined per
+project; never bespoke prose. Status row uses `Live | Beta | Building |
+Sunset`.
+_Avoid_: free-text role descriptions, "full-stack" (says less than the tokens)
+
 **Morph**:
 The shared-element transition where a work tile's current slide grows
 into the modal (and reverses on close), measured live from the DOM.

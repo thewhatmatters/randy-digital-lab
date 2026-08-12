@@ -29,7 +29,7 @@ export function WorkDetailContent({
   /** `modal` pads like a card interior; `page` sits on the page grid. */
   variant: 'modal' | 'page'
 }) {
-  const { title, publishedAt, liveUrl, meta } = project.metadata
+  const { title, publishedAt, summary, liveUrl, meta } = project.metadata
 
   return (
     <div
@@ -47,6 +47,9 @@ export function WorkDetailContent({
           <time className={styles.date} dateTime={publishedAt}>
             {formatDate(publishedAt)}
           </time>
+          {/* The tile's one-liner, surfaced here so the sheet keeps a human
+              sentence above the meta rows now that bodies are optional. */}
+          <p className={styles.summary}>{summary}</p>
         </div>
         {liveUrl && (
           <Button
@@ -60,9 +63,13 @@ export function WorkDetailContent({
         )}
       </header>
 
-      <article className={`prose ${styles.article}`}>
-        <CustomMDX source={project.content} />
-      </article>
+      {/* Bodies are optional (a project can be carousel + rail only) — an
+          empty article would still paint prose margins, so skip it. */}
+      {project.content.trim() ? (
+        <article className={`prose ${styles.article}`}>
+          <CustomMDX source={project.content} />
+        </article>
+      ) : null}
 
       {meta?.length ? (
         <dl className={styles.metaList} aria-label="Project at a glance">
