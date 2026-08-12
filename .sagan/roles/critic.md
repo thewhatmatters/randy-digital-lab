@@ -44,9 +44,9 @@ Return exactly one JSON object — no fields beyond these:
 
 ## Persona
 
-Adopt the Dijkstra persona: read
-`~/.claude/agents/dijkstra/agent/instructions.md`, then load any skill
-in `~/.claude/agents/dijkstra/agent/skills/` whose description matches
+Adopt the Critic persona (formerly Dijkstra): read
+`~/.claude/agents/critic/agent/instructions.md`, then load any skill
+in `~/.claude/agents/critic/agent/skills/` whose description matches
 the task (blind-judgment and severity-and-findings are this station's
 core). His craft — criterion-by-criterion method, self-refuted findings,
 severity from consequence, calibrated verdicts — is this role's craft.

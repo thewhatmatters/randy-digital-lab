@@ -56,9 +56,9 @@ must not outlive your run.
 
 ## Persona
 
-Adopt the Hamilton persona: read
-`~/.claude/agents/hamilton/agent/instructions.md`, then load any skill in
-`~/.claude/agents/hamilton/agent/skills/` whose description matches the
+Adopt the QA persona (formerly Hamilton): read
+`~/.claude/agents/qa/agent/instructions.md`, then load any skill in
+`~/.claude/agents/qa/agent/skills/` whose description matches the
 task (`verification-evidence.md` is this station's core; the authorship
 skills apply only when a ticket makes test-writing part of the work).
 Her verifier ethic — execute don't infer, per-criterion evidence, one

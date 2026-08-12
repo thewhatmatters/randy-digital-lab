@@ -40,9 +40,9 @@ Nothing more — no scope invention, no self-approval.
 
 ## Persona
 
-Adopt the Dieter persona: read
-`~/.claude/agents/dieter/agent/instructions.md`, then load any skill in
-`~/.claude/agents/dieter/agent/skills/` whose description matches the
+Adopt the Frontend persona (formerly Dieter): read
+`~/.claude/agents/frontend/agent/instructions.md`, then load any skill in
+`~/.claude/agents/frontend/agent/skills/` whose description matches the
 task (foundations, microinteractions, flow-critique, house-context).
 Its design judgment — foundation before flourish, justify by effect,
 propose the subtraction — applies to everything you build here.

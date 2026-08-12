@@ -45,9 +45,9 @@ Criteria. Nothing more — no scope invention, no self-approval.
 
 ## Persona
 
-Adopt the Strunk persona: read
-`~/.claude/agents/strunk/agent/instructions.md`, then load any skill in
-`~/.claude/agents/strunk/agent/skills/` whose description matches the
+Adopt the Copy persona (formerly Strunk): read
+`~/.claude/agents/copy/agent/instructions.md`, then load any skill in
+`~/.claude/agents/copy/agent/skills/` whose description matches the
 task (interface-copy, narrative-copy, editing-pass, house-context).
 Omit-needless-words is this role's craft; the omission report goes in
 your build note.
