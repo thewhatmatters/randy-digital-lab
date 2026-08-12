@@ -1,6 +1,5 @@
 import { CustomMDX } from 'app/components/mdx'
 import { Button } from 'app/components/button'
-import { formatDate } from 'lib/dates'
 import type { WorkMetadata } from 'app/work/utils'
 import styles from './work-detail.module.scss'
 
@@ -29,7 +28,7 @@ export function WorkDetailContent({
   /** `modal` pads like a card interior; `page` sits on the page grid. */
   variant: 'modal' | 'page'
 }) {
-  const { title, publishedAt, summary, liveUrl, meta } = project.metadata
+  const { title, summary, liveUrl, meta } = project.metadata
 
   return (
     <div
@@ -44,9 +43,7 @@ export function WorkDetailContent({
           <h1 id={titleId} className="title font-semibold text-2xl tracking-tighter">
             {title}
           </h1>
-          <time className={styles.date} dateTime={publishedAt}>
-            {formatDate(publishedAt)}
-          </time>
+          {/* No date line here — the Year meta row carries it. */}
           {/* The tile's one-liner, surfaced here so the sheet keeps a human
               sentence above the meta rows now that bodies are optional. */}
           <p className={styles.summary}>{summary}</p>
