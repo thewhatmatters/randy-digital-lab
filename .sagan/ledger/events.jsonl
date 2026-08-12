@@ -121,3 +121,8 @@
 {"event":"dispatch","tickets":["T-009"],"role":"docs","worker_id":"pm-direct","round":1,"run_id":"run-20260811-225832","rationale":"gate-specified stale-comment one-liners (critic finding 2); suite re-run green 101/101","files":["app/components/experience.module.scss","app/components/posts.module.scss"],"ts":"2026-08-12"}
 {"event":"decision.made","tickets":["T-009"],"gate":"promote","decision":"promote+commit+push-both","by":"randy","run_id":"run-20260811-225832","sha":"80b333c89421122f1bc14572ff87b5d643ff978f","ts":"2026-08-12"}
 {"event":"run.completed","tickets":["T-008","T-009"],"run_id":"run-20260811-225832","scope":"sprint","rounds":{"T-008":1,"T-009":1},"verdicts":"APPROVED both","promoted":true,"note":"architecture review closed 8/8","ts":"2026-08-12"}
+{"event":"decision.needed","tickets":["T-010"],"question":"scope","options":["reader-facing only","+dev strings","everything incl. comments"],"answer":"reader-facing only","by":"randy","recommended":"reader-facing only","ts":"2026-08-12"}
+{"event":"decision.needed","tickets":["T-010"],"question":"em-dash budget per note","options":["<=2","<=1","zero"],"answer":"zero everywhere","by":"randy","recommended":"<=2","ts":"2026-08-12"}
+{"event":"decision.needed","tickets":["T-010"],"question":"separator patterns","options":["keep","purge"],"answer":"keep (AC-4 allowlist)","by":"randy","recommended":"keep","ts":"2026-08-12"}
+{"event":"decision.needed","tickets":["T-010"],"question":"standing gate test","options":["yes","one-off"],"answer":"yes (AC 6)","by":"randy","recommended":"yes","ts":"2026-08-12"}
+{"event":"run.started","tickets":["T-010"],"run_id":"run-20260812-183721","scope":"ticket","store":"local-files","pm":"claude-code-session","ts":"2026-08-12"}
