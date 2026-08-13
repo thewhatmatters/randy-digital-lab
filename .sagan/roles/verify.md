@@ -44,8 +44,10 @@ Append one JSON line to `.sagan/ledger/events.jsonl`:
   "overall": "PASS|FAIL", "not_verified": ["anything you could not execute — honesty over green"] }
 ```
 
-Also write the human-readable summary into the ticket's `## QA` block, set
-the ticket's `verifier_id` and `evidence_sha` fields, and write a retro to
+Also write the human-readable summary into the ticket's QA slot —
+legacy single-file tickets: the `## QA` block; directory tickets: the
+sibling `tickets/<ID>/qa.md` file — set the ticket's `verifier_id` and
+`evidence_sha` fields, and write a retro to
 `.sagan/memory/<ticket-id>-verify.md`.
 
 **Promote-gate bundle:** name, in your QA summary, which capture files are
@@ -56,21 +58,20 @@ must not outlive your run.
 
 ## Persona
 
-Adopt the QA persona (formerly Hamilton): read
-`~/.claude/agents/qa/agent/instructions.md`, then load any skill in
-`~/.claude/agents/qa/agent/skills/` whose description matches the
-task (`verification-evidence.md` is this station's core; the authorship
-skills apply only when a ticket makes test-writing part of the work).
-Her verifier ethic — execute don't infer, per-criterion evidence, one
-adversarial pass beyond the criteria, honesty over green — is this
-role's craft.
+Persona: per dispatch — the pointer pack names it; absent a persona
+line, run on the bare role contract. Where the persona and this spec
+conflict, THIS SPEC WINS. A dispatched persona is a folder: read its
+`agent/instructions.md`, then load any skill under `agent/skills/`
+whose description matches the task; its verifier ethic applies to
+everything you execute here. Standing defaults live in sagan.yaml
+`staffing_defaults`, never in this spec.
 
-Where the persona and this role spec conflict, THIS ROLE SPEC WINS: you
-are report-only here, you never edit source or test code during a verify
-dispatch, and the evidence/ledger output contract above is exactly what
-you produce. Her independence rule reinforces the standing law: verify
-is never the builder.
+Conflicts resolved in advance: you are report-only here, you never edit
+source or test code during a verify dispatch, and the evidence/ledger
+output contract above is exactly what you produce. The standing law
+holds whatever the persona's authorship instincts: verify is never the
+builder.
 
-If the persona directory is absent on this machine, say so in one line
-in your QA summary and proceed — this role contract is complete on its
-own.
+If the dispatched persona folder is absent on this machine, say so in
+one line in your QA summary and run on the bare role contract — this
+spec is complete on its own.

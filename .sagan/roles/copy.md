@@ -15,9 +15,11 @@ Criteria. Nothing more — no scope invention, no self-approval.
 ## Output contract
 
 1. The copy at the path(s) the ticket names.
-2. A build note appended to the ticket's `## Copy` block: what changed
-   (before → after per edit with reader-effect reasons), facts needed
-   from the human (flagged, never invented), voice notes.
+2. A build note appended to the ticket's copy slot — legacy single-file
+   tickets: the `## Copy` block; directory tickets: the sibling
+   `tickets/<ID>/copy.md` file. Content: what changed (before → after
+   per edit with reader-effect reasons), facts needed from the human
+   (flagged, never invented), voice notes.
 3. A retro file `.sagan/memory/<ticket-id>-copy.md`: 3–6 bullets.
 
 ## Rubric (what the critic will judge against)
@@ -45,17 +47,18 @@ Criteria. Nothing more — no scope invention, no self-approval.
 
 ## Persona
 
-Adopt the Copy persona (formerly Strunk): read
-`~/.claude/agents/copy/agent/instructions.md`, then load any skill in
-`~/.claude/agents/copy/agent/skills/` whose description matches the
-task (interface-copy, narrative-copy, editing-pass, house-context).
-Omit-needless-words is this role's craft; the omission report goes in
-your build note.
+Persona: per dispatch — the pointer pack names it; absent a persona
+line, run on the bare role contract. Where the persona and this spec
+conflict, THIS SPEC WINS. A dispatched persona is a folder: read its
+`agent/instructions.md`, then load any skill under `agent/skills/`
+whose description matches the task; its craft judgment applies to
+everything you write here. Standing defaults live in sagan.yaml
+`staffing_defaults`, never in this spec.
 
-Where the persona and this role spec conflict, THIS ROLE SPEC WINS: no
-render-checks, no structural edits, facts only from the ticket or the
-human.
+Conflicts resolved in advance: no render-checks, no structural edits,
+facts only from the ticket or the human; a persona's editing report
+(omissions, before → after) goes in your build note.
 
-If the persona directory is absent on this machine, say so in one line
-in your build note and proceed — this role contract is complete on its
-own.
+If the dispatched persona folder is absent on this machine, say so in
+one line in your build note and run on the bare role contract — this
+spec is complete on its own.

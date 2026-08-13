@@ -4,7 +4,7 @@
 # v0 HONESTY: `enforced:` is aspirational — the PM (a model) interprets
 # everything below. Runtime enforcement is future Conan work.
 
-template_version: "0.5.1"
+template_version: "0.7.0"
 runtime: claude-code-session        # v0 stand-in; target is conan
 validation: pm-interpreted
 enforced: []                        # target: [round_caps, critic_isolation, human_gates, containment_floors]
@@ -28,6 +28,22 @@ bindings:
   copy:     { provider: claude }
   critic:   { provider: claude, isolation: fresh-subagent }
   verify:   { provider: claude }    # never the builder subagent
+
+staffing_defaults:
+  # Standing persona per dispatched role (role -> persona folder path).
+  # PRECEDENCE, weakest to strongest: this map < per-run gate answer;
+  # absent both, the role runs on the bare role contract (role specs
+  # carry no standing persona of their own). With a default resolved and
+  # no deviation, sagan-run asks NO staffing question for that role — the
+  # staffing is still ledgered with every dispatch. A missing or empty
+  # map means "no defaults, always ask" (the pre-0.6.3 behavior).
+  # Filled 2026-08-12 (sagan-wire --update gate answer): the persona
+  # folders the pre-0.7.0 role specs hardcoded, now resolved here.
+  frontend: ~/.claude/agents/frontend/
+  backend:  ~/.claude/agents/backend/
+  copy:     ~/.claude/agents/copy/
+  critic:   ~/.claude/agents/critic/
+  verify:   ~/.claude/agents/qa/
 
 rules:
   ac_before_dispatch: required

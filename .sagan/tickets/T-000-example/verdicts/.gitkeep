@@ -1,0 +1,2 @@
+<!-- critic verdict envelopes land here as round-N.json — one file per
+     round, persisted verbatim by the PM after validate_verdict passes. -->

@@ -22,6 +22,14 @@ verifier_id:
 evidence_sha:
 ---
 
+<!-- A ticket is a DIRECTORY: this ticket.md carries the tracker mirror and
+     the PM-owned contract (AC / Method / Decisions — one writer: the PM).
+     Every worker-owned block is a SIBLING FILE — frontend.md, backend.md,
+     copy.md, qa.md — one writer per file, enforced by the filesystem, so a
+     critic's pointer pack can exclude a build note by simply not naming its
+     file, and two workers can never race on one file. Critic verdict
+     envelopes land in verdicts/round-N.json, one file per round. -->
+
 <!-- sagan:linear-owned:start — regenerated on every fetch; edit in Linear -->
 
 <!-- THIS is all the human wrote — three plain paragraphs (what, how, what
@@ -98,19 +106,11 @@ Any one of those you can't hit, stop and tell me which and why.
   keyboard-focus capture, and the axe run — shipped with the first
   build so critique never waits.
 
-## Frontend
-
-(builder appends its build note here — what was built, key choices,
-anything the AC left ambiguous. Builders never render-check their own work.)
-
-## QA
-
-(verify appends the evidence summary here — per-AC PASS/FAIL with the
-command or observation that decided it, bound to `evidence_sha`.)
-
 ## Decisions
 
-(the PM logs dated entries here: pre-dispatch decisions, AC amendments —
-"Amended — see Decisions", never a silent edit — and the promote decision.)
+<!-- the PM logs dated entries here: pre-dispatch decisions, AC amendments —
+     "Amended — see Decisions", never a silent edit — and the promote
+     decision. Build notes and QA evidence do NOT go here: they live in the
+     sibling files (frontend.md / backend.md / copy.md / qa.md). -->
 
 <!-- sagan:repo-owned:end -->

@@ -1,13 +1,18 @@
 {
-  "template_version": "0.5.1",
+  "template_version": "0.7.0",
   "files": {
-    "sagan.yaml": "fa3adde7ed715c067d060527d090f16fdf89e3e5f1b18507f623370045e02c49",
+    "sagan.yaml": "ce3a961ef1a1cffdc1c1e55fadd3fd5ca492cc120378a25dedd06ca7009d8d42",
     "MEMORY.md": "8cc7e519a5c0b393d94553988220354dd3385d29a43dfff813811b6b92aa0182",
-    "roles/frontend.md": "614c4df56bdfbc1407fb1717b0b6887a53b972df4ebdeb084f6ff6a91628d6f7",
-    "roles/critic.md": "86c1b67f96d29e2621f7c33d17360967e9f57a4e27b66d74080e09cef0457e2b",
-    "roles/verify.md": "7f46c09aa00ed22b3b6672310ddbad011e7c31e56ff9f3acf821e26ea03d5e16",
-    "roles/copy.md": "7a12a7d11f51f35994c354f5de04ccd4e27be53e9f90853b35991d5cf784898f",
-    "tickets/T-000-example.md": "81e0f40ebe18e949ed93af6bb4be3346855ca0d37ed7fce1e9181761f1f68629"
+    "roles/frontend.md": "f7687d027131f5d74c41c2737a0f3b36d1c0d29ac0f5ce285169f4f761d292e2",
+    "roles/critic.md": "3089fdd90c1166373c31de1452d1b516118b2a1ecde64423b76121796bd2848d",
+    "roles/verify.md": "411668d0d40e7a1e6172c9c0f9f2a6a6268d69e04c67abc87aaac59eb730463e",
+    "roles/copy.md": "0e7a2f9213f20a03f5cc9720059ce8a1bb435dc4884ff78a89b0cc7f33d1b9c4",
+    "tickets/T-000-example/backend.md": "d16d8f4a8397b856b65a621f04137435a4249f137a4447e59b293a9a4790a4ff",
+    "tickets/T-000-example/copy.md": "fcbeb1ce4ce5a246790afccc91de81e1d8f1bbb689542533cd7516cb487ec17a",
+    "tickets/T-000-example/frontend.md": "bfa6acc40db1ffb0f0b9929092498f5493522f6f8fd3a824b0d4ed6f343e9b64",
+    "tickets/T-000-example/qa.md": "49a856187a53ead83db6a079bda01f23b6d46d2f2c0fdb07bbe6480915fba2fa",
+    "tickets/T-000-example/ticket.md": "c4b87d956e8d8f4ad3c2ce8af9f60a4042935d7679c2ccc0faeae87ac3106312",
+    "tickets/T-000-example/verdicts/.gitkeep": "2f9fcf973daebdb276a6cb98b628504ac29023c500da1c8f10a63ed8577ae9f7"
   },
   "sources": {
     "sagan.yaml": "sagan.yaml",
@@ -16,6 +21,39 @@
     "roles/critic.md": "roles/critic.md",
     "roles/verify.md": "roles/verify.md",
     "roles/copy.md": "roles/copy.md",
-    "tickets/T-000-example.md": "tickets/T-000-example.md"
+    "tickets/T-000-example/backend.md": "tickets/T-000-example/backend.md",
+    "tickets/T-000-example/copy.md": "tickets/T-000-example/copy.md",
+    "tickets/T-000-example/frontend.md": "tickets/T-000-example/frontend.md",
+    "tickets/T-000-example/qa.md": "tickets/T-000-example/qa.md",
+    "tickets/T-000-example/ticket.md": "tickets/T-000-example/ticket.md",
+    "tickets/T-000-example/verdicts/.gitkeep": "tickets/T-000-example/verdicts/.gitkeep"
+  },
+  "update_decisions": {
+    "0.7.0": {
+      "config:template_version": {
+        "answer": "apply",
+        "fingerprint": "32c16436108c4a3090d911c2bbbea2e149b20e2f5e1314d2097836d7a30da791"
+      },
+      "config:staffing_defaults": {
+        "answer": "apply",
+        "fingerprint": "dfa65e8a194d1ea60d8d99879f4bba7c1aa31f734246a1164bbc6ad649a64649"
+      },
+      "rolespec:roles/copy.md": {
+        "answer": "adopt",
+        "fingerprint": "d1c5f62c98327c88063a37d53efb7d51b61a86b49b2e0986dd14ece39f7d8621"
+      },
+      "rolespec:roles/critic.md": {
+        "answer": "adopt",
+        "fingerprint": "7b15bbcb7a789b3018ea81feeb8a15d74d42f28d3105aad3da800b469c13979b"
+      },
+      "rolespec:roles/frontend.md": {
+        "answer": "adopt",
+        "fingerprint": "8ba0e7cb46eddb30ffdb7085de7baf596685e0eb1baa03bfe520fa9c97bb6f87"
+      },
+      "rolespec:roles/verify.md": {
+        "answer": "adopt",
+        "fingerprint": "bce94a35b0c1928c4bef1033cdef2bdaa42ab74698acdff8c91bdf58af572ca8"
+      }
+    }
   }
 }
