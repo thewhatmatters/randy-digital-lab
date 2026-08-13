@@ -1,0 +1,17 @@
+{
+  "verdict": "APPROVED",
+  "findings": [
+    {
+      "severity": "low",
+      "ac_ref": "(taste)",
+      "issue": "The glow seat CSS is now hand-copied across three modules: work-index.module.scss and lab page.module.scss carry byte-identical ~10-line blocks (absolute inset, z-index -1, opacity fade, reduced-motion display:none), work-carousel.module.scss a deliberate always-on variant. T-004's history in this same file shows hand-typed copies drifting; a shared placeholder/mixin (the _work-geometry.scss precedent) would make tile/lab parity structural instead of conventional. Related: the FADE_MS(1000) in glow.tsx and the CSS 1s transitions stay mirrored by comment convention only — the load-bearing assumption of the AC-2 approval is that these paired constants move together; if either changes alone, the fade-out freezes mid-fade. Advisory, non-blocking.",
+      "where": "app/lab/page.module.scss:30-55; app/components/work-index.module.scss:75-94; app/components/glow.tsx:94"
+    },
+    {
+      "severity": "low",
+      "ac_ref": "(taste)",
+      "issue": "Inert declaration plus stale comment: `.glow { color: var(--fg) }` and the comment '`color` feeds the shader its token palette' claim a mechanism glow.tsx does not use — readColors() pulls --bg/--surface/--border/--muted custom properties directly; the span's `color` feeds nothing. Copied into the lab module from the work modules, so the misdirection now lives in three files. Advisory, non-blocking.",
+      "where": "app/lab/page.module.scss:26-37; app/components/work-index.module.scss:71-84; app/components/work-carousel.module.scss:24-32"
+    }
+  ]
+}

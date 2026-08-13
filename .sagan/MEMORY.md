@@ -311,3 +311,45 @@ insights are proposed to the vault through its gate.)
   per-line, not per-occurrence (second dash on an allowlisted line
   would pass); the .tsx comment-stripper's straight-apostrophe limit is
   documented in the test header. Revisit only if the gate grows.
+
+## T-011 — lab glow, shared component (run-20260812-203218 sprint close, promoted round 1 + amendment r1.1)
+
+- **Recon-rich tickets pay for themselves:** the plan-time structural
+  recon ("the lab has no tiles; the frame ground is genuinely visible;
+  Server Component needs a client island") plus a Method block naming
+  the exact mechanism made the build nearly mechanical — builder retro's
+  words. Keep buying recon at plan time.
+- **Read-tokens-at-wake made theme-sharing free:** the glow reads
+  custom properties at wake instead of taking color props, so seating
+  it in a second surface required zero component changes — "carries by
+  construction" was literal. Design shared visual components to read
+  tokens, not receive them.
+- **Shape refactors for the evidence story:** the `_glow.scss` hoist
+  used one parameterized mixin with @if interleaving specifically to
+  preserve compiled declaration order — the no-visual-change proof
+  became a one-line diff. Pick the abstraction that makes the proof
+  small, not the prettier API.
+- **Verify craft, new standing rules:** (1) byte-comparison captures
+  use EPHEMERAL browser contexts, never the persistent profile — the
+  Next image optimizer's immutable cache serves stale derivatives of
+  replaced source images per origin:port, and curl can lie differently
+  than the browser (Accept is in the cache key). (2) Tailwind v4
+  source-scans the dirty tree — untracked .md files can materialize
+  utilities absent from a clean-worktree build; grep before suspecting
+  the builder. (3) `pnpm start -- -p N` passes the literal `--` to
+  next; use `pnpm exec next start -p N`. (4) Glow-strip mean-RGB probes
+  turn "reads as plain surface" / "theme re-read" into numbers.
+- **AC wording:** count FILES when the action is "re-point imports"
+  (seats ≠ importers), and a rename ticket should pre-authorize
+  comment-reference updates in files it lists as study material.
+- **Session gotcha:** a freshly generated `.claude/agents/sagan-<role>.md`
+  is not spawnable until the NEXT session (registry loads at start) —
+  generate, then plan on a general-purpose stand-in under the same
+  file-write contract for the current run. The critic-writes-its-own-
+  verdict contract worked (both emissions validated in place, no
+  transport escapes — T-010's gap is closed).
+- **Carry-forwards:** the qa.md "missing test" — a compile-snapshot
+  agreement pin between the lab and work `.glow` transitions (partly
+  mooted by the _glow.scss hoist; a pin on the mixin's output would
+  still catch consumer drift); pre-existing /work/knav visible image
+  that never reaches `complete` (both builds, reported r1).

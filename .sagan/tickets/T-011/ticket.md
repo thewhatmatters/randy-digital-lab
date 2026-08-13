@@ -2,7 +2,7 @@
 # ── tracker-owned (regenerated on every /sagan-plan fetch; edit in Linear) ──
 id: T-011
 title: Lab frames — seat the shared mesh-glow as the experiment frame ground
-status: Todo
+status: Done
 priority: Medium
 assignee:
 labels: [frontend, lab, motion]
@@ -13,9 +13,9 @@ linear_updated_at:
 fetched_at:
 mirror_version: 1
 # ── repo-owned (carried across every fetch; set by the run, not the tracker) ─
-builder_id:
-verifier_id:
-evidence_sha:
+builder_id: frontend-useragent-r1
+verifier_id: verify-useragent-r1
+evidence_sha: 0447e6b72643cb2c4f0da6b20367eb984003698d
 ---
 
 <!-- sagan:linear-owned:start — regenerated on every fetch; edit in Linear -->
@@ -78,7 +78,8 @@ altering the experiment itself.
    captures, at rest and woken.
 8. `pnpm test`, `pnpm exec tsc --noEmit`, `pnpm build` green at the
    evidence SHA. Diff confined to the lab page/module, the renamed glow
-   component and its importers, and any tests.
+   component and its importers — including the shared `_glow.scss` seat
+   partial (Amended — see Decisions, r1.1) — and any tests.
 
 ## Method
 
@@ -110,5 +111,15 @@ altering the experiment itself.
   or kept as fallback.
 - 2026-08-12 (gate, Randy): one shared component under a work-neutral
   name; no lab copy.
+- 2026-08-13 (promote gate, Randy): PROMOTE at evidence SHA 0447e6b —
+  critic APPROVED r1 (AC 7 finalized against captures via re-emission;
+  2 low taste findings), verify PASS on every executable AC incl.
+  /work byte-identical HTML + AE=0 masked captures vs HEAD-worktree
+  baseline.
+- 2026-08-13 (amendment r1.1, Randy): both taste findings closed in-run
+  — the triplicated .glow seat CSS hoists into a shared `_glow.scss`
+  mixin (the new partial counts as the glow component for AC 8's diff
+  confinement) and the inert `color: var(--fg)` declaration + stale
+  palette comments are removed. AC 8 amended accordingly.
 
 <!-- sagan:repo-owned:end -->
