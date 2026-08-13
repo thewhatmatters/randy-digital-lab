@@ -2,7 +2,7 @@
 # ── tracker-owned (regenerated on every /sagan-plan fetch; edit in Linear) ──
 id: T-010
 title: Copy pass — zero em dashes in reader-facing copy, with a standing gate
-status: Todo
+status: Done
 priority: Medium
 assignee:
 labels: [copy, hygiene, gate]
@@ -13,9 +13,9 @@ linear_updated_at:
 fetched_at:
 mirror_version: 1
 # ── repo-owned (carried across every fetch; set by the run, not the tracker) ─
-builder_id:
-verifier_id:
-evidence_sha:
+builder_id: copy-useragent-r1
+verifier_id: verify-useragent-r1
+evidence_sha: 247f58ad3be7d73668851543486bb3f37fe20a5b
 ---
 
 <!-- sagan:linear-owned:start — regenerated on every fetch; edit in Linear -->
@@ -57,8 +57,10 @@ bad rewrite.
 3. Zero em dashes in reader-visible UI strings — the metadata
    descriptions (`app/layout.tsx`), page descriptions
    (`app/notes/page.tsx`, `app/work/page.tsx`, `app/lab/page.tsx`),
-   lab blurbs (`app/lab/experiments.tsx`), and tooltip strings
-   (`app/components/command-bar.tsx`) — EXCEPT the carve-outs in AC 4.
+   lab blurbs (`app/lab/experiments.tsx`), tooltip strings
+   (`app/components/command-bar.tsx`), and the AT-visible SVG
+   description in `app/components/sagan-loop.tsx` (Amended — see
+   Decisions, r1.1) — EXCEPT the carve-outs in AC 4.
 4. Carve-outs (the only em dashes that may remain in reader-visible
    strings): (a) title-pattern separators — the metadata title template
    `'%s — randy.digital'` in `app/layout.tsx` and the
@@ -76,7 +78,8 @@ bad rewrite.
    APPROVED with the pre-change text as the comparative bar.
 6. A standing budget test joins `pnpm test`: it scans every
    `app/**/*.mdx` for U+2014 (zero tolerance) and checks the AC-3
-   string sites against the AC-4 allowlist, failing on any new em dash.
+   string sites — including `sagan-loop.tsx` (Amended — see Decisions,
+   r1.1) — against the AC-4 allowlist, failing on any new em dash.
    Proven able to fail by mutation evidence (T-003 standard: insert an
    em dash, watch it fail, remove it).
 7. `pnpm test`, `pnpm exec tsc --noEmit`, and `pnpm build` green at the
@@ -123,5 +126,14 @@ bad rewrite.
   allowlist.
 - 2026-08-12 (gate, Randy): the standing budget test ships with the
   pass (AC 6), not as a follow-up.
+- 2026-08-12 (promote gate, Randy): PROMOTE at evidence SHA
+  247f58ad3be7 — critic APPROVED r1 (4 low findings), verify PASS 8/8,
+  106/106 tests, both mutation proofs.
+- 2026-08-12 (amendment r1.1, Randy): the SaganLoop SVG `<desc>`
+  (AT-visible, 2 em dashes, outside the original enumeration — flagged
+  by critic and verify) is rewritten and `sagan-loop.tsx` joins the
+  gate test's scanned sites. AC 3 and AC 6 amended accordingly.
+- 2026-08-12 (finding disposition, Randy): the PullQuote attribution
+  rewrite in building-conan stays; no attribution-dash carve-out.
 
 <!-- sagan:repo-owned:end -->

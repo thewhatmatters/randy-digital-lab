@@ -279,3 +279,35 @@ insights are proposed to the vault through its gate.)
   grid/lite chrome chips with the PullQuote/margin region on note pages —
   house UI fix, stop re-flagging per note; (3) the named bench has no
   written one-line specialties for content tickets to cite.
+
+## T-010 — copy pass, zero em dashes + standing gate (run-20260812-203218, promoted round 1 + amendment r1.1)
+
+- **First circuit on user-agents-as-stations** (Copy/Critic/QA agent
+  types instead of generic subagents or generated sagan-<role> files;
+  gate decision, Randy). Worked, with one structural gap confirmed:
+  the Critic type has no Write tool, so its verdict traveled as final-
+  message text and the PM byte-copied it to the verdict path — and the
+  transport escaped one `<desc>` to `&lt;desc&gt;` inside a finding,
+  exactly the paraphrase-surface the 0.7.0 file contract exists to
+  avoid. If this staffing repeats, generate sagan-critic.md (Write
+  grant) or accept the escape risk knowingly.
+- **Enumerated-site scans inherit the enumeration's blind spots:** both
+  critic (by reading) and verify (by execution) independently caught a
+  reader-visible surface outside the AC-3 list — sagan-loop.tsx's SVG
+  `<desc>`, AT-exposed inside a note AC 1 covered. Resolved as
+  amendment r1.1 (rewrite + scan). Standing lesson for copy gates:
+  aria/alt/title attributes AND SVG `<title>`/`<desc>` children are
+  reader-visible copy; a periodic full-tree sweep (comments stripped)
+  is cheap insurance against the list.
+- **Zero-budget rules catch non-prose typography:** the PullQuote
+  attribution dash (`from="— …"`) is convention, not voice, but a
+  zero-tolerance MDX scan has no way to know. Decide MDX-side
+  typographic conventions (attribution dashes, ranges) at AC time.
+- **Census craft:** `grep -c` counts lines, not occurrences — baseline
+  with `-o | wc -l`. Mutation-proof craft on a dirty tree: sha256 the
+  target before mutating; byte-identical revert becomes provable where
+  `git diff` can't separate your edit from the builder's.
+- **Known gate-test limits, recorded not fixed:** allowlist match is
+  per-line, not per-occurrence (second dash on an allowlisted line
+  would pass); the .tsx comment-stripper's straight-apostrophe limit is
+  documented in the test header. Revisit only if the gate grows.
