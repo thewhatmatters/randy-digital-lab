@@ -1,20 +1,50 @@
+// The glow seat skin — one definition (T-011 r1.1, _glow.scss), shared
+// with the /work tiles and detail carousel; it carries the 1s house-ease
+// fade the tiles use.
+@use '../components/glow' as *;
+
 /* Lab entry container — stays within the grid (placed by column line). Its
    visual element is free to overflow these bounds and is clipped here, à la
-   lab01.dev. Fixed height so the element visibly spills past the frame. */
+   lab01.dev. Fixed height so the element visibly spills past the frame.
+   Plain --surface at rest (T-011: the accent radial is replaced by the glow
+   ground, and --surface is every fallback — pre-mount, post-fade, reduced
+   motion, no-JS). */
 .frame {
   position: relative;
+  isolation: isolate; /* own stacking context — the glow's z-index: -1 stays inside the frame */
   height: clamp(300px, 46vh, 440px);
   overflow: hidden;
   border: 1px solid var(--border);
   border-radius: 14px;
   padding: clamp(1.5rem, 4vw, 2.5rem) clamp(1rem, 4vw, 2.5rem) 0;
-  background:
-    radial-gradient(
-      120% 120% at 30% 0%,
-      color-mix(in srgb, var(--accent) 8%, transparent),
-      transparent 60%
-    ),
-    var(--surface);
+  background: var(--surface);
+}
+
+// The glow ground (glow.tsx) — the same mesh flow as the /work tiles, seated
+// as the frame's BACKGROUND: absolute inset under everything the experiment
+// draws (negative z-index inside the frame's isolated stacking context; the
+// frame's overflow clips it to the border box). The shader reads its own
+// token palette (getComputedStyle at first wake — nothing here feeds it).
+// Wake mirrors the work tile: :hover/:focus-within fades it in over the
+// same 1s house ease ($fade, shared via _glow.scss), and glow.tsx keeps the
+// shader flowing for that long after leave (its FADE_MS mirrors this) so
+// the fade-out drifts instead of freezing mid-fade.
+.glow {
+  @include glow-seat($fade: true);
+}
+
+.frame:hover .glow,
+.frame:focus-within .glow {
+  opacity: 1;
+}
+
+// Animation-only layer, no static variant to keep — the frame's own
+// --surface is the reduced-motion state (glow.tsx also refuses to mount;
+// this is belt and braces).
+@media (prefers-reduced-motion: reduce) {
+  .glow {
+    display: none;
+  }
 }
 
 /* Metadata caption under each experiment — blurb, spec list (stack/fonts/

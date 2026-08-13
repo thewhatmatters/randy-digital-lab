@@ -7,8 +7,12 @@
 // The 16:10 work-media ratio — one definition (T-009), shared with the tile's
 // media panel + arrow layer so the tile→modal morph is one uniform scale.
 @use './work-geometry' as *;
-
-$ease: cubic-bezier(0.22, 1, 0.36, 1);
+// The glow seat skin — one definition (T-011 r1.1), shared with the tiles
+// and the lab frames.
+@use './glow' as *;
+// $ease — the one house curve, from the shared motion partial (T-011 r1.1:
+// the local retyped copy is retired).
+@use './motion' as *;
 
 .carousel {
   position: relative;
@@ -18,19 +22,14 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
   background: var(--surface);
 }
 
-// The glow ground (work-glow.tsx) — same mesh flow as the /work tiles,
-// always on in this seat (no hover gate: this carousel is the page's hero).
-// Sits under the slides; shows through the images' transparent margins.
-// `color` feeds the shader its token palette read at mount.
+// The glow ground (glow.tsx) — same mesh flow as the /work tiles,
+// always on in this seat (no hover gate: this carousel is the page's hero,
+// so no $fade). Sits under the slides; shows through the images'
+// transparent margins. The shader reads its own token palette
+// (getComputedStyle at mount — nothing here feeds it). Skin shared via
+// _glow.scss.
 .glow {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  display: block;
-  width: 100%;
-  height: 100%;
-  color: var(--fg);
-  pointer-events: none;
+  @include glow-seat;
 }
 
 // Full-page variant: hairline + house radius, matching the figure treatment.
@@ -168,7 +167,7 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
     transition: none;
   }
 
-  // Animation-only layer, no static variant (work-glow.tsx also refuses to
+  // Animation-only layer, no static variant (glow.tsx also refuses to
   // mount — this is belt and braces).
   .glow {
     display: none;

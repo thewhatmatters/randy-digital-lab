@@ -24,6 +24,9 @@
 // The 16:10 work-media ratio — one definition (T-009), shared with the
 // detail carousel so the morph stays a single uniform scale.
 @use './work-geometry' as *;
+// The glow seat skin — one definition (T-011 r1.1), shared with the detail
+// carousel and the lab frames.
+@use './glow' as *;
 
 .grid {
   list-style: none;
@@ -65,27 +68,16 @@
   text-decoration: none;
 }
 
-// The glow ground (work-glow.tsx) — the PulsingBorder shader as the media
+// The glow ground (glow.tsx) — the MeshGradient shader as the media
 // panel's BACKGROUND: it sits under the slides (negative z-index inside the
 // panel's isolated stacking context) and shows through the work images'
-// transparent margins, so the artwork reads as backlit. `color` feeds the
-// shader its monochrome palette (read as a computed value at first wake);
-// THIS opacity is the subtlety dial. The panel's overflow: hidden clips
-// its corners.
+// transparent margins, so the artwork reads as backlit. The shader reads
+// its own token palette (getComputedStyle at first wake — nothing here
+// feeds it); THIS seat's opacity is the subtlety dial. The panel's
+// overflow: hidden clips its corners. Skin shared via _glow.scss; $fade
+// carries the 1s breathe glow.tsx mirrors with FADE_MS.
 .glow {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  display: block;
-  width: 100%;
-  height: 100%;
-  color: var(--fg);
-  opacity: 0;
-  pointer-events: none;
-  // Slow breathe in/out — work-glow.tsx keeps the shader flowing for this
-  // long after mouse-out (its FADE_MS mirrors this), so the fade-out drifts
-  // instead of freezing mid-fade.
-  transition: opacity 1s $ease;
+  @include glow-seat($fade: true);
 }
 
 .tile:hover .glow,
@@ -255,7 +247,7 @@
   }
 
   // The glow ground is animation-only — no static variant to keep
-  // (work-glow.tsx also refuses to mount, so this is belt and braces).
+  // (glow.tsx also refuses to mount, so this is belt and braces).
   .glow {
     display: none;
   }

@@ -9,7 +9,7 @@ import {
   type WorkTileSyncDetail,
 } from './work-carousel-position'
 import { WORK_CAROUSEL_ATTR } from './work-morph'
-import { WorkGlow } from './work-glow'
+import { Glow } from './glow'
 import styles from './work-carousel.module.scss'
 
 // Work carousel — ONE implementation, three seats (T-004: no second
@@ -367,7 +367,7 @@ export function WorkCarousel({
           here (the carousel IS this seat's hero, there is no hover state to
           gate on). Sits under the slides; the images' transparent margins
           keep the treatment continuous through the tile→modal morph. */}
-      <WorkGlow active className={styles.glow} />
+      <Glow active className={styles.glow} />
       <CarouselTrack
         images={images}
         title={title}

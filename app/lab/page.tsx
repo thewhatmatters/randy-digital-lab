@@ -1,6 +1,7 @@
 import { Fragment } from 'react'
 import { experiments } from './experiments'
 import { CopyPrompt } from 'app/components/copy-prompt'
+import { LabFrame } from './frame'
 import styles from './page.module.scss'
 
 export const metadata = {
@@ -24,12 +25,14 @@ export default function Page() {
         const Experiment = e.component
         return (
           <Fragment key={e.slug}>
-            <div
+            {/* The frame is a client island (frame.tsx) hosting the glow's
+                wake state; the experiment passes through as children. */}
+            <LabFrame
               id={e.slug}
-              className={`col-start-1 col-end-13 ${styles.frame} mt-16 scroll-mt-24`}
+              className="col-start-1 col-end-13 mt-16 scroll-mt-24"
             >
               <Experiment />
-            </div>
+            </LabFrame>
 
             {/* description — left */}
             <div className="col-start-1 col-end-13 md:col-end-8">

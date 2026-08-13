@@ -1,0 +1,38 @@
+// The glow seat — shared skin for the mesh-glow ground layer (glow.tsx),
+// hoisted from its three consumers (T-011 r1.1: work-index tile panel,
+// work-carousel, lab frame). One definition of the layer geometry and the
+// wake fade, so the property AC 2 pins to the component's FADE_MS (the 1s
+// opacity ease) cannot drift between surfaces.
+//
+// The palette is NOT CSS-fed: glow.tsx reads the token custom properties
+// itself (getComputedStyle at first wake, re-read on [data-theme] flips) —
+// no declaration here feeds the shader.
+//
+// Consumers keep their real differences on their side: the :hover/
+// :focus-within rules that drive the fade, and the reduced-motion
+// `display: none` (kept consumer-side so each module's media block stays
+// one block).
+
+@use './motion' as *;
+
+// $fade: hover/focus-gated seats (work tile, lab frame) pass true — hidden
+// at rest, faded by the consumer's wake rule over the same 1s house ease
+// glow.tsx mirrors with FADE_MS (the shader keeps flowing through the
+// fade-out instead of freezing mid-fade). The always-on carousel seat
+// takes the default. The @if interleaving preserves the seats' shipped
+// declaration order exactly — the hoist compiles byte-identical.
+@mixin glow-seat($fade: false) {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  @if $fade {
+    opacity: 0;
+  }
+  pointer-events: none;
+  @if $fade {
+    transition: opacity 1s $ease;
+  }
+}

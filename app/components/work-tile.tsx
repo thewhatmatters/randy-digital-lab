@@ -13,7 +13,7 @@ import {
   type WorkTileSyncDetail,
 } from './work-carousel-position'
 import { WORK_TILE_ATTR, WORK_TILE_IMAGE_ATTR } from './work-morph'
-import { WorkGlow } from './work-glow'
+import { Glow } from './glow'
 import styles from './work-index.module.scss'
 
 // One /work tile (T-004) — the Airbnb-card pattern: page through a project's
@@ -134,7 +134,7 @@ export function WorkTile({ slug, title, summary, images, order }: WorkTileProps)
               under the slides): the work images carry transparent margins,
               so the pulsing light shows through around the artwork, never
               over it. Fades in with the tile wake. */}
-          <WorkGlow active={awake} className={styles.glow} />
+          <Glow active={awake} className={styles.glow} />
           <CarouselTrack
             images={images}
             title={title}
