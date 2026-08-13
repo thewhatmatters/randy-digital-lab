@@ -123,7 +123,7 @@ function CommandBar() {
         className={styles.chip}
         data-chip="theme"
         data-active={themeActive}
-        title={`Theme: ${themeLabel} — click to cycle (t)`}
+        title={`Theme: ${themeLabel}. Click to cycle (t)`}
         onClick={cycleTheme}
       >
         <kbd className={styles.key}>T</kbd>

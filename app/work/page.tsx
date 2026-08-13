@@ -3,7 +3,7 @@ import { WorkProjects } from 'app/components/work-index'
 export const metadata = {
   title: 'Work',
   description:
-    'Selected work — projects across design and engineering. Case studies on the way.',
+    'Selected work: projects across design and engineering. Case studies on the way.',
 }
 
 export default function Page() {
@@ -13,7 +13,7 @@ export default function Page() {
         Work
       </h1>
       <p className="col-start-1 col-end-13 md:col-end-8 mt-4 text-muted">
-        Selected work — projects across design and engineering. Case studies on
+        Selected work: projects across design and engineering. Case studies on
         the way.
       </p>
       <div className="col-start-1 col-end-13 mt-16">

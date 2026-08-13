@@ -1,12 +1,12 @@
 ---
 title: 'The Sagan Method'
 publishedAt: '2026-08-10'
-summary: 'Coding agents announce "done" with total confidence, and scrollback is not an audit trail. So I wrote the rule down and named it after the astronomer: builder, fresh critic, verifier, and me at the gate — because extraordinary claims require extraordinary evidence.'
+summary: 'Coding agents announce "done" with total confidence, and scrollback is not an audit trail. So I wrote the rule down and named it after the astronomer: builder, fresh critic, verifier, and me at the gate, because extraordinary claims require extraordinary evidence.'
 ---
 
-If you've run a coding agent for any length of time, you've gotten the message. *Done. Tests passing, edge cases handled, ready to ship* — stated with total confidence, occasionally even true. But the only way to find out is to scroll back through the transcript, and scrollback is not an audit trail. It's a record of what the agent *said* — which is precisely the thing in question.
+If you've run a coding agent for any length of time, you've gotten the message. *Done. Tests passing, edge cases handled, ready to ship.* Stated with total confidence, occasionally even true. But the only way to find out is to scroll back through the transcript, and scrollback is not an audit trail. It's a record of what the agent *said*, which is precisely the thing in question.
 
-I got tired of taking its word for it. So I wrote the rule down and named it after the astronomer: extraordinary claims require extraordinary evidence. The result is the Sagan method — [sagan.run ↗](https://sagan.run) — a small standard for how agent work gets verified before it ships. An agent claiming "done" is an extraordinary claim. This is the machinery that makes it prove it.
+I got tired of taking its word for it. So I wrote the rule down and named it after the astronomer: extraordinary claims require extraordinary evidence. The result is the Sagan method ([sagan.run ↗](https://sagan.run)), a small standard for how agent work gets verified before it ships. An agent claiming "done" is an extraordinary claim. This is the machinery that makes it prove it.
 
 ## Four stations, one rule
 
@@ -14,37 +14,37 @@ I got tired of taking its word for it. So I wrote the rule down and named it aft
   Approved means verified, not plausible.
 </PullQuote>
 
-It starts before any agent moves. I brief the work in plain language, a PM compiles it into acceptance criteria — a ticket that says exactly what done means — and I confirm them. Only then does anything get dispatched. Everything else hangs off this: if done wasn't defined up front, "done" is a vibe, not a verdict.
+It starts before any agent moves. I brief the work in plain language, a PM compiles it into acceptance criteria (a ticket that says exactly what done means), and I confirm them. Only then does anything get dispatched. Everything else hangs off this: if done wasn't defined up front, "done" is a vibe, not a verdict.
 
-Then four stations. A **builder** does the work — and never grades its own. A **critic** — a fresh instance, with no access to the builder's reasoning — reviews the result against the criteria. It flags; it never fixes. A **verifier**, never the builder, executes: runs the checks, captures the screens, records the results at a specific commit. The last station is me.
+Then four stations. A **builder** does the work. It never grades its own. A **critic** (a fresh instance, with no access to the builder's reasoning) reviews the result against the criteria. It flags; it never fixes. A **verifier**, never the builder, executes: runs the checks, captures the screens, records the results at a specific commit. The last station is me.
 
-The critic answers in exactly one of four words: APPROVED, REVISE, NEEDS_EVIDENCE, or ESCALATE. The third is the heart of it. A diff can read correctly and still be broken — reading is not judging — so a critic that can't honestly judge on read demands execution evidence instead of nodding along. Which is what APPROVED means here: verified, not plausible.
+The critic answers in exactly one of four words: APPROVED, REVISE, NEEDS_EVIDENCE, or ESCALATE. The third is the heart of it. A diff can read correctly and still be broken (reading is not judging), so a critic that can't honestly judge on read demands execution evidence instead of nodding along. Which is what APPROVED means here: verified, not plausible.
 
 ## Loops with circuit breakers
 
 <SaganLoop
   fig="001"
-  caption="The Sagan loop — four stations around one ledger: ticket + AC in, build, critique (with its verify satellite trading evidence), and the promote gate; REVISE arcs back, ESCALATE rays out to a human."
+  caption="The Sagan loop. Four stations around one ledger: ticket + AC in, build, critique (with its verify satellite trading evidence), and the promote gate; REVISE arcs back, ESCALATE rays out to a human."
 />
 
-A builder and a critic ping-pong: findings out, fixes back, until the verdict lands. Correctness loops converge fast — three to five rounds, a burst of issues, then a trickle, then approval. Quality loops are a different animal: "better" has no finish line, and the refinement research shows them legitimately running ten to forty rounds. The Sagan method allows that — but only as a choice I make on purpose, with a budget, never as a default the loop drifts into.
+A builder and a critic ping-pong: findings out, fixes back, until the verdict lands. Correctness loops converge fast: three to five rounds, a burst of issues, then a trickle, then approval. Quality loops are a different animal: "better" has no finish line, and the refinement research shows them legitimately running ten to forty rounds. The Sagan method allows that, but only as a choice I make on purpose, with a budget, never as a default the loop drifts into.
 
 <Margin label="The breakers">
   Five rounds for correctness, three for quality; every cap ends in a human decision, never a silent approve.
 </Margin>
 
-That's what the circuit breakers are for. Five rounds for correctness, three for quality — and the caps live in the runtime, not in a model's memory, because nothing safety-shaped should depend on an agent remembering to stop. And when the same finding fails three times in a row, the answer isn't round six. It's a stop and a flag that says, in effect: your strategy may be wrong. Change the angle instead of repeating it louder.
+That's what the circuit breakers are for. Five rounds for correctness, three for quality. The caps live in the runtime, not in a model's memory, because nothing safety-shaped should depend on an agent remembering to stop. And when the same finding fails three times in a row, the answer isn't round six. It's a stop and a flag that says, in effect: your strategy may be wrong. Change the angle instead of repeating it louder.
 
 ## Bring the agents you already have
 
-None of this required hiring a new fleet. The method separates the role from the agent: a role spec — mission, boundaries, output contract, rubric — is the contract, and the agent filling it is just the binding. So the named bench I already had — Dieter, Dijkstra, Hamilton, Strunk — slotted into `.sagan/roles/` unchanged. Same personas, same craft; they just stopped grading their own homework.
+None of this required hiring a new fleet. The method separates the role from the agent: a role spec (mission, boundaries, output contract, rubric) is the contract, and the agent filling it is just the binding. So Dieter, Dijkstra, Hamilton, and Strunk, the named bench I already had, slotted into `.sagan/roles/` unchanged. Same personas, same craft; they just stopped grading their own homework.
 
-The one rule that bites: builder ≠ verifier is about identity, not job titles. It doesn't matter what the role is called — if the agent that built the thing would also be the one verifying it, the dispatch is refused. Separation is structural, not polite.
+The one rule that bites: builder ≠ verifier is about identity, not job titles. It doesn't matter what the role is called. If the agent that built the thing would also be the one verifying it, the dispatch is refused. Separation is structural, not polite.
 
 ## You hold the gates
 
-Being the human in the loop isn't approving keystrokes. The run comes to me at defined points, not on every breath. A Needs-you queue surfaces open decisions as structured questions, each with a recommended default — never buried in prose. Mid-run escalations fire when something trips a wire: a destructive action, a scope change, a loop out of rounds. And nothing user-facing ships without the promote gate, where I get a preview bundle — the built thing itself, rendered at the evidence commit — rather than a screenshot filename I'm asked to take on faith.
+Being the human in the loop isn't approving keystrokes. The run comes to me at defined points, not on every breath. A Needs-you queue surfaces open decisions as structured questions, each with a recommended default, never buried in prose. Mid-run escalations fire when something trips a wire: a destructive action, a scope change, a loop out of rounds. And nothing user-facing ships without the promote gate, where I get a preview bundle (the built thing itself, rendered at the evidence commit) rather than a screenshot filename I'm asked to take on faith.
 
 The ledger keeps everyone honest, me included: the tickets and an events log (`events.jsonl`) are committed to the repo, and every piece of evidence binds to a git SHA.
 
-And yes — this note is the dogfood. It shipped through a Sagan run: acceptance criteria I confirmed before a word was drafted, a builder, a fresh critic, a verifier that rendered it, me at the gate. The whole standard lives in one `.sagan/` directory in this repo. One directory to add. One to delete, if I turn out to be wrong about all of it.
+And yes, this note is the dogfood. It shipped through a Sagan run: acceptance criteria I confirmed before a word was drafted, a builder, a fresh critic, a verifier that rendered it, me at the gate. The whole standard lives in one `.sagan/` directory in this repo. One directory to add. One to delete, if I turn out to be wrong about all of it.

@@ -27,7 +27,7 @@ export const experiments: Experiment[] = [
     slug: 'dev-overlay',
     title: 'Dev Overlay',
     summary:
-      "A faithful rebuild of the Next.js / Turbopack build-error overlay — paginator, status pill, syntax-highlighted code frame and caret — themed with the site's tokens and gently subverted: the errors are developer in-jokes, not real crashes.",
+      "A faithful rebuild of the Next.js / Turbopack build-error overlay (paginator, status pill, syntax-highlighted code frame and caret), themed with the site's tokens and gently subverted: the errors are developer in-jokes, not real crashes.",
     stack: ['React', 'sugar-high'],
     fonts: ['Geist Mono', 'Geist Sans'],
     colors: [

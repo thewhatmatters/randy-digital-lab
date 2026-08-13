@@ -6,7 +6,7 @@ import styles from './page.module.scss'
 export const metadata = {
   title: 'Lab',
   description:
-    'A lab of self-contained experiments — each a small project poking at a single UI element or interaction.',
+    'A lab of self-contained experiments, each a small project poking at a single UI element or interaction.',
 }
 
 export default function Page() {
@@ -16,7 +16,7 @@ export default function Page() {
         Lab
       </h1>
       <p className="col-start-1 col-end-13 md:col-end-8 mt-4 text-muted">
-        Self-contained experiments — each a small project poking at a single UI
+        Self-contained experiments, each a small project poking at a single UI
         element or interaction. All live below.
       </p>
 

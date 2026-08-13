@@ -14,12 +14,12 @@ export function SaganLoop({
     <figure className={styles.figure}>
       <svg className={styles.engraving} width="504" height="504" viewBox="-44 0 728 728" role="img" aria-labelledby="sagan-loop-t sagan-loop-d">
             <title id="sagan-loop-t">The Sagan loop, drawn as a thin-line engraving</title>
-            <desc id="sagan-loop-d">A circular circuit of four stations — ticket plus
-                      acceptance criteria, build, critique, promote gate — with a
-                      verify satellite exchanging evidence with critique, a REVISE
-                      return arc, an ESCALATE ray to a human, and radial lines binding
-                      every station to the ledger at the center, in the manner of the
-                      Voyager Golden Record cover.</desc>
+            <desc id="sagan-loop-d">A circular circuit of four stations: ticket plus
+                      acceptance criteria, build, critique, and promote gate. A verify
+                      satellite exchanges evidence with critique, a REVISE arc curves
+                      back, an ESCALATE ray reaches out to a human, and radial lines
+                      bind every station to the ledger at the center, in the manner of
+                      the Voyager Golden Record cover.</desc>
             <defs>
             <path id="sagan-arw" d="M-9 -3.5 L0 0 L-9 3.5" fill="none" stroke="currentColor" strokeWidth="1"></path>
             </defs>

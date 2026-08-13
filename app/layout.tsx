@@ -28,11 +28,11 @@ export const metadata: Metadata = {
     template: '%s — randy.digital',
   },
   description:
-    'Portfolio, notes, and a lab of small interactive experiments — by Randy.',
+    'Portfolio, notes, and a lab of small interactive experiments, by Randy.',
   openGraph: {
     title: 'randy.digital',
     description:
-      'Portfolio, notes, and a lab of small interactive experiments — by Randy.',
+      'Portfolio, notes, and a lab of small interactive experiments, by Randy.',
     url: baseUrl,
     siteName: 'randy.digital',
     locale: 'en_US',
