@@ -4,9 +4,9 @@ import { WorkTile } from './work-tile'
 import styles from './work-index.module.scss'
 
 // Work index — a 2-up card grid (gate decision), Newest-first (lib/dates:
-// publishedAt descending, slug ascending on ties — with all three projects
-// sharing one date, the grid order is knav → perchhq → shift by
-// specification), in the
+// publishedAt descending, slug ascending on ties — conan leads on its own
+// later date, then the three that share 2026-08-10 tie-break by slug, so the
+// grid order is conan → knav → perchhq → shift by specification), in the
 // Services card language (round-2.6 decision): each tile is the same "tool
 // card" object as a Services tile — rounded keycap-bordered card, the 16:10
 // image inside its own inset media panel, title + muted one-liner below in

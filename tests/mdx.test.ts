@@ -54,6 +54,7 @@
 //   keeps the thumbnail-first convention the tile→modal morph depends on.
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
+import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import {
@@ -429,5 +430,25 @@ describe('real content contract (app/notes/posts + app/work/projects)', () => {
         `${project.slug}: thumbnail is not the first carousel entry — the tile→modal morph convention is broken (intentional? update the convention docs in app/work/utils.ts first)`
       )
     }
+  })
+
+  // A carousel entry with no file on disk renders a never-completing <Image>:
+  // the tile/modal sits on a blank slide with no build-time or runtime error.
+  // perchhq shipped that way (05/06 listed, four files present), so the
+  // frontmatter↔public/ correspondence is pinned here rather than trusted.
+  it('every declared project image exists under public/', () => {
+    const missing: string[] = []
+    for (const project of getWorkProjects()) {
+      for (const image of project.metadata.images) {
+        const file = path.join(testDir, '..', 'public', image.replace(/^\//, ''))
+        if (!fs.existsSync(file)) missing.push(`${project.slug}: ${image}`)
+      }
+    }
+    assert.deepEqual(
+      missing,
+      [],
+      `carousel image declared in frontmatter but absent from public/ —` +
+        ` add the file or drop the line:\n${missing.join('\n')}`
+    )
   })
 })
