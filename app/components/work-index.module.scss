@@ -61,8 +61,13 @@
 }
 
 // The card — Services tile anatomy: shell holding [media panel][body].
+// height: 100% makes the card frame fill its grid cell, so the two cards in a
+// row end on the same line no matter how many lines each summary wraps to
+// (grid rows are already equal-height; without this the card box stopped at
+// its own content and the shorter one's border floated up).
 .card {
   @include card-shell;
+  height: 100%;
   display: flex;
   flex-direction: column;
   text-decoration: none;
@@ -118,9 +123,14 @@
   display: block;
 }
 
+// Two lines of blurb are reserved (1.5 line-height × 2, in the summary's own
+// em) so a one-line project sits in the same block as a two-line one and the
+// row needs no leftover space to equalize. Longer summaries still grow, and
+// the card's height: 100% keeps the row square when they do.
 .summary {
   @include card-blurb;
   display: block;
+  min-height: 3em;
 }
 
 // Hover/focus — the card wakes exactly like a Services tile: panel edge
