@@ -8,6 +8,14 @@
 // still read. That combination IS the effect — smooth it further and it
 // becomes a plain gradient; sharpen it and it becomes a bar chart.
 
+// The aurora's own curve, deliberately NOT the house $ease. $ease is an
+// entrance curve (decisive start, long soft landing); a transition that both
+// arrives and leaves needs symmetry at both ends. One definition, shared by
+// the rise (aurora-riser.module.scss) and the sweep band the lab keeps
+// (aurora-transition.module.scss) so the two gestures cannot drift into
+// different feels.
+$aurora-ease: cubic-bezier(0.65, 0, 0.35, 1);
+
 // One bar of the equalizer: the full spectrum bottom → top, in the token
 // order. The top stop is transparent so a blurred crest fades out instead of
 // hard-clipping. Consumers own the bar's width, height and transform.
@@ -31,4 +39,30 @@
   grid-template-columns: repeat(var(--grid-cols), 1fr);
   align-items: end;
   filter: blur(var(--aurora-blur));
+}
+
+// The aurora used as a LAYER OVER a page: how much of the page reads through
+// it. One definition, three seats — the route transition's fixed veil
+// (aurora-sweep.module.scss), and the lab miniature's own veil and its sweep
+// band (aurora-transition.module.scss). Consumers own position and z-index.
+//
+// The translucency IS the transition's manners: the page stays visible
+// underneath, so the route swap is softened rather than hidden. An opaque
+// version could hide the swap outright, but covering the screen for ~300ms
+// read as a page-load, not a transition.
+@mixin aurora-veil {
+  overflow: hidden;
+  pointer-events: none;
+  /* Plain alpha, NOT a lighten blend. plus-lighter reads as "light laid on the
+     page", which is the right idea and the wrong math here: white is already
+     at the ceiling, so on the light theme it added nothing to the page and
+     only brightened the dark text — the aurora vanished and the words turned
+     magenta. Alpha shows the same color over both grounds. */
+  opacity: var(--aurora-alpha, 0.75);
+
+  /* Dark theme: the same alpha reads much hotter against a near-black ground,
+     so the light needs less of itself. */
+  :global([data-theme='dark']) & {
+    --aurora-alpha: 0.6;
+  }
 }

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 
-import { AURORA_BARS } from './aurora-bars'
+import { AuroraRiser, RISE_MS, RISE_PUSH_AT } from './aurora-riser'
 import { WORK_TILE_ATTR } from './work-morph'
 import styles from './aurora-sweep.module.scss'
 
@@ -13,48 +13,31 @@ import styles from './aurora-sweep.module.scss'
 // Same tokens, same arc, same skin as footer-reveal.tsx — see aurora-bars.ts
 // and _aurora.scss, which both surfaces share so they cannot drift.
 //
+// This file is the ROUTE seat: it owns the click interception, the moment of
+// the push, and the fixed veil the gesture plays in. The gesture itself is
+// aurora-riser.tsx, shared with lab experiment 02 (aurora-transition.tsx), so
+// the live demo in the lab is the same riser and not a lookalike.
+//
 // Why an interceptor and not the View Transitions API: a fixed DOM band is
 // captured INTO the root snapshot during a view transition, so it freezes
 // exactly when it should be moving. Giving it its own view-transition-name
 // buys a group we could transform, but the band must then be permanently
 // rendered to have a snapshot at all. Intercepting the click and owning both
 // halves — the band and the moment of the push — is simpler and leaves the
-// timing tunable in one place (the three constants below).
+// timing tunable in one place (the riser's two constants).
 //
 // It stays translucent, so the swap is softened rather than hidden: it happens
-// at PUSH_AT, when the light is at its densest. An opaque version could hide
-// the swap outright, but covering the screen for ~300ms read as a page-load,
-// not a transition.
+// at PUSH_AT, when the light is at its densest.
 //
 // Reduced motion: the component renders nothing and never intercepts — links
 // navigate normally, which is the honest reduced-motion answer for an effect
 // that IS motion (same contract as the glow seat and the preloader).
 
-/** Which gesture plays. 'rise' is the footer bloom standing up across the
- *  viewport and travelling off the top; 'sweep' is the earlier horizontal
- *  band crossing left to right (glimm's own shape), kept as the comparison. */
-const GESTURE: 'rise' | 'sweep' = 'rise'
-
-/** Total run, end to end. The rise needs longer than the sweep: it is two
- *  moves (grow, then travel out) where the sweep is one. */
-const SWEEP_MS = GESTURE === 'rise' ? 760 : 620
-/** Point in the run where the light is densest — the swap. For the rise that
- *  is the top of the growth, just before the panel starts travelling. */
-const PUSH_AT = GESTURE === 'rise' ? 0.55 : 0.4
-/** Nav order, so the sweep travels the way the eye does: going 01 → 03 sweeps
- *  forward, 03 → 01 sweeps back. Anything off this list sweeps forward.
- *  ('rise' has one direction — the aurora always comes up from the floor.) */
-const NAV_ORDER = ['/', '/work', '/lab', '/notes']
-
-type Direction = 'forward' | 'back'
-
-/** The nav rank of a path — its section, so /notes/some-post ranks as /notes. */
-function rank(pathname: string): number {
-  const i = NAV_ORDER.findIndex(
-    (p) => p !== '/' && (pathname === p || pathname.startsWith(`${p}/`))
-  )
-  return i === -1 ? (pathname === '/' ? 0 : NAV_ORDER.length) : i
-}
+/** Total run, end to end, and the point in it where the route swaps. Both are
+ *  the riser's own numbers (its keyframes bake them in) — named here because
+ *  this seat is what schedules against them. */
+const SWEEP_MS = RISE_MS
+const PUSH_AT = RISE_PUSH_AT
 
 /**
  * Should this click become a sweep? Everything that is not a plain left-click
@@ -87,7 +70,7 @@ function sweepTarget(e: MouseEvent): string | null {
 export function AuroraSweep() {
   const router = useRouter()
   const pathname = usePathname()
-  const [direction, setDirection] = useState<Direction | null>(null)
+  const [playing, setPlaying] = useState(false)
   const running = useRef(false)
   const timers = useRef<number[]>([])
 
@@ -109,7 +92,7 @@ export function AuroraSweep() {
       if (running.current) return
 
       running.current = true
-      setDirection(rank(href) >= rank(window.location.pathname) ? 'forward' : 'back')
+      setPlaying(true)
 
       timers.current.push(
         window.setTimeout(() => router.push(href), SWEEP_MS * PUSH_AT)
@@ -117,7 +100,7 @@ export function AuroraSweep() {
       timers.current.push(
         window.setTimeout(() => {
           running.current = false
-          setDirection(null)
+          setPlaying(false)
         }, SWEEP_MS)
       )
     }
@@ -137,41 +120,15 @@ export function AuroraSweep() {
   useEffect(() => {
     if (!running.current) {
       clearTimers()
-      setDirection(null)
+      setPlaying(false)
     }
   }, [pathname, clearTimers])
 
-  if (!direction) return null
-
-  const duration = { ['--sweep-ms' as string]: `${SWEEP_MS}ms` }
+  if (!playing) return null
 
   return (
     <div className={styles.veil} aria-hidden="true">
-      {GESTURE === 'rise' ? (
-        // The bloom's own markup: one bar per grid column, each at its arc
-        // height, growing from the bottom edge. The panel then carries them
-        // off the top.
-        <div className={styles.riser} style={duration}>
-          {AURORA_BARS.map((h, i) => (
-            <span
-              key={i}
-              className={styles.riserBar}
-              style={{ ...duration, ['--bar-h' as string]: `${h}%` }}
-            />
-          ))}
-        </div>
-      ) : (
-        <div
-          className={`${styles.band} ${styles[direction]}`}
-          style={duration}
-        >
-          {/* Eleven solid steps under one blur — the same construction laid on
-              its side. */}
-          {Array.from({ length: 11 }, (_, i) => (
-            <span key={i} className={styles.step} />
-          ))}
-        </div>
-      )}
+      <AuroraRiser ms={SWEEP_MS} />
     </div>
   )
 }

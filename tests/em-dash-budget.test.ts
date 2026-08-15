@@ -124,6 +124,10 @@ const stringSites = [
   'app/work/page.tsx',
   'app/lab/page.tsx',
   'app/lab/experiments.tsx',
+  // Lab experiment 02's miniature site (T-012): its nav labels, page titles
+  // and lede are reader-visible copy, so it joins the enumerated sites rather
+  // than inheriting the enumeration's blind spot.
+  'app/components/aurora-transition.tsx',
   'app/components/command-bar.tsx',
   'app/components/design-canvas.tsx',
   'app/components/work-carousel.tsx',

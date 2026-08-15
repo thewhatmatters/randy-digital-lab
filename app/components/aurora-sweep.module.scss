@@ -1,196 +1,31 @@
-/* Aurora route transition (see ./aurora-sweep.tsx) — the footer bloom's
-   equalizer, used as the site's page transition. Same tokens (--aurora-1..6),
-   same arc (aurora-bars.ts), same skin (_aurora.scss): the difference between
-   the two surfaces is only the gesture. Push past the footer and the aurora
-   stands up at the bottom of the page; change route and it stands up across
-   the whole viewport and keeps going.
+/* Aurora route transition (see ./aurora-sweep.tsx) — the seat only. The
+   gesture itself (panel geometry, bar growth, travel, the bottom feather) now
+   lives in aurora-riser.module.scss, shared with lab experiment 02; the skin
+   (bar spectrum, panel grid + melt, the layer's translucency) lives in
+   _aurora.scss, shared with the footer bloom. What is left here is what only
+   this seat knows: where the layer sits, how high it stacks, and how tall the
+   viewport it rises through is.
 
-   Two gestures live here, switched by GESTURE in the .tsx:
+   Push past the footer and the aurora stands up at the bottom of the page;
+   change route and the same arc stands up across the whole viewport and keeps
+   going. Same tokens, same arc, same skin — the difference between the two
+   surfaces is only the gesture.
 
-   RISE (default) — the footer gesture, scaled to the viewport. The arc of bars
-   grows from the bottom edge (scaleY from a bottom origin, exactly as --p does
-   in the bloom), holds while the route swaps, then the whole panel travels up
-   and off the top, revealing the new page from the bottom up. Because the arc
-   tapers at the edges, the top corners stay open the whole way — the effect is
-   light rising past you, not a door closing.
-
-   SWEEP — the earlier horizontal band (glimm.dev's mechanic): the same
-   spectrum as vertical steps, crossing the screen left to right. Kept because
-   it is the reference the rise is being judged against.
-
-   Both stay translucent so the page reads through them, which means the route
-   swap is softened rather than hidden. */
+   The horizontal sweep variant that used to live here moved into the lab
+   experiment (T-012), where a viewer can switch between the two gestures. This
+   file keeps exactly one path. */
 
 @use './aurora' as *;
-
-/* The transition's own curve, deliberately NOT the house $ease. $ease is an
-   entrance curve (decisive start, long soft landing); this needs symmetry at
-   both ends. Kept local while this is a prototype — if it ships, this
-   graduates into _motion.scss. */
-$ease-sweep: cubic-bezier(0.65, 0, 0.35, 1);
 
 .veil {
   position: fixed;
   inset: 0;
   z-index: 95; // over the work modal (90) + command bar (70), under the preloader (100)
-  overflow: hidden;
-  pointer-events: none;
   contain: strict; // never affects layout or scroll
-  /* Plain alpha, NOT a lighten blend. plus-lighter reads as "light laid on the
-     page", which is the right idea and the wrong math here: white is already
-     at the ceiling, so on the light theme it added nothing to the page and
-     only brightened the dark text — the aurora vanished and the words turned
-     magenta. Alpha shows the same color over both grounds. */
-  opacity: var(--sweep-alpha, 0.75);
-}
-
-/* ── RISE ─────────────────────────────────────────────────────────────────── */
-
-.riser {
-  @include aurora-panel;
-  position: absolute;
-  left: 0;
-  right: 0;
-  /* Overshoot below the fold so the bars' solid bottoms (and their blur) run
-     off the bottom edge instead of ending on a hard line — the same trick and
-     the same token the bloom uses. */
-  bottom: calc(-1 * var(--aurora-overflow, 0px));
-  /* Taller than the viewport: at full height the center bars (99% of this) are
-     well past the top, so the crest leaves the screen rather than landing in
-     the middle of it. */
-  height: 130vh;
-  /* Feather the bottom. In the footer the bars' solid bottoms simply live
-     below the fold, so their hard edge is never on screen — but this panel
-     TRAVELS, and an unfeathered bottom edge crosses the viewport on the way
-     out as a visible blue line. Fading the lowest fifth to transparent means
-     the aurora thins into the page as it leaves, the way it does at rest. */
-  /* Four stops, not two: a straight two-stop ramp fades evenly and so lands
-     its own soft edge where it reaches full opacity. Weighting the middle
-     (35% at a seventh of the way up, 75% at a quarter) bends the ramp so it
-     leaves the page slowly and arrives at full strength without a shoulder. */
-  mask-image: linear-gradient(
-    to top,
-    transparent 0%,
-    rgb(0 0 0 / 0.35) 14%,
-    rgb(0 0 0 / 0.75) 25%,
-    #000 36%
-  );
-  will-change: transform;
-  animation: aurora-rise var(--sweep-ms, 760ms) $ease-sweep both;
-}
-
-.riserBar {
-  @include aurora-bar;
-  width: 100%;
-  height: var(--bar-h, 50%);
-  /* Grown from the bottom edge, the bloom's --p move: early in the run the
-     whole spectrum is squashed into a bright seam along the bottom, then it
-     blooms to the full arc. */
-  transform-origin: 50% 100%;
-  transform: scaleY(0);
-  animation: aurora-grow calc(var(--sweep-ms, 760ms) * 0.55) $ease-sweep both;
-}
-
-/* Bars grow (0 → 55% of the run), then the whole panel travels up and out
-   (55% → 100%). The swap happens in between, at the top of the growth. */
-@keyframes aurora-grow {
-  to {
-    transform: scaleY(1);
-  }
-}
-
-@keyframes aurora-rise {
-  0%,
-  55% {
-    transform: translate3d(0, 0, 0);
-  }
-  100% {
-    transform: translate3d(0, -145vh, 0);
-  }
-}
-
-/* ── SWEEP (the horizontal alternative) ───────────────────────────────────── */
-
-/* The eleven steps: the six aurora stops with a 50/50 mix between each
-   neighbouring pair, so the ramp reads as steps rather than banding hard from
-   blue to yellow. color-mix keeps them derived from the tokens. */
-$steps: (
-  var(--aurora-1),
-  color-mix(in srgb, var(--aurora-1), var(--aurora-2)),
-  var(--aurora-2),
-  color-mix(in srgb, var(--aurora-2), var(--aurora-3)),
-  var(--aurora-3),
-  color-mix(in srgb, var(--aurora-3), var(--aurora-4)),
-  var(--aurora-4),
-  color-mix(in srgb, var(--aurora-4), var(--aurora-5)),
-  var(--aurora-5),
-  color-mix(in srgb, var(--aurora-5), var(--aurora-6)),
-  var(--aurora-6)
-);
-
-.band {
-  position: absolute;
-  top: -10vh; // overshoot so the blur never shows a top/bottom edge
-  bottom: -10vh;
-  left: 0;
-  width: 130vw;
-  display: flex;
-  mask-image: linear-gradient(
-    90deg,
-    transparent 0%,
-    #000 14%,
-    #000 86%,
-    transparent 100%
-  );
-  filter: blur(var(--sweep-blur, 10px));
-  will-change: transform;
-  transform: translate3d(-130vw, 0, 0);
-}
-
-.step {
-  flex: 1;
-  height: 100%;
-}
-
-@for $i from 1 through length($steps) {
-  .step:nth-child(#{$i}) {
-    background: nth($steps, $i);
-  }
-}
-
-// Blue leads in both directions: the steps are laid blue→magenta, so a forward
-// (left→right) run reverses them visually to put blue on the leading edge.
-.forward {
-  flex-direction: row-reverse;
-  animation: sweep-forward var(--sweep-ms, 620ms) $ease-sweep both;
-}
-
-.back {
-  animation: sweep-back var(--sweep-ms, 620ms) $ease-sweep both;
-}
-
-@keyframes sweep-forward {
-  from {
-    transform: translate3d(-130vw, 0, 0);
-  }
-  to {
-    transform: translate3d(100vw, 0, 0);
-  }
-}
-
-@keyframes sweep-back {
-  from {
-    transform: translate3d(100vw, 0, 0);
-  }
-  to {
-    transform: translate3d(-130vw, 0, 0);
-  }
-}
-
-/* Dark theme: the same alpha reads much hotter against a near-black ground,
-   so the light needs less of itself. */
-:global([data-theme='dark']) .veil {
-  --sweep-alpha: 0.6;
+  /* The riser's geometry is written as multiples of the viewport it rises
+     through. Here that viewport is the real one. */
+  --rise-viewport: 100vh;
+  @include aurora-veil; // overflow, pointer-events, translucency (+ dark)
 }
 
 /* Reduced motion: the transition never mounts (aurora-sweep.tsx refuses), so
