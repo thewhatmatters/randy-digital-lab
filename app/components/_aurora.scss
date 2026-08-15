@@ -1,0 +1,34 @@
+// The aurora equalizer's SKIN — one definition, two consumers (the footer
+// bloom and the route sweep), extracted the way _card.scss and _glow.scss
+// were: the bar's spectrum and the panel's melt live here, and each consumer
+// adds only its own geometry and motion.
+//
+// The look is stepped-then-softened: solid columns of the full vertical
+// spectrum, blurred just enough to melt into each other while the column sides
+// still read. That combination IS the effect — smooth it further and it
+// becomes a plain gradient; sharpen it and it becomes a bar chart.
+
+// One bar of the equalizer: the full spectrum bottom → top, in the token
+// order. The top stop is transparent so a blurred crest fades out instead of
+// hard-clipping. Consumers own the bar's width, height and transform.
+@mixin aurora-bar {
+  background: linear-gradient(
+    to top,
+    var(--aurora-1) 0%,
+    var(--aurora-2) 20%,
+    var(--aurora-3) 40%,
+    var(--aurora-4) 56%,
+    var(--aurora-5) 73%,
+    var(--aurora-6) 88%,
+    transparent 100%
+  );
+}
+
+// The panel that holds the bars: one grid column each, sitting on the bottom
+// edge, melted by the shared blur. Consumers own position, height and opacity.
+@mixin aurora-panel {
+  display: grid;
+  grid-template-columns: repeat(var(--grid-cols), 1fr);
+  align-items: end;
+  filter: blur(var(--aurora-blur));
+}

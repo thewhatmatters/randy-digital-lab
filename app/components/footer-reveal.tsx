@@ -2,13 +2,8 @@
 
 import { useEffect, useRef } from 'react'
 
+import { AURORA_BARS } from './aurora-bars'
 import styles from './footer-reveal.module.scss'
-
-// Per-column bar heights (% of the reveal area) — a symmetric arc that peaks
-// at the center columns and tapers to the edges (a raised half-sine). The whole
-// arc scales with scroll velocity via --p, so harder pushes make it taller and
-// the middle column reaches the peak.
-const BARS = [39, 57, 73, 86, 95, 99, 99, 95, 86, 73, 57, 39]
 
 /**
  * Footer aurora "equalizer" — the sui.io / diabrowser.com "push past the
@@ -163,7 +158,7 @@ export function FooterReveal() {
       {/* panel mirrors grid-page: centered, max-width 72rem, 12 columns — so the
           bars land on the grid columns with dotted guides between them */}
       <div className={styles.panel} ref={panelRef}>
-        {BARS.map((h, i) => (
+        {AURORA_BARS.map((h, i) => (
           <div className={styles.col} key={i}>
             <div
               className={styles.bar}

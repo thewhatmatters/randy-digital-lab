@@ -11,6 +11,7 @@ import { FooterReveal } from './components/footer-reveal'
 import { UIChrome } from './components/command-bar'
 import { SmoothScroll } from './components/smooth-scroll'
 import { Preloader } from './components/preloader'
+import { AuroraSweep } from './components/aurora-sweep'
 import { ThemeProvider } from 'next-themes'
 import { INTRO_ARM_SCRIPT } from 'lib/intro-gate'
 import { baseUrl } from 'lib/site'
@@ -99,6 +100,11 @@ export default function RootLayout({
         >
           <UIChrome>
            <Preloader />
+           {/* Aurora route sweep — the footer bloom's spectrum as a transition
+               band across route changes (glimm.dev's mechanic, our palette).
+               Renders nothing at rest and nothing at all under reduced
+               motion. */}
+           <AuroraSweep />
            <SmoothScroll>
             {/* Aurora bloom pinned behind the page (z-0). Hidden until you push
                 past the footer, when <main> lifts to uncover it. See
