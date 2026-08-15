@@ -36,7 +36,7 @@ type Gesture = 'rise' | 'sweep'
 /** The miniature's nav, in the real site's own vocabulary and order. Order is
  *  load-bearing for the sweep: it is what gives the band a direction. */
 const PAGES: { id: PageId; title: string }[] = [
-  { id: 'base', title: 'Randy' },
+  { id: 'base', title: 'Base' },
   { id: 'work', title: 'Work' },
   { id: 'notes', title: 'Notes' },
 ]
@@ -134,7 +134,6 @@ export function AuroraTransition() {
   return (
     <div className={styles.root}>
       <div className={styles.tools}>
-        <span className={styles.toolLabel}>gesture</span>
         {/* Which gesture the next navigation plays. Pressing it always takes
             effect immediately as a choice (the pressed state moves under the
             finger); if a run happens to be in flight, that run finishes in the
@@ -194,7 +193,7 @@ export function AuroraTransition() {
             )}
             {page === 'work' && (
               <div className={styles.tiles} aria-hidden="true">
-                {['01', '02', '03'].map((n) => (
+                {['01', '02', '03', '04', '05', '06'].map((n) => (
                   <div key={n} className={styles.tile}>
                     <span className={styles.tileNum}>{n}</span>
                   </div>

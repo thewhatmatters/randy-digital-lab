@@ -10,6 +10,15 @@ export const metadata = {
     'A lab of self-contained experiments, each a small project poking at a single UI element or interaction.',
 }
 
+// Newest first, the same reading order /notes and /work use (lib/dates:
+// newest at the top). The registry itself stays in AUTHORING order — 01, 02,
+// 03 — so adding an experiment is an append and the numbers keep meaning
+// "when it was made"; only the display reverses. Sorted by `number` rather
+// than array position so the two can never disagree.
+const newestFirst = [...experiments].sort((a, b) =>
+  b.number.localeCompare(a.number)
+)
+
 export default function Page() {
   return (
     <section className="grid-page">
@@ -21,7 +30,7 @@ export default function Page() {
         element or interaction. All live below.
       </p>
 
-      {experiments.map((e) => {
+      {newestFirst.map((e) => {
         const Experiment = e.component
         return (
           <Fragment key={e.slug}>

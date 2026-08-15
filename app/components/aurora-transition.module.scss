@@ -55,18 +55,18 @@ $steps: (
   gap: 0.625rem;
 }
 
+/* The control is centred above the window now that it stands alone — with the
+   "gesture" label gone there is no left-hand element for space-between to
+   push against, and a lone control flush right reads as stranded. The
+   segmented control's own labels ("rise" / "sweep") say what it is. */
 .tools {
   flex: none;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   font-family: var(--font-mono);
   font-size: 0.6875rem;
   letter-spacing: 0.01em;
-}
-
-.toolLabel {
-  color: var(--muted);
 }
 
 /* Segmented control: which gesture plays. Deliberately reads as instrument,
