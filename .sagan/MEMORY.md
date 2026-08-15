@@ -353,3 +353,66 @@ insights are proposed to the vault through its gate.)
   mooted by the _glow.scss hoist; a pin on the mixin's output would
   still catch consumer drift); pre-existing /work/knav visible image
   that never reaches `complete` (both builds, reported r1).
+
+## T-012 — Lab 02, the aurora page transition (run-20260815-163813)
+
+- **PM defect worth never repeating:** the round-1 critic pack named only
+  `.sagan/ledger/<ticket>/gate/`, so the critic never saw the motion
+  pairs verify had already captured in `work/`. It returned
+  NEEDS_EVIDENCE on evidence that existed. **A critic pack must name
+  every evidence directory, not the tidy one** — or verify must promote
+  everything gate-worthy into `gate/` before the critique dispatch
+  (which is what fixed it here). Cost: one full critique round.
+- **Sample motion at motion, not at endpoints.** The first AC-6 gate
+  pair was shot at `PUSH_AT`, where the bars are exactly `scaleY(1)` and
+  the panel exactly `translate 0` REGARDLESS of duration, easing or
+  travel distance. That pair proves the static composition and nothing
+  about the animation. The critic caught it unaided. Sample mid-growth
+  and mid-travel too.
+- **Timeline stepping beats wall-clock sampling.** Verify's first AC-6
+  pass was invalid (screenshot latency) and it said so. The method that
+  worked: stretch the timers the handler schedules, pause every
+  animation, step `currentTime` to identical values in both trees.
+  Result 0/1,024,000 differing pixels at five points × two themes.
+- **Mask honestly:** the only masked region was a live world clock, and
+  the unmasked delta was published beside the masked result, so the mask
+  is auditable rather than trusted.
+- **One state answering two questions is the bug.** The in-flight toggle
+  defect was `gesture` meaning both "what the control says" and "what is
+  playing". Splitting it (`gesture` follows the click, `runGesture`
+  frozen at dispatch) fixed it. The choice among ignore/restart/defer
+  was made on user grounds — the swap lands at 55% of 760ms, so a second
+  press usually arrives after the change it covers, and restarting
+  replays a cover over a completed change.
+- **A source-text regex pins presence, not behavior.** Both seat pins are
+  regexes; a dead element satisfies them. Accepted here (house idiom,
+  runtime proof exists elsewhere) but it is the standing weakness of
+  this test family.
+- **Mutation-prove the assertion, not just the test.** The skin test
+  caught a fork by REPLACEMENT but not by OVERRIDE; running the old
+  helper against overridden CSS returned `true`. Gaps like this are
+  invisible unless someone mutates in the direction the assertion is
+  blind to.
+- **Session correction:** a freshly generated `.claude/agents/sagan-<role>.md`
+  IS spawnable in the same session — the earlier note here (and the
+  T-011 experience behind it) is wrong. `sagan-frontend` and
+  `sagan-verify` were generated and dispatched within this run.
+- **Staffing:** the human chose the default Critic persona over the
+  project's `sagan-critic` agent, knowing the persona has no Write tool.
+  Both envelopes were therefore PM-transcribed and validated in place —
+  they survived intact (sha256 recorded), but this is the transport the
+  file-in-place rule exists to remove, and T-010's HTML-escape incident
+  is what it looks like when it fails.
+- **Scope shape:** the human's ask was medium (a lab example + prompt);
+  the PM's gate recommendations (extract a shared riser, move the sweep
+  out of production) are what added the extraction, the invariance
+  proof, and most of the runtime. Right call, wrong attribution when the
+  PM later blamed "ticket size". Next time split along the invariance
+  boundary: extraction + unchanged-production proof as one ticket, the
+  experiment + prompt as another.
+- **Carry-forwards:** (a) blur does not scale — 375px solid core is 51%
+  rise / 41.8% sweep vs 79% at desktop, and the route seat degrades the
+  same way (62%) pre-existing; (b) rename `aurora-sweep.tsx`, which now
+  holds only the rise; (c) no test pins the AC-11 defer behavior (no DOM
+  in the harness) — a refactor collapsing the two gesture states back
+  into one would reintroduce the bug with the suite green.
